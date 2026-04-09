@@ -1,0 +1,41 @@
+# Monorepo root ignore rules
+
+# Node dependencies and build outputs
+**/node_modules/
+**/.next/
+**/dist/
+**/out/
+**/build/
+**/coverage/
+
+# Sanity runtime
+**/.sanity/
+
+# Environment and secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local tooling/state
+**/.clerk/
+**/.vercel/
+
+# Logs
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# OS/editor
+.DS_Store
+Thumbs.db
+
+# TypeScript
+**/*.tsbuildinfo
+**/next-env.d.ts
+
+# Keep root clean from generated archives
+*.zip
+*.tar
+*.gz
