@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
+import { SignOutButton } from "@clerk/nextjs";
 
 export default async function Home() {
   const { userId } = await auth();
@@ -12,9 +13,16 @@ export default async function Home() {
             QR CJENIK
           </p>
           {userId ? (
-            <span className="rounded-full border border-emerald-300/60 px-4 py-2 text-xs text-emerald-200">
-              prijavljen korisnik
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="rounded-full border border-emerald-300/60 px-4 py-2 text-xs text-emerald-200">
+                prijavljen korisnik
+              </span>
+              <SignOutButton redirectUrl="/">
+                <button className="rounded-full border border-red-400/60 px-4 py-2 text-xs text-red-200 hover:bg-red-400/10 transition-colors">
+                  Odjavi se
+                </button>
+              </SignOutButton>
+            </div>
           ) : null}
         </div>
 

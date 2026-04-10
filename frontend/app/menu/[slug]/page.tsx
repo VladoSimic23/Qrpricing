@@ -85,21 +85,18 @@ export default async function PublicMenuPage({
   );
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6">
-      <header className="rounded-2xl bg-slate-950 px-6 py-8 text-white">
-        <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">
-          Digitalni meni
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold">{menu.name}</h1>
-      </header>
-
-      {nonEmptyCategories.length > 0 ? (
-        <section className="px-0">
-          <MenuTabs categories={nonEmptyCategories} />
-        </section>
-      ) : (
-        <p className="text-slate-500">Meni još nije dostupan.</p>
-      )}
+    <main className="min-h-screen bg-gradient-to-b from-[#0b1418] via-[#101a1f] to-[#131114] text-[#f7efe4]">
+      <section className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pb-10 pt-6 sm:px-6 sm:pt-8">
+        {nonEmptyCategories.length > 0 ? (
+          <section className="px-0">
+            <MenuTabs categories={nonEmptyCategories} venueName={menu.name} />
+          </section>
+        ) : (
+          <p className="rounded-xl border border-amber-100/10 bg-[#1b191a]/70 px-4 py-3 text-sm text-amber-100/70">
+            Meni još nije dostupan.
+          </p>
+        )}
+      </section>
     </main>
   );
 }
