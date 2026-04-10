@@ -26,8 +26,19 @@ export const menuItemType = defineType({
       validation: (rule) => rule.required().min(2),
     }),
     defineField({
+      name: "nameEn",
+      title: "Naziv artikla (EN)",
+      type: "string",
+    }),
+    defineField({
       name: "description",
       title: "Opis",
+      type: "text",
+      rows: 3,
+    }),
+    defineField({
+      name: "descriptionEn",
+      title: "Opis (EN)",
       type: "text",
       rows: 3,
     }),

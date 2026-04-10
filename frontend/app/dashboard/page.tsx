@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 
 import { DashboardItemTabs } from "./DashboardItemTabs";
+import { FormActionButton } from "./FormActionButton";
 
 import {
   getCurrentMembership,
@@ -18,12 +19,14 @@ import {
 type Category = {
   _id: string;
   title: string;
+  titleEn?: string;
   sortOrder: number;
 };
 
 type Subcategory = {
   _id: string;
   title: string;
+  titleEn?: string;
   sortOrder: number;
   categoryId: string;
 };
@@ -31,11 +34,13 @@ type Subcategory = {
 type MenuItem = {
   _id: string;
   name: string;
+  nameEn?: string;
   price: number;
   currency: string;
   isAvailable: boolean;
   categoryTitle: string;
   description?: string;
+  descriptionEn?: string;
   categoryId: string;
   sortOrder: number;
   imageUrl?: string;
@@ -106,6 +111,7 @@ async function createCategoryAction(formData: FormData) {
   }
 
   const title = String(formData.get("title") || "").trim();
+  const titleEn = String(formData.get("titleEn") || "").trim();
   const sortOrder = Number(formData.get("sortOrder") || 0);
 
   if (!title) {
@@ -117,6 +123,7 @@ async function createCategoryAction(formData: FormData) {
     _type: "menuCategory",
     tenant: { _type: "reference", _ref: membership.tenant._id },
     title,
+    ...(titleEn ? { titleEn } : {}),
     sortOrder,
   });
 
@@ -133,7 +140,9 @@ async function createMenuItemAction(formData: FormData) {
   }
 
   const name = String(formData.get("name") || "").trim();
+  const nameEn = String(formData.get("nameEn") || "").trim();
   const description = String(formData.get("description") || "").trim();
+  const descriptionEn = String(formData.get("descriptionEn") || "").trim();
   const categoryId = String(formData.get("categoryId") || "").trim();
   const currency = String(formData.get("currency") || "EUR").trim();
   const price = Number(formData.get("price") || 0);
@@ -192,6 +201,8 @@ async function createMenuItemAction(formData: FormData) {
     category: { _type: "reference", _ref: categoryId },
     name,
     description,
+    ...(nameEn ? { nameEn } : {}),
+    ...(descriptionEn ? { descriptionEn } : {}),
     price,
     currency,
     isAvailable: true,
@@ -216,6 +227,7 @@ async function updateCategoryAction(formData: FormData) {
 
   const categoryId = String(formData.get("categoryId") || "").trim();
   const title = String(formData.get("title") || "").trim();
+  const titleEn = String(formData.get("titleEn") || "").trim();
   const sortOrder = Number(formData.get("sortOrder") || 0);
 
   if (!categoryId || !title) {
@@ -232,7 +244,10 @@ async function updateCategoryAction(formData: FormData) {
   }
 
   const writeClient = getServerWriteClient();
-  await writeClient.patch(categoryId).set({ title, sortOrder }).commit();
+  await writeClient
+    .patch(categoryId)
+    .set({ title, sortOrder, titleEn })
+    .commit();
 
   revalidatePath("/dashboard");
   revalidatePath(`/menu/${membership.tenant.slug}`);
@@ -278,6 +293,7 @@ async function createSubcategoryAction(formData: FormData) {
 
   const categoryId = String(formData.get("categoryId") || "").trim();
   const title = String(formData.get("title") || "").trim();
+  const titleEn = String(formData.get("titleEn") || "").trim();
   const sortOrder = Number(formData.get("sortOrder") || 0);
 
   if (!categoryId || !title) {
@@ -299,6 +315,7 @@ async function createSubcategoryAction(formData: FormData) {
     tenant: { _type: "reference", _ref: membership.tenant._id },
     category: { _type: "reference", _ref: categoryId },
     title,
+    ...(titleEn ? { titleEn } : {}),
     sortOrder,
   });
 
@@ -316,6 +333,7 @@ async function updateSubcategoryAction(formData: FormData) {
 
   const subCategoryId = String(formData.get("subCategoryId") || "").trim();
   const title = String(formData.get("title") || "").trim();
+  const titleEn = String(formData.get("titleEn") || "").trim();
   const sortOrder = Number(formData.get("sortOrder") || 0);
 
   if (!subCategoryId || !title) {
@@ -332,7 +350,10 @@ async function updateSubcategoryAction(formData: FormData) {
   }
 
   const writeClient = getServerWriteClient();
-  await writeClient.patch(subCategoryId).set({ title, sortOrder }).commit();
+  await writeClient
+    .patch(subCategoryId)
+    .set({ title, sortOrder, titleEn })
+    .commit();
 
   revalidatePath("/dashboard");
   revalidatePath(`/menu/${membership.tenant.slug}`);
@@ -378,7 +399,9 @@ async function updateMenuItemAction(formData: FormData) {
 
   const itemId = String(formData.get("itemId") || "").trim();
   const name = String(formData.get("name") || "").trim();
+  const nameEn = String(formData.get("nameEn") || "").trim();
   const description = String(formData.get("description") || "").trim();
+  const descriptionEn = String(formData.get("descriptionEn") || "").trim();
   const categoryId = String(formData.get("categoryId") || "").trim();
   const subCategoryId = String(formData.get("subCategoryId") || "").trim();
   const currency = String(formData.get("currency") || "EUR").trim();
@@ -424,7 +447,9 @@ async function updateMenuItemAction(formData: FormData) {
 
   let patchBuilder = writeClient.patch(itemId).set({
     name,
+    nameEn,
     description,
+    descriptionEn,
     price,
     currency,
     sortOrder,
@@ -502,23 +527,30 @@ export default async function DashboardPage() {
   if (!membership?.tenant?._id) {
     return (
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-10">
-        <h1 className="text-3xl font-semibold">Postavi svoj prvi lokal</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">
+          Postavi svoj prvi lokal
+        </h1>
         <p className="text-slate-600">
           Nakon ovog koraka dobit ces privatni dashboard i javni URL menija.
         </p>
-        <form action={createTenantAction} className="flex flex-col gap-3">
+        <form
+          action={createTenantAction}
+          className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+        >
           <input
             name="name"
             required
             placeholder="Naziv lokala"
-            className="rounded-xl border border-slate-300 px-4 py-3"
+            className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           />
-          <button
-            type="submit"
-            className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white"
-          >
-            Kreiraj tenant
-          </button>
+          <FormActionButton
+            idleLabel="Kreiraj tenant"
+            loadingLabel="Kreiram..."
+            className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+          />
+          <p className="text-xs text-slate-500">
+            Nakon klika pricekaj poruku u gumbu dok traje spremanje.
+          </p>
         </form>
       </main>
     );
@@ -529,6 +561,7 @@ export default async function DashboardPage() {
       `*[_type == "menuCategory" && tenant._ref == $tenantId] | order(sortOrder asc, title asc){
         _id,
         title,
+        titleEn,
         sortOrder
       }`,
       { tenantId: membership.tenant._id },
@@ -537,6 +570,7 @@ export default async function DashboardPage() {
       `*[_type == "menuItem" && tenant._ref == $tenantId] | order(category->sortOrder asc, sortOrder asc, name asc){
         _id,
         name,
+        nameEn,
         price,
         currency,
         isAvailable,
@@ -545,6 +579,7 @@ export default async function DashboardPage() {
         "subCategoryId": subCategory._ref,
         "subCategoryTitle": subCategory->title,
         description,
+        descriptionEn,
         sortOrder,
         "imageUrl": image.asset->url
       }`,
@@ -555,6 +590,7 @@ export default async function DashboardPage() {
     `*[_type == "menuSubcategory" && tenant._ref == $tenantId] | order(category->sortOrder asc, sortOrder asc, title asc){
       _id,
       title,
+      titleEn,
       sortOrder,
       "categoryId": category._ref
     }`,
@@ -562,8 +598,8 @@ export default async function DashboardPage() {
   );
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-10">
-      <section className="rounded-2xl bg-slate-950 p-8 text-white">
+    <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
+      <section className="rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 p-6 text-white shadow-lg sm:p-8">
         <p className="text-sm uppercase tracking-[0.2em] text-emerald-300">
           Dashboard
         </p>
@@ -576,11 +612,16 @@ export default async function DashboardPage() {
             /menu/{membership.tenant.slug}
           </Link>
         </p>
+        <p className="mt-3 text-xs text-slate-300">
+          Svaki submit gumb prikazuje loading dok se akcija izvrsava.
+        </p>
       </section>
 
-      <section className="grid gap-8 md:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 p-6">
-          <h2 className="text-xl font-semibold">Dodaj kategoriju</h2>
+      <section className="grid items-start gap-6 lg:grid-cols-2">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-900">
+            Dodaj kategoriju
+          </h2>
           <form
             action={createCategoryAction}
             className="mt-4 flex flex-col gap-3"
@@ -588,26 +629,30 @@ export default async function DashboardPage() {
             <input
               name="title"
               required
-              placeholder="Npr. Kava"
-              className="rounded-xl border border-slate-300 px-4 py-3"
+              placeholder="Naziv (HR)"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            />
+            <input
+              name="titleEn"
+              placeholder="Naziv (EN)"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
             <input
               name="sortOrder"
               type="number"
               defaultValue={0}
-              className="rounded-xl border border-slate-300 px-4 py-3"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
-            <button
-              type="submit"
-              className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white"
-            >
-              Spremi kategoriju
-            </button>
+            <FormActionButton
+              idleLabel="Spremi kategoriju"
+              loadingLabel="Spremam..."
+              className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+            />
           </form>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 p-6">
-          <h2 className="text-xl font-semibold">Dodaj artikl</h2>
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-900">Dodaj artikl</h2>
           <form
             action={createMenuItemAction}
             className="mt-4 flex flex-col gap-3"
@@ -616,13 +661,23 @@ export default async function DashboardPage() {
             <input
               name="name"
               required
-              placeholder="Npr. Cappuccino"
-              className="rounded-xl border border-slate-300 px-4 py-3"
+              placeholder="Naziv artikla (HR)"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            />
+            <input
+              name="nameEn"
+              placeholder="Naziv artikla (EN)"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
             <textarea
               name="description"
-              placeholder="Opis artikla"
-              className="rounded-xl border border-slate-300 px-4 py-3"
+              placeholder="Opis (HR)"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            />
+            <textarea
+              name="descriptionEn"
+              placeholder="Opis (EN)"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
             <input
               name="price"
@@ -631,17 +686,17 @@ export default async function DashboardPage() {
               min="0"
               required
               placeholder="0.00"
-              className="rounded-xl border border-slate-300 px-4 py-3"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
             <input
               name="currency"
               defaultValue="EUR"
-              className="rounded-xl border border-slate-300 px-4 py-3"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
             <select
               name="categoryId"
               required
-              className="rounded-xl border border-slate-300 px-4 py-3"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             >
               <option value="">Odaberi kategoriju</option>
               {categories.map((category) => (
@@ -652,7 +707,7 @@ export default async function DashboardPage() {
             </select>
             <select
               name="subCategoryId"
-              className="rounded-xl border border-slate-300 px-4 py-3"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             >
               <option value="">Bez podkategorije</option>
               {subcategories.map((sub) => (
@@ -666,7 +721,7 @@ export default async function DashboardPage() {
               name="sortOrder"
               type="number"
               defaultValue={0}
-              className="rounded-xl border border-slate-300 px-4 py-3"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
             <div>
               <label className="mb-1 block text-sm text-slate-600">
@@ -676,16 +731,15 @@ export default async function DashboardPage() {
                 type="file"
                 name="image"
                 accept="image/*"
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               />
             </div>
-            <button
-              type="submit"
-              className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white"
+            <FormActionButton
+              idleLabel="Spremi artikl"
+              loadingLabel="Spremam artikl..."
               disabled={categories.length === 0}
-            >
-              Spremi artikl
-            </button>
+              className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            />
           </form>
           {categories.length === 0 && (
             <p className="mt-3 text-sm text-amber-700">
@@ -695,23 +749,29 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="grid gap-8 md:grid-cols-2 items-start">
-        <div className="rounded-2xl border border-slate-200 p-6">
-          <h2 className="text-xl font-semibold">Kategorije</h2>
+      <section className="grid items-start gap-6 lg:grid-cols-2">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-900">Kategorije</h2>
           <ul className="mt-4 space-y-3">
             {categories.map((category) => (
               <li
                 key={category._id}
-                className="rounded-lg bg-slate-100 px-3 py-3"
+                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3"
               >
                 <form action={updateCategoryAction} className="grid gap-2">
                   <input type="hidden" name="categoryId" value={category._id} />
                   <div className="text-xs text-slate-600">Uredi kategoriju</div>
-                  <div className="grid gap-2 sm:grid-cols-[1fr_120px_auto_auto]">
+                  <div className="grid gap-2 sm:grid-cols-[1fr_1fr_110px_auto_auto]">
                     <input
                       name="title"
                       defaultValue={category.title}
                       required
+                      className="rounded border border-slate-300 px-3 py-2 text-sm"
+                    />
+                    <input
+                      name="titleEn"
+                      defaultValue={category.titleEn}
+                      placeholder="EN"
                       className="rounded border border-slate-300 px-3 py-2 text-sm"
                     />
                     <input
@@ -720,18 +780,17 @@ export default async function DashboardPage() {
                       defaultValue={category.sortOrder}
                       className="rounded border border-slate-300 px-3 py-2 text-sm"
                     />
-                    <button
-                      type="submit"
-                      className="rounded bg-blue-500 px-3 py-2 text-xs text-white transition hover:bg-blue-600"
-                    >
-                      Spremi
-                    </button>
-                    <button
+                    <FormActionButton
+                      idleLabel="Spremi"
+                      loadingLabel="Spremam..."
+                      className="rounded bg-blue-500 px-3 py-2 text-xs text-white transition hover:bg-blue-600 disabled:opacity-70"
+                    />
+                    <FormActionButton
+                      idleLabel="Obriši"
+                      loadingLabel="Brisem..."
                       formAction={deleteCategoryAction}
-                      className="rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600"
-                    >
-                      Obriši
-                    </button>
+                      className="rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600 disabled:opacity-70"
+                    />
                   </div>
                 </form>
               </li>
@@ -742,7 +801,7 @@ export default async function DashboardPage() {
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 p-6">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">
             Artikli po kategorijama
           </h2>

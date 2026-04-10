@@ -12,6 +12,11 @@ export const tenantType = defineType({
       validation: (rule) => rule.required().min(2),
     }),
     defineField({
+      name: "nameEn",
+      title: "Naziv lokala (EN)",
+      type: "string",
+    }),
+    defineField({
       name: "slug",
       title: "Public slug",
       type: "slug",

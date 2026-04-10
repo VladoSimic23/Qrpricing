@@ -19,6 +19,11 @@ export const menuCategoryType = defineType({
       validation: (rule) => rule.required().min(2),
     }),
     defineField({
+      name: "titleEn",
+      title: "Naziv kategorije (EN)",
+      type: "string",
+    }),
+    defineField({
       name: "sortOrder",
       title: "Redoslijed",
       type: "number",

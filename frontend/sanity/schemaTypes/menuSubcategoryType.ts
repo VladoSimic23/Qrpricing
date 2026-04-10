@@ -26,6 +26,11 @@ export const menuSubcategoryType = defineType({
       validation: (rule) => rule.required().min(2),
     }),
     defineField({
+      name: "titleEn",
+      title: "Naziv podkategorije (EN)",
+      type: "string",
+    }),
+    defineField({
       name: "sortOrder",
       title: "Redoslijed",
       type: "number",

@@ -95,9 +95,23 @@ function ItemCard({ item }: { item: Item }) {
 export function MenuTabs({
   categories,
   venueName,
+  messages,
 }: {
   categories: Category[];
   venueName: string;
+  messages: {
+    digitalMenu: string;
+    categories: string;
+    subcategories: string;
+    close: string;
+    all: string;
+    noSubcategory: string;
+    noItemsAvailable: string;
+    noItemsInCategory: string;
+    openCategories: string;
+    openSubcategories: string;
+    closeMobileMenu: string;
+  };
 }) {
   const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
   const [activeSubTab, setActiveSubTab] = useState("all");
@@ -114,8 +128,8 @@ export function MenuTabs({
     active.subcategories.reduce((sum, sub) => sum + sub.items.length, 0);
 
   const subTabs: SubTab[] = [
-    { key: "all", title: "Sve", count: allItemsCount },
-    { key: "none", title: "Bez podkategorije", count: active.items.length },
+    { key: "all", title: messages.all, count: allItemsCount },
+    { key: "none", title: messages.noSubcategory, count: active.items.length },
     ...active.subcategories.map((sub) => ({
       key: `sub-${sub._id}`,
       title: sub.title,
@@ -148,7 +162,7 @@ export function MenuTabs({
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 pr-3">
               <p className="text-[10px] uppercase tracking-[0.22em] text-amber-200/70">
-                Digitalni meni
+                {messages.digitalMenu}
               </p>
               <p className="truncate text-[11px] text-amber-100/70">
                 {venueName}
@@ -160,16 +174,22 @@ export function MenuTabs({
                 setIsMobileCategoryMenuOpen((prev) => !prev);
                 setIsMobileSubcategoryMenuOpen(false);
               }}
-              className="rounded-xl border border-amber-100/20 bg-amber-200/10 p-2"
-              aria-label="Otvori kategorije"
+              className="flex items-center gap-2 rounded-xl border border-amber-100/20 bg-amber-200/10 px-3 py-2"
+              aria-label={messages.openCategories}
               aria-expanded={isMobileCategoryMenuOpen}
             >
               <HamburgerIcon open={isMobileCategoryMenuOpen} />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-100">
+                {messages.categories}
+              </span>
             </button>
           </div>
 
           <div className="mt-2 flex items-center justify-between gap-3 border-t border-amber-100/10 pt-2">
             <div className="min-w-0 pr-3">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-amber-200/60">
+                {messages.categories}
+              </p>
               <p className="truncate text-sm font-semibold text-amber-50">
                 {active.title}
               </p>
@@ -182,10 +202,10 @@ export function MenuTabs({
                   setIsMobileCategoryMenuOpen(false);
                 }}
                 className="rounded-xl border border-amber-100/20 bg-amber-200/10 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-100"
-                aria-label="Otvori podkategorije"
+                aria-label={messages.openSubcategories}
                 aria-expanded={isMobileSubcategoryMenuOpen}
               >
-                Vrste jela
+                {messages.subcategories}
               </button>
             ) : null}
           </div>
@@ -195,7 +215,7 @@ export function MenuTabs({
       {(isMobileCategoryMenuOpen || isMobileSubcategoryMenuOpen) && (
         <button
           type="button"
-          aria-label="Zatvori mobilni meni"
+          aria-label={messages.closeMobileMenu}
           className="fixed inset-0 z-40 bg-black/55 md:hidden"
           onClick={() => {
             setIsMobileCategoryMenuOpen(false);
@@ -210,13 +230,15 @@ export function MenuTabs({
         }`}
       >
         <div className="mb-5 flex items-center justify-between">
-          <p className="text-sm font-semibold text-amber-100">Kategorije</p>
+          <p className="text-sm font-semibold text-amber-100">
+            {messages.categories}
+          </p>
           <button
             type="button"
             onClick={() => setIsMobileCategoryMenuOpen(false)}
             className="rounded-lg border border-amber-100/20 px-2 py-1 text-xs text-amber-100/80"
           >
-            Zatvori
+            {messages.close}
           </button>
         </div>
 
@@ -245,13 +267,15 @@ export function MenuTabs({
         }`}
       >
         <div className="mb-5 flex items-center justify-between">
-          <p className="text-sm font-semibold text-amber-100">Podkategorije</p>
+          <p className="text-sm font-semibold text-amber-100">
+            {messages.subcategories}
+          </p>
           <button
             type="button"
             onClick={() => setIsMobileSubcategoryMenuOpen(false)}
             className="rounded-lg border border-amber-100/20 px-2 py-1 text-xs text-amber-100/80"
           >
-            Zatvori
+            {messages.close}
           </button>
         </div>
 
@@ -269,7 +293,7 @@ export function MenuTabs({
                   : "bg-white/[0.04] text-amber-50/75"
               }`}
             >
-              Sve
+              {messages.all}
             </button>
           </li>
 
@@ -287,7 +311,7 @@ export function MenuTabs({
                     : "bg-white/[0.04] text-amber-50/75"
                 }`}
               >
-                Bez podkategorije
+                {messages.noSubcategory}
               </button>
             </li>
           )}
@@ -357,7 +381,7 @@ export function MenuTabs({
         {activeSubTab === "all" && active.items.length > 0 && (
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200/45">
-              Bez podkategorije
+              {messages.noSubcategory}
             </p>
             <ul className="space-y-3">
               {active.items.map((item) => (
@@ -370,11 +394,11 @@ export function MenuTabs({
         {activeSubTab === "none" && (
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200/45">
-              Bez podkategorije
+              {messages.noSubcategory}
             </p>
             {active.items.length === 0 ? (
               <p className="rounded-xl border border-amber-100/10 bg-[#17181b] px-3 py-3 text-sm text-amber-50/65">
-                Nema dostupnih artikala.
+                {messages.noItemsAvailable}
               </p>
             ) : (
               <ul className="space-y-3">
@@ -398,7 +422,7 @@ export function MenuTabs({
               </p>
               {sub.items.length === 0 ? (
                 <p className="rounded-xl border border-amber-100/10 bg-[#17181b] px-3 py-3 text-sm text-amber-50/65">
-                  Nema dostupnih artikala.
+                  {messages.noItemsAvailable}
                 </p>
               ) : (
                 <ul className="space-y-3">
@@ -412,7 +436,7 @@ export function MenuTabs({
 
         {allItemsCount === 0 && (
           <p className="rounded-xl border border-amber-100/10 bg-[#17181b] px-3 py-3 text-sm text-amber-50/65">
-            Nema dostupnih artikala u ovoj kategoriji.
+            {messages.noItemsInCategory}
           </p>
         )}
       </div>

@@ -1,22 +1,26 @@
 ﻿"use client";
 
 import { useState } from "react";
+import { FormActionButton } from "./FormActionButton";
 
 type Category = { _id: string; title: string; sortOrder: number };
 type Subcategory = {
   _id: string;
   title: string;
+  titleEn?: string;
   sortOrder: number;
   categoryId: string;
 };
 type MenuItem = {
   _id: string;
   name: string;
+  nameEn?: string;
   price: number;
   currency: string;
   isAvailable: boolean;
   categoryTitle: string;
   description?: string;
+  descriptionEn?: string;
   categoryId: string;
   subCategoryId?: string;
   subCategoryTitle?: string;
@@ -73,12 +77,26 @@ function ItemForm({
         name="name"
         required
         defaultValue={item.name}
-        className="rounded border border-slate-300 px-3 py-2"
+        placeholder="Naziv (HR)"
+        className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+      />
+      <input
+        name="nameEn"
+        defaultValue={item.nameEn}
+        placeholder="Naziv (EN)"
+        className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
       />
       <textarea
         name="description"
         defaultValue={item.description}
-        className="rounded border border-slate-300 px-3 py-2"
+        placeholder="Opis (HR)"
+        className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+      />
+      <textarea
+        name="descriptionEn"
+        defaultValue={item.descriptionEn}
+        placeholder="Opis (EN)"
+        className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
       />
       <div className="grid gap-2 sm:grid-cols-2">
         <input
@@ -88,12 +106,12 @@ function ItemForm({
           min="0"
           required
           defaultValue={item.price}
-          className="rounded border border-slate-300 px-3 py-2"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
         <input
           name="currency"
           defaultValue={item.currency}
-          className="rounded border border-slate-300 px-3 py-2"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
       </div>
       <div className="grid gap-2 sm:grid-cols-3">
@@ -101,7 +119,7 @@ function ItemForm({
           name="categoryId"
           required
           defaultValue={item.categoryId}
-          className="rounded border border-slate-300 px-3 py-2"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         >
           {categories.map((cat) => (
             <option key={cat._id} value={cat._id}>
@@ -112,7 +130,7 @@ function ItemForm({
         <select
           name="subCategoryId"
           defaultValue={item.subCategoryId ?? ""}
-          className="rounded border border-slate-300 px-3 py-2"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         >
           <option value="">— Bez podkategorije —</option>
           {catSubs.map((sub) => (
@@ -125,14 +143,14 @@ function ItemForm({
           name="sortOrder"
           type="number"
           defaultValue={item.sortOrder}
-          className="rounded border border-slate-300 px-3 py-2"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
       </div>
       <div className="grid gap-2 sm:grid-cols-2">
         <select
           name="isAvailable"
           defaultValue={item.isAvailable ? "true" : "false"}
-          className="rounded border border-slate-300 px-3 py-2"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         >
           <option value="true">Dostupno</option>
           <option value="false">Nedostupno</option>
@@ -145,23 +163,22 @@ function ItemForm({
             type="file"
             name="image"
             accept="image/*"
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           />
         </div>
       </div>
       <div className="flex gap-2">
-        <button
-          type="submit"
-          className="rounded bg-blue-500 px-3 py-2 text-xs text-white transition hover:bg-blue-600"
-        >
-          Spremi
-        </button>
-        <button
+        <FormActionButton
+          idleLabel="Spremi"
+          loadingLabel="Spremam..."
+          className="rounded bg-blue-500 px-3 py-2 text-xs text-white transition hover:bg-blue-600 disabled:opacity-70"
+        />
+        <FormActionButton
+          idleLabel="Obriši"
+          loadingLabel="Brisem..."
           formAction={deleteItemAction}
-          className="rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600"
-        >
-          Obriši
-        </button>
+          className="rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600 disabled:opacity-70"
+        />
       </div>
     </form>
   );
@@ -191,7 +208,7 @@ export function DashboardItemTabs({
   return (
     <div>
       {/* Category tabs */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 rounded-xl border border-slate-200 bg-slate-50 p-2">
         {categories.map((cat) => {
           const count = menuItems.filter(
             (i) => i.categoryId === cat._id,
@@ -203,8 +220,8 @@ export function DashboardItemTabs({
               onClick={() => setActiveId(cat._id)}
               className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition ${
                 cat._id === activeId
-                  ? "bg-slate-900 text-white"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  ? "bg-slate-900 text-white shadow"
+                  : "bg-white text-slate-700 hover:bg-slate-100"
               }`}
             >
               {cat.title}
@@ -221,7 +238,7 @@ export function DashboardItemTabs({
       {activeCategory && (
         <div className="mt-4">
           {/* Subcategory management panel */}
-          <div className="mb-4 rounded-lg border-2 border-dashed border-slate-300 p-3">
+          <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
               Podkategorije — {activeCategory.title}
             </p>
@@ -235,26 +252,33 @@ export function DashboardItemTabs({
                 name="title"
                 required
                 placeholder="Naziv podkategorije"
-                className="rounded border border-slate-300 px-3 py-2 text-sm"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              />
+              <input
+                name="titleEn"
+                placeholder="Naziv podkategorije (EN)"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               />
               <input
                 name="sortOrder"
                 type="number"
                 placeholder="Redoslijed"
-                className="w-24 rounded border border-slate-300 px-3 py-2 text-sm"
+                className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               />
-              <button
-                type="submit"
-                className="rounded bg-emerald-500 px-3 py-2 text-sm text-white transition hover:bg-emerald-600"
-              >
-                + Dodaj
-              </button>
+              <FormActionButton
+                idleLabel="+ Dodaj"
+                loadingLabel="Dodajem..."
+                className="rounded bg-emerald-500 px-3 py-2 text-sm text-white transition hover:bg-emerald-600 disabled:opacity-70"
+              />
             </form>
             {/* Existing subcategories */}
             {activeSubs.length > 0 && (
               <ul className="space-y-2">
                 {activeSubs.map((sub) => (
-                  <li key={sub._id} className="rounded bg-slate-50 p-2">
+                  <li
+                    key={sub._id}
+                    className="rounded-lg border border-slate-200 bg-white p-2"
+                  >
                     <form
                       action={updateSubcategoryAction}
                       className="flex flex-wrap items-center gap-2"
@@ -268,26 +292,31 @@ export function DashboardItemTabs({
                         name="title"
                         required
                         defaultValue={sub.title}
-                        className="flex-1 rounded border border-slate-300 px-2 py-1 text-sm"
+                        className="flex-1 rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                      />
+                      <input
+                        name="titleEn"
+                        defaultValue={sub.titleEn}
+                        placeholder="EN"
+                        className="rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                       />
                       <input
                         name="sortOrder"
                         type="number"
                         defaultValue={sub.sortOrder}
-                        className="w-20 rounded border border-slate-300 px-2 py-1 text-sm"
+                        className="w-20 rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                       />
-                      <button
-                        type="submit"
-                        className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600"
-                      >
-                        Spremi
-                      </button>
-                      <button
+                      <FormActionButton
+                        idleLabel="Spremi"
+                        loadingLabel="Spremam..."
+                        className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600 disabled:opacity-70"
+                      />
+                      <FormActionButton
+                        idleLabel="Obriši"
+                        loadingLabel="Brisem..."
                         formAction={deleteSubcategoryAction}
-                        className="rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
-                      >
-                        Obriši
-                      </button>
+                        className="rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600 disabled:opacity-70"
+                      />
                     </form>
                   </li>
                 ))}
@@ -310,7 +339,7 @@ export function DashboardItemTabs({
                 {noSubItems.map((item) => (
                   <li
                     key={item._id}
-                    className="rounded-lg bg-slate-100 px-3 py-3 text-sm"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm"
                   >
                     <ItemForm
                       item={item}
@@ -342,7 +371,7 @@ export function DashboardItemTabs({
                     {subItems.map((item) => (
                       <li
                         key={item._id}
-                        className="rounded-lg bg-slate-100 px-3 py-3 text-sm"
+                        className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm"
                       >
                         <ItemForm
                           item={item}
