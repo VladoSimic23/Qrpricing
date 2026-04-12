@@ -47,6 +47,8 @@ function ItemCard({
     exchangeRateEurToBam,
   );
 
+  const hasImageOrDesc = !!(item.imageUrl || item.description);
+
   return (
     <li
       key={item._id}
@@ -64,21 +66,29 @@ function ItemCard({
             />
           </div>
         )}
-        <div className="flex min-w-0 flex-1 items-start justify-between gap-4">
-          <div className="min-w-0">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex items-start justify-between gap-4">
             <h3 className="text-[17px] font-semibold leading-snug text-[#fff6e8] md:text-[15px]">
               {item.name}
             </h3>
-            {item.description && (
-              <p className="mt-1 text-sm leading-relaxed text-amber-50/70">
-                {item.description}
-              </p>
+            {!hasImageOrDesc && (
+              <span className="shrink-0 rounded-full bg-amber-400/15 px-3 py-1 text-sm font-semibold text-amber-200">
+                {converted.bam.toFixed(2)} KM&nbsp;|&nbsp;{converted.eur.toFixed(2)} EUR
+              </span>
             )}
           </div>
-          <div className="shrink-0 rounded-xl bg-amber-400/15 px-3 py-2 text-right text-sm font-semibold text-amber-200">
-            <p>{converted.bam.toFixed(2)} KM</p>
-            <p>{converted.eur.toFixed(2)} EUR</p>
-          </div>
+          {item.description && (
+            <p className="text-sm leading-relaxed text-amber-50/70">
+              {item.description}
+            </p>
+          )}
+          {hasImageOrDesc && (
+            <div className="mt-1 flex justify-end">
+              <span className="rounded-full bg-amber-400/15 px-3 py-1 text-sm font-semibold text-amber-200">
+                {converted.bam.toFixed(2)} KM&nbsp;|&nbsp;{converted.eur.toFixed(2)} EUR
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </li>
