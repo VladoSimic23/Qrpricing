@@ -59,7 +59,13 @@ export const menuItemType = defineType({
           { title: "KM", value: "BAM" },
         ],
       },
-      validation: (rule) => rule.required().valid("EUR", "BAM"),
+      validation: (rule) =>
+        rule.required().custom((value) => {
+          if (value === undefined) return true;
+          return value === "EUR" || value === "BAM"
+            ? true
+            : "Valuta mora biti EUR ili KM.";
+        }),
     }),
     defineField({
       name: "isAvailable",
