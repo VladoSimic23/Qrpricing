@@ -3,10 +3,12 @@ import { headers } from "next/headers";
 
 import { client } from "@/sanity/lib/client";
 import { messages, resolveLocale, supportedLocales } from "@/lib/i18n";
+import { normalizeExchangeRate } from "@/lib/pricing";
 import { MenuTabs } from "./MenuTabs";
 
 type MenuPayload = {
   name: string;
+  exchangeRateEurToBam?: number;
   categories: {
     _id: string;
     title: string;
@@ -56,6 +58,7 @@ export default async function PublicMenuPage({
         $locale == "en" => coalesce(nameEn, name),
         name
       ),
+      exchangeRateEurToBam,
       "categories": *[_type == "menuCategory" && tenant._ref == ^._id] | order(sortOrder asc, title asc){
         _id,
         "title": select(
@@ -108,6 +111,8 @@ export default async function PublicMenuPage({
     notFound();
   }
 
+  const exchangeRateEurToBam = normalizeExchangeRate(menu.exchangeRateEurToBam);
+
   const nonEmptyCategories = menu.categories.filter(
     (c) =>
       c.items.length > 0 || c.subcategories.some((sub) => sub.items.length > 0),
@@ -121,6 +126,7 @@ export default async function PublicMenuPage({
             <MenuTabs
               categories={nonEmptyCategories}
               venueName={menu.name}
+              exchangeRateEurToBam={exchangeRateEurToBam}
               messages={t}
               locale={locale}
               slug={slug}

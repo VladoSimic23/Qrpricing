@@ -11,6 +11,7 @@ import {
   requireSignedInUserId,
   toSlug,
 } from "@/lib/tenant";
+import { normalizeCurrency } from "@/lib/pricing";
 import {
   getServerWriteClient,
   serverReadClient,
@@ -36,7 +37,7 @@ type MenuItem = {
   name: string;
   nameEn?: string;
   price: number;
-  currency: string;
+  currency: "EUR" | "BAM";
   isAvailable: boolean;
   categoryTitle: string;
   description?: string;
@@ -144,7 +145,7 @@ async function createMenuItemAction(formData: FormData) {
   const description = String(formData.get("description") || "").trim();
   const descriptionEn = String(formData.get("descriptionEn") || "").trim();
   const categoryId = String(formData.get("categoryId") || "").trim();
-  const currency = String(formData.get("currency") || "EUR").trim();
+  const currency = normalizeCurrency(String(formData.get("currency") || "EUR"));
   const price = Number(formData.get("price") || 0);
   const sortOrder = Number(formData.get("sortOrder") || 0);
   const imageFile = formData.get("image") as File | null;
@@ -152,6 +153,19 @@ async function createMenuItemAction(formData: FormData) {
 
   if (!name || !categoryId) {
     throw new Error("Naziv artikla i kategorija su obavezni.");
+  }
+
+  if (!Number.isFinite(price) || price < 0) {
+    throw new Error("Cijena mora biti broj veci ili jednak nuli.");
+  }
+
+  if (
+    !membership.tenant.exchangeRateEurToBam ||
+    membership.tenant.exchangeRateEurToBam <= 0
+  ) {
+    throw new Error(
+      "Prvo unesi trenutni tecaj EUR -> KM u dashboard postavkama.",
+    );
   }
 
   const categoryExists = await serverReadClient.fetch<number>(
@@ -404,13 +418,26 @@ async function updateMenuItemAction(formData: FormData) {
   const descriptionEn = String(formData.get("descriptionEn") || "").trim();
   const categoryId = String(formData.get("categoryId") || "").trim();
   const subCategoryId = String(formData.get("subCategoryId") || "").trim();
-  const currency = String(formData.get("currency") || "EUR").trim();
+  const currency = normalizeCurrency(String(formData.get("currency") || "EUR"));
   const price = Number(formData.get("price") || 0);
   const sortOrder = Number(formData.get("sortOrder") || 0);
   const isAvailable = formData.get("isAvailable") === "true";
 
   if (!itemId || !name || !categoryId) {
     throw new Error("ID artikla, naziv i kategorija su obavezni.");
+  }
+
+  if (!Number.isFinite(price) || price < 0) {
+    throw new Error("Cijena mora biti broj veci ili jednak nuli.");
+  }
+
+  if (
+    !membership.tenant.exchangeRateEurToBam ||
+    membership.tenant.exchangeRateEurToBam <= 0
+  ) {
+    throw new Error(
+      "Prvo unesi trenutni tecaj EUR -> KM u dashboard postavkama.",
+    );
   }
 
   const itemExists = await serverReadClient.fetch<number>(
@@ -511,6 +538,29 @@ async function deleteMenuItemAction(formData: FormData) {
 
   const writeClient = getServerWriteClient();
   await writeClient.delete(itemId);
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/menu/${membership.tenant.slug}`);
+}
+
+async function updateExchangeRateAction(formData: FormData) {
+  "use server";
+
+  const membership = await getCurrentMembership();
+  if (!membership?.tenant?._id) {
+    throw new Error("Nemas pristup tenantu.");
+  }
+
+  const exchangeRate = Number(formData.get("exchangeRateEurToBam") || 0);
+  if (!Number.isFinite(exchangeRate) || exchangeRate <= 0) {
+    throw new Error("Tecaj mora biti pozitivan broj.");
+  }
+
+  const writeClient = getServerWriteClient();
+  await writeClient
+    .patch(membership.tenant._id)
+    .set({ exchangeRateEurToBam: exchangeRate })
+    .commit();
 
   revalidatePath("/dashboard");
   revalidatePath(`/menu/${membership.tenant.slug}`);
@@ -618,9 +668,11 @@ export default async function DashboardPage() {
       </section>
 
       <DashboardSectionsTabs
+        tenantExchangeRate={membership.tenant.exchangeRateEurToBam ?? 1.95583}
         categories={categories}
         subcategories={subcategories}
         menuItems={menuItems}
+        updateExchangeRateAction={updateExchangeRateAction}
         createCategoryAction={createCategoryAction}
         createMenuItemAction={createMenuItemAction}
         updateCategoryAction={updateCategoryAction}

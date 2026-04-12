@@ -24,6 +24,15 @@ export const tenantType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "exchangeRateEurToBam",
+      title: "Tecaj EUR -> KM",
+      description:
+        "Unesi trenutni tecaj po kojem se prikazuju cijene u obje valute.",
+      type: "number",
+      initialValue: 1.95583,
+      validation: (rule) => rule.required().positive().min(0.0001).precision(5),
+    }),
+    defineField({
       name: "isActive",
       title: "Aktivan",
       type: "boolean",

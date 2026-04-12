@@ -53,7 +53,13 @@ export const menuItemType = defineType({
       title: "Valuta",
       type: "string",
       initialValue: "EUR",
-      validation: (rule) => rule.required(),
+      options: {
+        list: [
+          { title: "EUR", value: "EUR" },
+          { title: "KM", value: "BAM" },
+        ],
+      },
+      validation: (rule) => rule.required().valid("EUR", "BAM"),
     }),
     defineField({
       name: "isAvailable",

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { convertPrice } from "@/lib/pricing";
 
 type Item = {
   _id: string;
@@ -33,7 +34,19 @@ type SubTab = {
   count: number;
 };
 
-function ItemCard({ item }: { item: Item }) {
+function ItemCard({
+  item,
+  exchangeRateEurToBam,
+}: {
+  item: Item;
+  exchangeRateEurToBam: number;
+}) {
+  const converted = convertPrice(
+    item.price,
+    item.currency,
+    exchangeRateEurToBam,
+  );
+
   return (
     <li
       key={item._id}
@@ -62,9 +75,10 @@ function ItemCard({ item }: { item: Item }) {
               </p>
             )}
           </div>
-          <p className="shrink-0 rounded-full bg-amber-400/15 px-3 py-1 text-sm font-semibold text-amber-200">
-            {item.price} {item.currency}
-          </p>
+          <div className="shrink-0 rounded-xl bg-amber-400/15 px-3 py-2 text-right text-sm font-semibold text-amber-200">
+            <p>{converted.bam.toFixed(2)} KM</p>
+            <p>{converted.eur.toFixed(2)} EUR</p>
+          </div>
         </div>
       </div>
     </li>
@@ -74,6 +88,7 @@ function ItemCard({ item }: { item: Item }) {
 export function MenuTabs({
   categories,
   venueName,
+  exchangeRateEurToBam,
   messages,
   locale,
   slug,
@@ -81,6 +96,7 @@ export function MenuTabs({
 }: {
   categories: Category[];
   venueName: string;
+  exchangeRateEurToBam: number;
   messages: {
     digitalMenu: string;
     categories: string;
@@ -241,7 +257,11 @@ export function MenuTabs({
         {activeSubTab === "all" && active.items.length > 0 && (
           <ul className="space-y-3">
             {active.items.map((item) => (
-              <ItemCard key={item._id} item={item} />
+              <ItemCard
+                key={item._id}
+                item={item}
+                exchangeRateEurToBam={exchangeRateEurToBam}
+              />
             ))}
           </ul>
         )}
@@ -263,7 +283,11 @@ export function MenuTabs({
               ) : (
                 <ul className="space-y-3">
                   {sub.items.map((item) => (
-                    <ItemCard key={item._id} item={item} />
+                    <ItemCard
+                      key={item._id}
+                      item={item}
+                      exchangeRateEurToBam={exchangeRateEurToBam}
+                    />
                   ))}
                 </ul>
               )}

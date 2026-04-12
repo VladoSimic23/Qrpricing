@@ -25,7 +25,7 @@ type MenuItem = {
   name: string;
   nameEn?: string;
   price: number;
-  currency: string;
+  currency: "EUR" | "BAM";
   isAvailable: boolean;
   categoryTitle: string;
   description?: string;
@@ -38,9 +38,11 @@ type MenuItem = {
 };
 
 type Props = {
+  tenantExchangeRate: number;
   categories: Category[];
   subcategories: Subcategory[];
   menuItems: MenuItem[];
+  updateExchangeRateAction: (formData: FormData) => Promise<void>;
   createCategoryAction: (formData: FormData) => Promise<void>;
   createMenuItemAction: (formData: FormData) => Promise<void>;
   updateCategoryAction: (formData: FormData) => Promise<void>;
@@ -66,9 +68,11 @@ const DASHBOARD_TABS: { id: DashboardTab; label: string }[] = [
 ];
 
 export function DashboardSectionsTabs({
+  tenantExchangeRate,
   categories,
   subcategories,
   menuItems,
+  updateExchangeRateAction,
   createCategoryAction,
   createMenuItemAction,
   updateCategoryAction,
@@ -83,6 +87,37 @@ export function DashboardSectionsTabs({
 
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <h2 className="text-base font-semibold text-slate-900">
+          Postavke valuta
+        </h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Unesi trenutni tecaj da se cijene pravilno prikazuju u KM i EUR.
+        </p>
+        <form
+          action={updateExchangeRateAction}
+          className="mt-3 flex flex-wrap items-end gap-2"
+        >
+          <label className="flex min-w-[220px] flex-1 flex-col gap-1 text-sm text-slate-700">
+            Tecaj EUR -&gt; KM
+            <input
+              name="exchangeRateEurToBam"
+              type="number"
+              step="0.00001"
+              min="0.00001"
+              required
+              defaultValue={tenantExchangeRate}
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            />
+          </label>
+          <FormActionButton
+            idleLabel="Spremi tecaj"
+            loadingLabel="Spremam..."
+            className="h-[42px] rounded-full bg-slate-900 px-5 text-sm text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+          />
+        </form>
+      </div>
+
       <div className="mb-6 flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2">
         {DASHBOARD_TABS.map((tab) => (
           <button
@@ -138,11 +173,14 @@ export function DashboardSectionsTabs({
               placeholder="0.00"
               className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
-            <input
+            <select
               name="currency"
               defaultValue="EUR"
               className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-            />
+            >
+              <option value="EUR">EUR</option>
+              <option value="BAM">KM</option>
+            </select>
             <select
               name="categoryId"
               required
@@ -293,6 +331,7 @@ export function DashboardSectionsTabs({
             Artikli po kategorijama
           </h2>
           <DashboardItemTabs
+            tenantExchangeRate={tenantExchangeRate}
             categories={categories}
             subcategories={subcategories}
             menuItems={menuItems}

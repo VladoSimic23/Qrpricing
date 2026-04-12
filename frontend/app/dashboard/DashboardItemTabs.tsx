@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FormActionButton } from "./FormActionButton";
+import { formatPricePair } from "@/lib/pricing";
 
 type Category = { _id: string; title: string; sortOrder: number };
 type Subcategory = {
@@ -16,7 +17,7 @@ type MenuItem = {
   name: string;
   nameEn?: string;
   price: number;
-  currency: string;
+  currency: "EUR" | "BAM";
   isAvailable: boolean;
   categoryTitle: string;
   description?: string;
@@ -28,6 +29,7 @@ type MenuItem = {
   imageUrl?: string;
 };
 type Props = {
+  tenantExchangeRate: number;
   categories: Category[];
   subcategories: Subcategory[];
   menuItems: MenuItem[];
@@ -44,12 +46,14 @@ function ItemForm({
   subcategories,
   updateItemAction,
   deleteItemAction,
+  tenantExchangeRate,
 }: {
   item: MenuItem;
   categories: Category[];
   subcategories: Subcategory[];
   updateItemAction: (formData: FormData) => Promise<void>;
   deleteItemAction: (formData: FormData) => Promise<void>;
+  tenantExchangeRate: number;
 }) {
   const catSubs = subcategories.filter((s) => s.categoryId === item.categoryId);
   return (
@@ -62,7 +66,7 @@ function ItemForm({
       <div className="flex items-center justify-between gap-2">
         <span className="font-medium">{item.name}</span>
         <span className="whitespace-nowrap text-xs text-slate-500">
-          {item.price} {item.currency}
+          {formatPricePair(item.price, item.currency, tenantExchangeRate)}
         </span>
       </div>
       {item.imageUrl && (
@@ -108,11 +112,14 @@ function ItemForm({
           defaultValue={item.price}
           className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
-        <input
+        <select
           name="currency"
           defaultValue={item.currency}
           className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-        />
+        >
+          <option value="EUR">EUR</option>
+          <option value="BAM">KM</option>
+        </select>
       </div>
       <div className="grid gap-2 sm:grid-cols-3">
         <select
@@ -185,6 +192,7 @@ function ItemForm({
 }
 
 export function DashboardItemTabs({
+  tenantExchangeRate,
   categories,
   subcategories,
   menuItems,
@@ -220,7 +228,7 @@ export function DashboardItemTabs({
           <div>
             <p className="font-medium text-slate-900">{item.name}</p>
             <p className="text-xs text-slate-500">
-              {item.price} {item.currency} ·{" "}
+              {formatPricePair(item.price, item.currency, tenantExchangeRate)} ·{" "}
               {item.isAvailable ? "Dostupno" : "Nedostupno"}
             </p>
           </div>
@@ -237,6 +245,7 @@ export function DashboardItemTabs({
               subcategories={subcategories}
               updateItemAction={updateItemAction}
               deleteItemAction={deleteItemAction}
+              tenantExchangeRate={tenantExchangeRate}
             />
           </div>
         )}

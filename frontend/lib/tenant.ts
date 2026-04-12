@@ -11,6 +11,7 @@ export type TenantMembership = {
     name: string;
     slug: string;
     isActive?: boolean;
+    exchangeRateEurToBam?: number;
   };
 };
 
@@ -21,7 +22,8 @@ const membershipQuery = `*[_type == "tenantMember" && clerkUserId == $userId][0]
     _id,
     name,
     "slug": slug.current,
-    isActive
+    isActive,
+    exchangeRateEurToBam
   }
 }`;
 
