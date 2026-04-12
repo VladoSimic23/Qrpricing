@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 type Item = {
   _id: string;
@@ -31,28 +32,6 @@ type SubTab = {
   title: string;
   count: number;
 };
-
-function HamburgerIcon({ open }: { open: boolean }) {
-  return (
-    <span className="relative block h-4 w-5">
-      <span
-        className={`absolute left-0 top-0 h-0.5 w-5 rounded-full bg-amber-100 transition-transform duration-300 ${
-          open ? "translate-y-[7px] rotate-45" : ""
-        }`}
-      />
-      <span
-        className={`absolute left-0 top-[7px] h-0.5 w-5 rounded-full bg-amber-100 transition-opacity duration-300 ${
-          open ? "opacity-0" : "opacity-100"
-        }`}
-      />
-      <span
-        className={`absolute left-0 top-[14px] h-0.5 w-5 rounded-full bg-amber-100 transition-transform duration-300 ${
-          open ? "-translate-y-[7px] -rotate-45" : ""
-        }`}
-      />
-    </span>
-  );
-}
 
 function ItemCard({ item }: { item: Item }) {
   return (
@@ -96,6 +75,9 @@ export function MenuTabs({
   categories,
   venueName,
   messages,
+  locale,
+  slug,
+  supportedLocales,
 }: {
   categories: Category[];
   venueName: string;
@@ -112,13 +94,12 @@ export function MenuTabs({
     openSubcategories: string;
     closeMobileMenu: string;
   };
+  locale: string;
+  slug: string;
+  supportedLocales: readonly string[];
 }) {
   const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
   const [activeSubTab, setActiveSubTab] = useState("all");
-  const [isMobileCategoryMenuOpen, setIsMobileCategoryMenuOpen] =
-    useState(false);
-  const [isMobileSubcategoryMenuOpen, setIsMobileSubcategoryMenuOpen] =
-    useState(false);
   const active = categories.find((c) => c._id === activeId) ?? categories[0];
 
   if (!active) return null;
@@ -129,7 +110,6 @@ export function MenuTabs({
 
   const subTabs: SubTab[] = [
     { key: "all", title: messages.all, count: allItemsCount },
-    { key: "none", title: messages.noSubcategory, count: active.items.length },
     ...active.subcategories.map((sub) => ({
       key: `sub-${sub._id}`,
       title: sub.title,
@@ -146,19 +126,12 @@ export function MenuTabs({
   const selectCategory = (categoryId: string) => {
     setActiveId(categoryId);
     setActiveSubTab("all");
-    setIsMobileCategoryMenuOpen(false);
-    setIsMobileSubcategoryMenuOpen(false);
-  };
-
-  const selectSubcategoryFromMenu = (subId: string) => {
-    setActiveSubTab(`sub-${subId}`);
-    setIsMobileSubcategoryMenuOpen(false);
   };
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-2 z-30 md:hidden">
-        <div className="rounded-2xl border border-amber-100/10 bg-[#1b191a]/90 px-4 py-2.5 shadow-lg backdrop-blur-md">
+      <div className="sticky top-0 z-30 -mx-4 md:hidden sm:-mx-6">
+        <div className="bg-[#1b191a]/90 px-4 py-2.5 shadow-lg backdrop-blur-md sm:px-6">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 pr-3">
               <p className="text-[10px] uppercase tracking-[0.22em] text-amber-200/70">
@@ -168,174 +141,61 @@ export function MenuTabs({
                 {venueName}
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                setIsMobileCategoryMenuOpen((prev) => !prev);
-                setIsMobileSubcategoryMenuOpen(false);
-              }}
-              className="flex items-center gap-2 rounded-xl border border-amber-100/20 bg-amber-200/10 px-3 py-2"
-              aria-label={messages.openCategories}
-              aria-expanded={isMobileCategoryMenuOpen}
-            >
-              <HamburgerIcon open={isMobileCategoryMenuOpen} />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-100">
-                {messages.categories}
-              </span>
-            </button>
+            <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
+              {supportedLocales.slice(0, 2).map((code) => (
+                <Link
+                  key={code}
+                  href={`/menu/${slug}?lang=${code}`}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+                    code === locale
+                      ? "bg-amber-300/20 text-amber-100"
+                      : "text-amber-100/70"
+                  }`}
+                >
+                  {code}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-2 flex items-center justify-between gap-3 border-t border-amber-100/10 pt-2">
-            <div className="min-w-0 pr-3">
-              <p className="text-[10px] uppercase tracking-[0.16em] text-amber-200/60">
-                {messages.categories}
-              </p>
-              <p className="truncate text-sm font-semibold text-amber-50">
-                {active.title}
-              </p>
+          <div className="mt-2 border-t border-amber-100/10 pt-2">
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {categories.map((cat) => (
+                <button
+                  key={cat._id}
+                  type="button"
+                  onClick={() => selectCategory(cat._id)}
+                  className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition ${
+                    cat._id === activeId
+                      ? "border-amber-200/40 bg-amber-200/10 text-amber-100"
+                      : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70"
+                  }`}
+                >
+                  {cat.title}
+                </button>
+              ))}
             </div>
-            {hasSubcategories ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMobileSubcategoryMenuOpen((prev) => !prev);
-                  setIsMobileCategoryMenuOpen(false);
-                }}
-                className="rounded-xl border border-amber-100/20 bg-amber-200/10 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-100"
-                aria-label={messages.openSubcategories}
-                aria-expanded={isMobileSubcategoryMenuOpen}
-              >
-                {messages.subcategories}
-              </button>
-            ) : null}
+            {hasSubcategories && (
+              <div className="mt-1.5 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {subTabs.map((tab) => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => selectSubTab(tab.key)}
+                    className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                      tab.key === activeSubTab
+                        ? "border-amber-300/50 bg-amber-300/15 text-amber-100"
+                        : "border-amber-100/15 bg-[#1a1f23] text-amber-50/65"
+                    }`}
+                  >
+                    {tab.title}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {(isMobileCategoryMenuOpen || isMobileSubcategoryMenuOpen) && (
-        <button
-          type="button"
-          aria-label={messages.closeMobileMenu}
-          className="fixed inset-0 z-40 bg-black/55 md:hidden"
-          onClick={() => {
-            setIsMobileCategoryMenuOpen(false);
-            setIsMobileSubcategoryMenuOpen(false);
-          }}
-        />
-      )}
-
-      <aside
-        className={`fixed right-0 top-0 z-50 h-full w-[82vw] max-w-80 border-l border-amber-100/10 bg-[#120f10] p-5 shadow-2xl transition-transform duration-300 md:hidden ${
-          isMobileCategoryMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="mb-5 flex items-center justify-between">
-          <p className="text-sm font-semibold text-amber-100">
-            {messages.categories}
-          </p>
-          <button
-            type="button"
-            onClick={() => setIsMobileCategoryMenuOpen(false)}
-            className="rounded-lg border border-amber-100/20 px-2 py-1 text-xs text-amber-100/80"
-          >
-            {messages.close}
-          </button>
-        </div>
-
-        <ul className="space-y-2 overflow-y-auto pb-10">
-          {categories.map((cat) => (
-            <li key={cat._id}>
-              <button
-                type="button"
-                onClick={() => selectCategory(cat._id)}
-                className={`w-full rounded-xl px-3 py-3 text-left text-sm font-medium transition ${
-                  cat._id === activeId
-                    ? "bg-amber-300/15 text-amber-100"
-                    : "bg-white/[0.04] text-amber-50/80"
-                }`}
-              >
-                {cat.title}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </aside>
-
-      <aside
-        className={`fixed right-0 top-0 z-50 h-full w-[82vw] max-w-80 border-l border-amber-100/10 bg-[#120f10] p-5 shadow-2xl transition-transform duration-300 md:hidden ${
-          isMobileSubcategoryMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="mb-5 flex items-center justify-between">
-          <p className="text-sm font-semibold text-amber-100">
-            {messages.subcategories}
-          </p>
-          <button
-            type="button"
-            onClick={() => setIsMobileSubcategoryMenuOpen(false)}
-            className="rounded-lg border border-amber-100/20 px-2 py-1 text-xs text-amber-100/80"
-          >
-            {messages.close}
-          </button>
-        </div>
-
-        <ul className="space-y-2 overflow-y-auto pb-10">
-          <li>
-            <button
-              type="button"
-              onClick={() => {
-                setActiveSubTab("all");
-                setIsMobileSubcategoryMenuOpen(false);
-              }}
-              className={`w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
-                activeSubTab === "all"
-                  ? "bg-amber-300/15 text-amber-100"
-                  : "bg-white/[0.04] text-amber-50/75"
-              }`}
-            >
-              {messages.all}
-            </button>
-          </li>
-
-          {active.items.length > 0 && (
-            <li>
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveSubTab("none");
-                  setIsMobileSubcategoryMenuOpen(false);
-                }}
-                className={`w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
-                  activeSubTab === "none"
-                    ? "bg-amber-300/15 text-amber-100"
-                    : "bg-white/[0.04] text-amber-50/75"
-                }`}
-              >
-                {messages.noSubcategory}
-              </button>
-            </li>
-          )}
-
-          {active.subcategories.map((sub) => (
-            <li key={sub._id}>
-              <button
-                type="button"
-                onClick={() => selectSubcategoryFromMenu(sub._id)}
-                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
-                  activeSubTab === `sub-${sub._id}`
-                    ? "bg-amber-300/15 text-amber-100"
-                    : "bg-white/[0.04] text-amber-50/75"
-                }`}
-              >
-                <span>{sub.title}</span>
-                <span className="text-xs text-amber-50/55">
-                  {sub.items.length}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </aside>
 
       <div className="hidden gap-2 overflow-x-auto pb-1 md:flex">
         {categories.map((cat) => (
@@ -379,35 +239,11 @@ export function MenuTabs({
 
       <div className="space-y-4">
         {activeSubTab === "all" && active.items.length > 0 && (
-          <div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200/45">
-              {messages.noSubcategory}
-            </p>
-            <ul className="space-y-3">
-              {active.items.map((item) => (
-                <ItemCard key={item._id} item={item} />
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {activeSubTab === "none" && (
-          <div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200/45">
-              {messages.noSubcategory}
-            </p>
-            {active.items.length === 0 ? (
-              <p className="rounded-xl border border-amber-100/10 bg-[#17181b] px-3 py-3 text-sm text-amber-50/65">
-                {messages.noItemsAvailable}
-              </p>
-            ) : (
-              <ul className="space-y-3">
-                {active.items.map((item) => (
-                  <ItemCard key={item._id} item={item} />
-                ))}
-              </ul>
-            )}
-          </div>
+          <ul className="space-y-3">
+            {active.items.map((item) => (
+              <ItemCard key={item._id} item={item} />
+            ))}
+          </ul>
         )}
 
         {active.subcategories
@@ -417,7 +253,7 @@ export function MenuTabs({
           )
           .map((sub) => (
             <div key={sub._id}>
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200/45">
+              <p className="mb-2 text-[15px] font-semibold text-amber-100/65">
                 {sub.title}
               </p>
               {sub.items.length === 0 ? (

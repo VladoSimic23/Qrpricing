@@ -195,11 +195,54 @@ export function DashboardItemTabs({
   deleteSubcategoryAction,
 }: Props) {
   const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
+  const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
 
   const activeCategory = categories.find((c) => c._id === activeId);
   const activeSubs = subcategories.filter((s) => s.categoryId === activeId);
   const activeItems = menuItems.filter((item) => item.categoryId === activeId);
   const noSubItems = activeItems.filter((item) => !item.subCategoryId);
+
+  const renderAccordionItem = (item: MenuItem) => {
+    const isOpen = expandedItemId === item._id;
+
+    return (
+      <li
+        key={item._id}
+        className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm"
+      >
+        <button
+          type="button"
+          onClick={() =>
+            setExpandedItemId((prev) => (prev === item._id ? null : item._id))
+          }
+          className="flex w-full items-center justify-between gap-3 text-left"
+        >
+          <div>
+            <p className="font-medium text-slate-900">{item.name}</p>
+            <p className="text-xs text-slate-500">
+              {item.price} {item.currency} ·{" "}
+              {item.isAvailable ? "Dostupno" : "Nedostupno"}
+            </p>
+          </div>
+          <span className="text-xs font-semibold text-slate-500">
+            {isOpen ? "Sakrij detalje" : "Prikazi detalje"}
+          </span>
+        </button>
+
+        {isOpen && (
+          <div className="mt-3 border-t border-slate-200 pt-3">
+            <ItemForm
+              item={item}
+              categories={categories}
+              subcategories={subcategories}
+              updateItemAction={updateItemAction}
+              deleteItemAction={deleteItemAction}
+            />
+          </div>
+        )}
+      </li>
+    );
+  };
 
   if (categories.length === 0) {
     return <p className="mt-4 text-sm text-slate-500">Nema kategorija jos.</p>;
@@ -336,20 +379,7 @@ export function DashboardItemTabs({
                 Bez podkategorije
               </p>
               <ul className="space-y-4">
-                {noSubItems.map((item) => (
-                  <li
-                    key={item._id}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm"
-                  >
-                    <ItemForm
-                      item={item}
-                      categories={categories}
-                      subcategories={subcategories}
-                      updateItemAction={updateItemAction}
-                      deleteItemAction={deleteItemAction}
-                    />
-                  </li>
-                ))}
+                {noSubItems.map((item) => renderAccordionItem(item))}
               </ul>
             </div>
           )}
@@ -368,20 +398,7 @@ export function DashboardItemTabs({
                   <p className="text-xs text-slate-400">Nema artikala.</p>
                 ) : (
                   <ul className="space-y-4">
-                    {subItems.map((item) => (
-                      <li
-                        key={item._id}
-                        className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm"
-                      >
-                        <ItemForm
-                          item={item}
-                          categories={categories}
-                          subcategories={subcategories}
-                          updateItemAction={updateItemAction}
-                          deleteItemAction={deleteItemAction}
-                        />
-                      </li>
-                    ))}
+                    {subItems.map((item) => renderAccordionItem(item))}
                   </ul>
                 )}
               </div>

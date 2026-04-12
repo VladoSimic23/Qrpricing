@@ -1,14 +1,8 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { headers } from "next/headers";
 
 import { client } from "@/sanity/lib/client";
-import {
-  messages,
-  resolveLocale,
-  supportedLocales,
-  withLang,
-} from "@/lib/i18n";
+import { messages, resolveLocale, supportedLocales } from "@/lib/i18n";
 import { MenuTabs } from "./MenuTabs";
 
 type MenuPayload = {
@@ -121,33 +115,16 @@ export default async function PublicMenuPage({
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0b1418] via-[#101a1f] to-[#131114] text-[#f7efe4]">
-      <section className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pb-10 pt-6 sm:px-6 sm:pt-8">
+      <section className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pb-10 sm:px-6">
         {nonEmptyCategories.length > 0 ? (
           <section className="px-0">
-            <div className="mb-3 flex items-center justify-end">
-              <div className="flex items-center gap-2 rounded-full border border-amber-100/15 bg-[#1b191a]/80 p-1 pr-2">
-                <span className="pl-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-100/65">
-                  {t.languageLabel}
-                </span>
-                {supportedLocales.slice(0, 2).map((code) => (
-                  <Link
-                    key={code}
-                    href={withLang(`/menu/${slug}`, code)}
-                    className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
-                      code === locale
-                        ? "bg-amber-300/20 text-amber-100"
-                        : "text-amber-100/70"
-                    }`}
-                  >
-                    {code}
-                  </Link>
-                ))}
-              </div>
-            </div>
             <MenuTabs
               categories={nonEmptyCategories}
               venueName={menu.name}
               messages={t}
+              locale={locale}
+              slug={slug}
+              supportedLocales={supportedLocales}
             />
           </section>
         ) : (
