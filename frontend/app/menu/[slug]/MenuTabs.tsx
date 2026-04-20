@@ -73,7 +73,8 @@ function ItemCard({
             </h3>
             {!hasImageOrDesc && (
               <span className="shrink-0 rounded-full bg-amber-400/15 px-3 py-1 text-sm font-semibold text-amber-200">
-                {converted.bam.toFixed(2)} KM&nbsp;|&nbsp;{converted.eur.toFixed(2)} EUR
+                {converted.bam.toFixed(2)} KM&nbsp;|&nbsp;
+                {converted.eur.toFixed(2)} EUR
               </span>
             )}
           </div>
@@ -85,7 +86,8 @@ function ItemCard({
           {hasImageOrDesc && (
             <div className="mt-1 flex justify-end">
               <span className="rounded-full bg-amber-400/15 px-3 py-1 text-sm font-semibold text-amber-200">
-                {converted.bam.toFixed(2)} KM&nbsp;|&nbsp;{converted.eur.toFixed(2)} EUR
+                {converted.bam.toFixed(2)} KM&nbsp;|&nbsp;
+                {converted.eur.toFixed(2)} EUR
               </span>
             </div>
           )}
