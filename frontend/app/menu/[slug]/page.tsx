@@ -9,6 +9,8 @@ import { MenuTabs } from "./MenuTabs";
 type MenuPayload = {
   name: string;
   exchangeRateEurToBam?: number;
+  logo?: string;
+  hideDigitalMenuHeader?: boolean;
   categories: {
     _id: string;
     title: string;
@@ -59,6 +61,8 @@ export default async function PublicMenuPage({
         name
       ),
       exchangeRateEurToBam,
+      "logo": logo.asset->url,
+      hideDigitalMenuHeader,
       "categories": *[_type == "menuCategory" && tenant._ref == ^._id] | order(sortOrder asc, title asc){
         _id,
         "title": select(
@@ -126,6 +130,8 @@ export default async function PublicMenuPage({
             <MenuTabs
               categories={nonEmptyCategories}
               venueName={menu.name}
+              logoUrl={menu.logo}
+              hideDigitalMenuHeader={menu.hideDigitalMenuHeader}
               exchangeRateEurToBam={exchangeRateEurToBam}
               messages={t}
               locale={locale}

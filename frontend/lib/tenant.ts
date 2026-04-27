@@ -12,6 +12,8 @@ export type TenantMembership = {
     slug: string;
     isActive?: boolean;
     exchangeRateEurToBam?: number;
+    logo?: string;
+    hideDigitalMenuHeader?: boolean;
   };
 };
 
@@ -23,7 +25,9 @@ const membershipQuery = `*[_type == "tenantMember" && clerkUserId == $userId][0]
     name,
     "slug": slug.current,
     isActive,
-    exchangeRateEurToBam
+    exchangeRateEurToBam,
+    "logo": logo.asset->url,
+    hideDigitalMenuHeader
   }
 }`;
 

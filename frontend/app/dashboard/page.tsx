@@ -566,6 +566,43 @@ async function updateExchangeRateAction(formData: FormData) {
   revalidatePath(`/menu/${membership.tenant.slug}`);
 }
 
+async function updateTenantLogoAction(formData: FormData) {
+  "use server";
+
+  const membership = await getCurrentMembership();
+  if (!membership?.tenant?._id) {
+    throw new Error("Nemas pristup tenantu.");
+  }
+
+  const logoFile = formData.get("logo") as File | null;
+  const hideDigitalMenuHeader = formData.get("hideDigitalMenuHeader") === "on";
+
+  const writeClient = getServerWriteClient();
+  let patchBuilder = writeClient.patch(membership.tenant._id);
+
+  if (logoFile && logoFile.size > 0) {
+    if (!logoFile.type.startsWith("image/")) {
+      throw new Error("Datoteka mora biti slika (JPEG, PNG, WebP...).");
+    }
+    if (logoFile.size > 5 * 1024 * 1024) {
+      throw new Error("Logo ne smije biti veci od 5MB.");
+    }
+    const asset = await writeClient.assets.upload("image", logoFile, {
+      filename: logoFile.name,
+    });
+    patchBuilder = patchBuilder.set({
+      logo: { _type: "image", asset: { _type: "reference", _ref: asset._id } },
+    });
+  }
+
+  patchBuilder = patchBuilder.set({ hideDigitalMenuHeader });
+
+  await patchBuilder.commit();
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/menu/${membership.tenant.slug}`);
+}
+
 export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) {
@@ -668,11 +705,15 @@ export default async function DashboardPage() {
       </section>
 
       <DashboardSectionsTabs
+        tenantId={membership.tenant._id}
         tenantExchangeRate={membership.tenant.exchangeRateEurToBam ?? 1.95583}
+        tenantLogo={membership.tenant.logo}
+        hideDigitalMenuHeader={membership.tenant.hideDigitalMenuHeader}
         categories={categories}
         subcategories={subcategories}
         menuItems={menuItems}
         updateExchangeRateAction={updateExchangeRateAction}
+        updateTenantLogoAction={updateTenantLogoAction}
         createCategoryAction={createCategoryAction}
         createMenuItemAction={createMenuItemAction}
         updateCategoryAction={updateCategoryAction}

@@ -33,6 +33,22 @@ export const tenantType = defineType({
       validation: (rule) => rule.required().positive().min(0.0001).precision(5),
     }),
     defineField({
+      name: "logo",
+      title: "Logo",
+      type: "image",
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
+      name: "hideDigitalMenuHeader",
+      title: "Sakrij naslov 'Digitalni Meni'",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Ako je uključeno, naslov 'Digitalni Meni' neće biti prikazan",
+    }),
+    defineField({
       name: "isActive",
       title: "Aktivan",
       type: "boolean",

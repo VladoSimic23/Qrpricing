@@ -38,11 +38,15 @@ type MenuItem = {
 };
 
 type Props = {
+  tenantId: string;
   tenantExchangeRate: number;
+  tenantLogo?: string;
+  hideDigitalMenuHeader?: boolean;
   categories: Category[];
   subcategories: Subcategory[];
   menuItems: MenuItem[];
   updateExchangeRateAction: (formData: FormData) => Promise<void>;
+  updateTenantLogoAction: (formData: FormData) => Promise<void>;
   createCategoryAction: (formData: FormData) => Promise<void>;
   createMenuItemAction: (formData: FormData) => Promise<void>;
   updateCategoryAction: (formData: FormData) => Promise<void>;
@@ -58,21 +62,27 @@ type DashboardTab =
   | "add-item"
   | "add-category"
   | "categories"
-  | "items-by-category";
+  | "items-by-category"
+  | "settings";
 
 const DASHBOARD_TABS: { id: DashboardTab; label: string }[] = [
   { id: "add-item", label: "Dodaj artikl" },
   { id: "add-category", label: "Dodaj kategoriju" },
   { id: "categories", label: "Kategorije" },
   { id: "items-by-category", label: "Artikli po kategorijama" },
+  { id: "settings", label: "Postavke" },
 ];
 
 export function DashboardSectionsTabs({
+  tenantId,
   tenantExchangeRate,
+  tenantLogo,
+  hideDigitalMenuHeader,
   categories,
   subcategories,
   menuItems,
   updateExchangeRateAction,
+  updateTenantLogoAction,
   createCategoryAction,
   createMenuItemAction,
   updateCategoryAction,
@@ -341,6 +351,70 @@ export function DashboardSectionsTabs({
             updateSubcategoryAction={updateSubcategoryAction}
             deleteSubcategoryAction={deleteSubcategoryAction}
           />
+        </div>
+      )}
+
+      {activeTab === "settings" && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <h2 className="text-xl font-semibold text-slate-900">Postavke</h2>
+          <form
+            action={updateTenantLogoAction}
+            className="mt-4 flex flex-col gap-4"
+            encType="multipart/form-data"
+          >
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">
+                Logo restorana
+              </label>
+              <p className="text-xs text-slate-600">
+                Ovdje učitaj logo koji će se prikazati umjesto naziva restorana
+                u meniju.
+              </p>
+              {tenantLogo && (
+                <div className="mt-2">
+                  <p className="mb-2 text-xs text-slate-600">Trenutni logo:</p>
+                  <img
+                    src={tenantLogo}
+                    alt="Trenutni logo"
+                    className="h-16 rounded border border-slate-200 object-contain"
+                  />
+                </div>
+              )}
+              <input
+                type="file"
+                name="logo"
+                accept="image/*"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              />
+              <p className="text-xs text-slate-500">
+                Preporučena veličina: 200x100px, max 5MB
+              </p>
+            </div>
+
+            <div className="space-y-2 border-t border-slate-200 pt-4">
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  name="hideDigitalMenuHeader"
+                  defaultChecked={hideDigitalMenuHeader}
+                  className="h-4 w-4 rounded border-slate-300 accent-emerald-600"
+                />
+                <span className="text-sm text-slate-700">
+                  Sakrij naslov "Digitalni Meni"
+                </span>
+              </label>
+              <p className="text-xs text-slate-600">
+                Ako je uključeno, naslov "Digitalni Meni" se neće prikazati u
+                meniju.
+              </p>
+            </div>
+
+            <FormActionButton
+              idleLabel="Spremi postavke"
+              loadingLabel="Spremam..."
+              className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+            />
+          </form>
         </div>
       )}
     </section>

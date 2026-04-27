@@ -34,6 +34,19 @@ type SubTab = {
   count: number;
 };
 
+function PricePills({ bam, eur }: { bam: number; eur: number }) {
+  return (
+    <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 text-sm font-semibold">
+      <span className="rounded-full border border-amber-200/15 bg-amber-400/15 px-3 py-1 text-amber-100">
+        {bam.toFixed(2)} KM
+      </span>
+      <span className="rounded-full border border-sky-200/15 bg-sky-400/15 px-3 py-1 text-sky-100">
+        {eur.toFixed(2)} EUR
+      </span>
+    </div>
+  );
+}
+
 function ItemCard({
   item,
   exchangeRateEurToBam,
@@ -72,10 +85,7 @@ function ItemCard({
               {item.name}
             </h3>
             {!hasImageOrDesc && (
-              <span className="shrink-0 rounded-full bg-amber-400/15 px-3 py-1 text-sm font-semibold text-amber-200">
-                {converted.bam.toFixed(2)} KM&nbsp;|&nbsp;
-                {converted.eur.toFixed(2)} EUR
-              </span>
+              <PricePills bam={converted.bam} eur={converted.eur} />
             )}
           </div>
           {item.description && (
@@ -85,10 +95,7 @@ function ItemCard({
           )}
           {hasImageOrDesc && (
             <div className="mt-1 flex justify-end">
-              <span className="rounded-full bg-amber-400/15 px-3 py-1 text-sm font-semibold text-amber-200">
-                {converted.bam.toFixed(2)} KM&nbsp;|&nbsp;
-                {converted.eur.toFixed(2)} EUR
-              </span>
+              <PricePills bam={converted.bam} eur={converted.eur} />
             </div>
           )}
         </div>
@@ -100,6 +107,8 @@ function ItemCard({
 export function MenuTabs({
   categories,
   venueName,
+  logoUrl,
+  hideDigitalMenuHeader,
   exchangeRateEurToBam,
   messages,
   locale,
@@ -108,6 +117,8 @@ export function MenuTabs({
 }: {
   categories: Category[];
   venueName: string;
+  logoUrl?: string;
+  hideDigitalMenuHeader?: boolean;
   exchangeRateEurToBam: number;
   messages: {
     digitalMenu: string;
@@ -121,6 +132,7 @@ export function MenuTabs({
     openCategories: string;
     openSubcategories: string;
     closeMobileMenu: string;
+    languageLabel: string;
   };
   locale: string;
   slug: string;
@@ -158,16 +170,78 @@ export function MenuTabs({
 
   return (
     <div className="space-y-4">
+      <div className="hidden items-center justify-between gap-6 rounded-[28px] border border-amber-100/10 bg-[#1b191a]/70 px-6 py-5 backdrop-blur-sm md:flex">
+        <div className="min-w-0">
+          {!hideDigitalMenuHeader && (
+            <p className="text-[10px] uppercase tracking-[0.22em] text-amber-200/70">
+              {messages.digitalMenu}
+            </p>
+          )}
+          {logoUrl ? (
+            <div className="relative mt-2 h-14 w-auto max-h-14 overflow-hidden">
+              <Image
+                src={logoUrl}
+                alt={venueName}
+                height={56}
+                width={180}
+                className="h-full w-auto object-contain"
+                priority
+              />
+            </div>
+          ) : (
+            <p className="mt-1 text-lg font-semibold text-[#fff6e8]">
+              {venueName}
+            </p>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium uppercase tracking-[0.22em] text-amber-100/55">
+            {messages.languageLabel}
+          </span>
+          <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
+            {supportedLocales.slice(0, 2).map((code) => (
+              <Link
+                key={code}
+                href={`/menu/${slug}?lang=${code}`}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition ${
+                  code === locale
+                    ? "bg-amber-300/20 text-amber-100"
+                    : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"
+                }`}
+              >
+                {code}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="sticky top-0 z-30 -mx-4 md:hidden sm:-mx-6">
-        <div className="bg-[#1b191a]/90 px-4 py-2.5 shadow-lg backdrop-blur-md sm:px-6">
+        <div className="bg-[#1b191a]/90 px-4 py-4 shadow-lg backdrop-blur-md sm:px-6">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 pr-3">
-              <p className="text-[10px] uppercase tracking-[0.22em] text-amber-200/70">
-                {messages.digitalMenu}
-              </p>
-              <p className="truncate text-[11px] text-amber-100/70">
-                {venueName}
-              </p>
+              {!hideDigitalMenuHeader && (
+                <p className="text-[10px] uppercase tracking-[0.22em] text-amber-200/70">
+                  {messages.digitalMenu}
+                </p>
+              )}
+              {logoUrl ? (
+                <div className="relative h-12 w-auto max-h-12 overflow-hidden">
+                  <Image
+                    src={logoUrl}
+                    alt={venueName}
+                    height={48}
+                    width={160}
+                    className="h-full w-auto object-contain"
+                    priority
+                  />
+                </div>
+              ) : (
+                <p className="truncate text-[11px] text-amber-100/70">
+                  {venueName}
+                </p>
+              )}
             </div>
             <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
               {supportedLocales.slice(0, 2).map((code) => (
