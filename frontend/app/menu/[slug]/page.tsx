@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import type { Metadata } from "next";
 
 import { client } from "@/sanity/lib/client";
 import { messages, resolveLocale, supportedLocales } from "@/lib/i18n";
 import { normalizeExchangeRate } from "@/lib/pricing";
+import { siteConfig } from "@/lib/seo";
 import { MenuTabs } from "./MenuTabs";
 
 type MenuPayload = {
@@ -40,6 +42,93 @@ type MenuPayload = {
 };
 
 export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ lang?: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { lang } = await searchParams;
+  const requestHeaders = await headers();
+  const locale = resolveLocale(lang, requestHeaders.get("accept-language"));
+
+  try {
+    const menu = await client.fetch<MenuPayload | null>(
+      `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{
+        "name": select(
+          $locale == "en" => coalesce(nameEn, name),
+          name
+        ),
+        "logo": logo.asset->url
+      }`,
+      { slug, locale },
+    );
+
+    if (!menu) {
+      return {
+        title: "Meni - QR Cjenik",
+        description: "Digitalni meni",
+      };
+    }
+
+    const title = `${menu.name} - Digitalni Meni | QR Cjenik`;
+    const description = `Interaktivni digitalni meni za ${menu.name}. Vidi cijene, dostupne artikle i narušite na QR kodu.`;
+
+    return {
+      title,
+      description,
+      keywords: [
+        "meni",
+        menu.name,
+        "restoran",
+        "kafić",
+        "digitalni meni",
+        "QR kod",
+        "cijene",
+      ],
+      openGraph: {
+        title,
+        description,
+        type: "website",
+        url: `${siteConfig.url}/menu/${slug}`,
+        images: menu.logo
+          ? [
+              {
+                url: menu.logo,
+                width: 600,
+                height: 400,
+                alt: menu.name,
+              },
+            ]
+          : [
+              {
+                url: `${siteConfig.url}/og-image.png`,
+                width: 1200,
+                height: 630,
+                alt: menu.name,
+              },
+            ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: menu.logo ? [menu.logo] : [`${siteConfig.url}/og-image.png`],
+      },
+      alternates: {
+        canonical: `${siteConfig.url}/menu/${slug}`,
+      },
+    };
+  } catch {
+    return {
+      title: "Meni - QR Cjenik",
+      description: "Digitalni meni",
+    };
+  }
+}
 
 export default async function PublicMenuPage({
   params,

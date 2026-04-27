@@ -1,20 +1,9 @@
-// import Link from "next/link";
-// import { auth } from "@clerk/nextjs/server";
-// import { SignOutButton } from "@clerk/nextjs";
-// import { headers } from "next/headers";
-
-// import {
-//   messages,
-//   resolveLocale,
-//   supportedLocales,
-//   withLang,
-// } from "@/lib/i18n";
-
 import Link from "next/link";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { SignOutButton } from "@clerk/nextjs";
 import { headers } from "next/headers";
+import type { Metadata } from "next";
 
 import {
   messages,
@@ -22,6 +11,37 @@ import {
   supportedLocales,
   withLang,
 } from "@/lib/i18n";
+import { generateMetadata as generateSeoMetadata, siteConfig } from "@/lib/seo";
+
+export const metadata: Metadata = generateSeoMetadata({
+  title: "Digitalni Meniji za Restorane - QR Cjenik",
+  description:
+    "Brzo kreirajte interaktivne digitalne menije za vaš restoran ili kafić. Ažuriranja u sekundi, bez tiskanja, sa QR kodovima i dinamičkim cijenama.",
+  keywords: [
+    "digitalni meni",
+    "QR meni",
+    "meni za restoran",
+    "meni za kafić",
+    "digitalni cjenik",
+    "meni aplikacija",
+    "elektronski meni",
+  ],
+  openGraph: {
+    title: "Digitalni Meniji za Restorane - QR Cjenik",
+    description:
+      "Brzo kreirajte interaktivne digitalne menije za vaš restoran ili kafić.",
+    type: "website",
+    url: siteConfig.url,
+    images: [
+      {
+        url: `${siteConfig.url}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "QR Cjenik - Digitalni Meniji",
+      },
+    ],
+  },
+});
 
 export default async function Home({
   searchParams,
