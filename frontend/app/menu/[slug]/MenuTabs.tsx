@@ -107,7 +107,6 @@ function ItemCard({
 export function MenuTabs({
   categories,
   venueName,
-  logoUrl,
   hideDigitalMenuHeader,
   exchangeRateEurToBam,
   messages,
@@ -117,7 +116,6 @@ export function MenuTabs({
 }: {
   categories: Category[];
   venueName: string;
-  logoUrl?: string;
   hideDigitalMenuHeader?: boolean;
   exchangeRateEurToBam: number;
   messages: {
@@ -177,22 +175,9 @@ export function MenuTabs({
               {messages.digitalMenu}
             </p>
           )}
-          {logoUrl ? (
-            <div className="relative mt-2 h-14 w-auto max-h-14 overflow-hidden">
-              <Image
-                src={logoUrl}
-                alt={venueName}
-                height={56}
-                width={180}
-                className="h-full w-auto object-contain"
-                priority
-              />
-            </div>
-          ) : (
-            <p className="mt-1 text-lg font-semibold text-[#fff6e8]">
-              {venueName}
-            </p>
-          )}
+          <p className="mt-1 text-lg font-semibold text-[#fff6e8]">
+            {venueName}
+          </p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -226,22 +211,9 @@ export function MenuTabs({
                   {messages.digitalMenu}
                 </p>
               )}
-              {logoUrl ? (
-                <div className="relative h-12 w-auto max-h-12 overflow-hidden">
-                  <Image
-                    src={logoUrl}
-                    alt={venueName}
-                    height={48}
-                    width={160}
-                    className="h-full w-auto object-contain"
-                    priority
-                  />
-                </div>
-              ) : (
-                <p className="truncate text-[11px] text-amber-100/70">
-                  {venueName}
-                </p>
-              )}
+              <p className="truncate text-[11px] text-amber-100/70">
+                {venueName}
+              </p>
             </div>
             <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
               {supportedLocales.slice(0, 2).map((code) => (

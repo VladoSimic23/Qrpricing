@@ -603,6 +603,29 @@ async function updateTenantLogoAction(formData: FormData) {
   revalidatePath(`/menu/${membership.tenant.slug}`);
 }
 
+async function updateTenantNameAction(formData: FormData) {
+  "use server";
+
+  const membership = await getCurrentMembership();
+  if (!membership?.tenant?._id) {
+    throw new Error("Nemas pristup tenantu.");
+  }
+  if (membership.role !== "owner") {
+    throw new Error("Samo vlasnik moze mijenjati naziv restorana.");
+  }
+
+  const name = String(formData.get("name") || "").trim();
+  if (!name) {
+    throw new Error("Naziv restorana je obavezan.");
+  }
+
+  const writeClient = getServerWriteClient();
+  await writeClient.patch(membership.tenant._id).set({ name }).commit();
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/menu/${membership.tenant.slug}`);
+}
+
 export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) {
@@ -706,7 +729,8 @@ export default async function DashboardPage() {
 
       <DashboardSectionsTabs
         tenantId={membership.tenant._id}
-        tenantExchangeRate={membership.tenant.exchangeRateEurToBam ?? 1.95583}
+        tenantName={membership.tenant.name}
+        tenantExchangeRate={membership.tenant.exchangeRateEurToBam || 0}
         tenantLogo={membership.tenant.logo}
         hideDigitalMenuHeader={membership.tenant.hideDigitalMenuHeader}
         categories={categories}
@@ -720,6 +744,7 @@ export default async function DashboardPage() {
         deleteCategoryAction={deleteCategoryAction}
         updateMenuItemAction={updateMenuItemAction}
         deleteMenuItemAction={deleteMenuItemAction}
+        updateTenantNameAction={updateTenantNameAction}
         createSubcategoryAction={createSubcategoryAction}
         updateSubcategoryAction={updateSubcategoryAction}
         deleteSubcategoryAction={deleteSubcategoryAction}

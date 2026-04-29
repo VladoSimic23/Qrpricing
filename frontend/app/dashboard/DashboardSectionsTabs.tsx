@@ -39,6 +39,7 @@ type MenuItem = {
 
 type Props = {
   tenantId: string;
+  tenantName: string;
   tenantExchangeRate: number;
   tenantLogo?: string;
   hideDigitalMenuHeader?: boolean;
@@ -47,6 +48,7 @@ type Props = {
   menuItems: MenuItem[];
   updateExchangeRateAction: (formData: FormData) => Promise<void>;
   updateTenantLogoAction: (formData: FormData) => Promise<void>;
+  updateTenantNameAction: (formData: FormData) => Promise<void>;
   createCategoryAction: (formData: FormData) => Promise<void>;
   createMenuItemAction: (formData: FormData) => Promise<void>;
   updateCategoryAction: (formData: FormData) => Promise<void>;
@@ -75,6 +77,7 @@ const DASHBOARD_TABS: { id: DashboardTab; label: string }[] = [
 
 export function DashboardSectionsTabs({
   tenantId,
+  tenantName,
   tenantExchangeRate,
   tenantLogo,
   hideDigitalMenuHeader,
@@ -83,6 +86,7 @@ export function DashboardSectionsTabs({
   menuItems,
   updateExchangeRateAction,
   updateTenantLogoAction,
+  updateTenantNameAction,
   createCategoryAction,
   createMenuItemAction,
   updateCategoryAction,
@@ -95,8 +99,23 @@ export function DashboardSectionsTabs({
 }: Props) {
   const [activeTab, setActiveTab] = useState<DashboardTab>("add-item");
 
+  const isExchangeRateSet = tenantExchangeRate && tenantExchangeRate > 0;
+
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      {!isExchangeRateSet && (
+        <div className="mb-6 rounded-2xl border-l-4 border-l-amber-500 border border-amber-200 bg-amber-50 p-4">
+          <h3 className="font-semibold text-amber-900">
+            ⚠️ Obavezno: Postavi tečaj valuta
+          </h3>
+          <p className="mt-2 text-sm text-amber-800">
+            Prije nego što počneš dodavati artikle, moraš uneti trenutni tečaj
+            EUR → KM. To osigurava da se cijene pravilno prikazuju u oba
+            novčića.
+          </p>
+        </div>
+      )}
+
       <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
         <h2 className="text-base font-semibold text-slate-900">
           Postavke valuta
@@ -116,7 +135,8 @@ export function DashboardSectionsTabs({
               step="0.00001"
               min="0.00001"
               required
-              defaultValue={tenantExchangeRate}
+              placeholder={isExchangeRateSet ? "" : "npr. 1.95"}
+              defaultValue={isExchangeRateSet ? tenantExchangeRate : ""}
               className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
           </label>
@@ -185,7 +205,7 @@ export function DashboardSectionsTabs({
             />
             <select
               name="currency"
-              defaultValue="EUR"
+              defaultValue="BAM"
               className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             >
               <option value="EUR">EUR</option>
@@ -235,13 +255,18 @@ export function DashboardSectionsTabs({
             <FormActionButton
               idleLabel="Spremi artikl"
               loadingLabel="Spremam artikl..."
-              disabled={categories.length === 0}
+              disabled={categories.length === 0 || !isExchangeRateSet}
               className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
             />
           </form>
           {categories.length === 0 && (
             <p className="mt-3 text-sm text-amber-700">
               Prvo kreiraj barem jednu kategoriju.
+            </p>
+          )}
+          {isExchangeRateSet === false && (
+            <p className="mt-3 text-sm text-amber-700">
+              Postavi tečaj valuta gore prije nego što možeš dodati artikle.
             </p>
           )}
         </div>
@@ -358,8 +383,35 @@ export function DashboardSectionsTabs({
         <div className="rounded-2xl border border-slate-200 bg-white p-6">
           <h2 className="text-xl font-semibold text-slate-900">Postavke</h2>
           <form
+            action={updateTenantNameAction}
+            className="mt-4 flex flex-col gap-3"
+          >
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">
+                Naziv restorana
+              </label>
+              <input
+                name="name"
+                required
+                defaultValue={tenantName}
+                placeholder="Naziv restorana"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              />
+              <p className="text-xs text-slate-600">
+                Ovaj naziv će se prikazivati na javnoj menu stranici.
+              </p>
+            </div>
+
+            <FormActionButton
+              idleLabel="Spremi naziv"
+              loadingLabel="Spremam..."
+              className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+            />
+          </form>
+
+          <form
             action={updateTenantLogoAction}
-            className="mt-4 flex flex-col gap-4"
+            className="mt-8 flex flex-col gap-4 border-t border-slate-200 pt-6"
             encType="multipart/form-data"
           >
             <div className="space-y-2">

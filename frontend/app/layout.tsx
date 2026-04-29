@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Geist_Mono, Manrope, Playfair_Display } from "next/font/google";
+import { Geist_Mono, Manrope, Sora } from "next/font/google";
 import Script from "next/script";
 import { generateMetadata, generateJsonLd } from "@/lib/seo";
 import "./globals.css";
@@ -10,7 +10,7 @@ const manrope = Manrope({
   subsets: ["latin"],
 });
 
-const playfairDisplay = Playfair_Display({
+const sora = Sora({
   variable: "--font-display",
   subsets: ["latin"],
 });
@@ -34,11 +34,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html
         lang="hr"
-        className={`${manrope.variable} ${playfairDisplay.variable} ${geistMono.variable} h-full antialiased`}
+        className={`${manrope.variable} ${sora.variable} ${geistMono.variable} h-full antialiased`}
       >
         <head>
           {/* Favicon */}
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href="/logoqr.png" type="image/png" />
           <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
           {/* Preconnect za performanse */}

@@ -60,8 +60,8 @@ export default async function Home({
       <section className="relative mx-auto flex w-full max-w-6xl flex-col px-6 pt-10 pb-20 lg:pt-16 lg:pb-32">
         {/* Navigation Bar / Login State */}
         <div className="mb-16 flex items-center justify-between">
-          <p className="text-xl font-bold tracking-widest text-emerald-400">
-            QR CJENIK
+          <p className="font-display text-2xl font-extrabold tracking-wide text-emerald-400 sm:text-3xl">
+            DigitalMeni
           </p>
           {userId ? (
             <div className="flex items-center gap-4">
@@ -102,7 +102,7 @@ export default async function Home({
           <div className="flex-1 space-y-8">
             <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl xl:text-7xl leading-tight">
               Moderni digitalni meniji <br className="hidden sm:block" />
-              za vaš <span className="text-emerald-400">restoran</span>
+              za vaš <span className="text-emerald-400">posao</span>
               <br className="hidden sm:block" />
               <span className="text-2xl sm:text-4xl xl:text-5xl ml-2 font-medium text-slate-400">
                 — brže, jeftinije, preglednije.
@@ -292,8 +292,7 @@ export default async function Home({
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Višejezičnost</h3>
             <p className="text-slate-400 text-sm leading-relaxed">
-              Automatski prijevod na engleski, njemački i druge jezike - ključno
-              za turiste i bržu uslugu.
+              Prijevod na engleski - ključno za turiste i bržu uslugu.
             </p>
           </div>
           {/* Card 3 */}
@@ -433,7 +432,7 @@ export default async function Home({
       </section>
 
       {/* 6. SOCIAL PROOF */}
-      <section className="bg-slate-900">
+      {/* <section className="bg-slate-900">
         <div className="mx-auto max-w-5xl px-6 py-24 text-center">
           <p className="text-emerald-400 font-bold tracking-widest text-sm uppercase mb-8">
             Što kažu zadovoljni klijenti
@@ -455,7 +454,7 @@ export default async function Home({
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* 7. FOOTER */}
       <footer className="border-t border-slate-800 bg-slate-950 pt-16 pb-8">
@@ -498,7 +497,7 @@ export default async function Home({
                 +385 99 123 4567
               </a>
               <a
-                href="mailto:info@qrcjenik.hr"
+                href="mailto:vladosimic525@gmail.com"
                 className="group flex items-center text-lg text-slate-300 hover:text-emerald-400 transition-colors"
               >
                 <svg
@@ -514,7 +513,7 @@ export default async function Home({
                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                info@qrcjenik.hr
+                info@digitalmeni.com
               </a>
             </div>
           </div>

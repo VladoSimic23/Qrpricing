@@ -41,6 +41,14 @@ export function generateMetadata(overrides?: Partial<Metadata>): Metadata {
     creator: siteConfig.author,
     publisher: siteConfig.author,
     metadataBase: new URL(siteConfig.url),
+    icons: {
+      icon: [
+        { url: "/logoqr.png", type: "image/png", sizes: "32x32" },
+        { url: "/logoqr.png", type: "image/png", sizes: "192x192" },
+      ],
+      shortcut: [{ url: "/logoqr.png" }],
+      apple: [{ url: "/logoqr.png", sizes: "180x180", type: "image/png" }],
+    },
     robots: {
       index: true,
       follow: true,
@@ -119,7 +127,7 @@ export function generateJsonLd(
       name: siteConfig.name,
       url: siteConfig.url,
       email: siteConfig.email,
-      logo: `${siteConfig.url}/logo.png`,
+      logo: `${siteConfig.url}/logoqr.png`,
       description: siteConfig.description,
       sameAs: [
         "https://www.facebook.com/digitalcjenik",

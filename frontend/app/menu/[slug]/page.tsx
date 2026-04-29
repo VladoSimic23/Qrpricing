@@ -219,7 +219,6 @@ export default async function PublicMenuPage({
             <MenuTabs
               categories={nonEmptyCategories}
               venueName={menu.name}
-              logoUrl={menu.logo}
               hideDigitalMenuHeader={menu.hideDigitalMenuHeader}
               exchangeRateEurToBam={exchangeRateEurToBam}
               messages={t}
