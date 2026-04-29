@@ -13,6 +13,8 @@ type MenuPayload = {
   exchangeRateEurToBam?: number;
   logo?: string;
   hideDigitalMenuHeader?: boolean;
+  showPricesBam?: boolean;
+  showPricesEur?: boolean;
   categories: {
     _id: string;
     title: string;
@@ -152,6 +154,8 @@ export default async function PublicMenuPage({
       exchangeRateEurToBam,
       "logo": logo.asset->url,
       hideDigitalMenuHeader,
+      showPricesBam,
+      showPricesEur,
       "categories": *[_type == "menuCategory" && tenant._ref == ^._id] | order(sortOrder asc, title asc){
         _id,
         "title": select(
@@ -213,13 +217,15 @@ export default async function PublicMenuPage({
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0b1418] via-[#101a1f] to-[#131114] text-[#f7efe4]">
-      <section className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pb-10 sm:px-6">
+      <section className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 pb-10 sm:px-6 lg:px-8">
         {nonEmptyCategories.length > 0 ? (
           <section className="px-0">
             <MenuTabs
               categories={nonEmptyCategories}
               venueName={menu.name}
               hideDigitalMenuHeader={menu.hideDigitalMenuHeader}
+              showPricesBam={menu.showPricesBam ?? true}
+              showPricesEur={menu.showPricesEur ?? true}
               exchangeRateEurToBam={exchangeRateEurToBam}
               messages={t}
               locale={locale}

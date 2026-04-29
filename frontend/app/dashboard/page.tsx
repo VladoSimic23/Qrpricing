@@ -576,6 +576,8 @@ async function updateTenantLogoAction(formData: FormData) {
 
   const logoFile = formData.get("logo") as File | null;
   const hideDigitalMenuHeader = formData.get("hideDigitalMenuHeader") === "on";
+  const showPricesBam = formData.get("showPricesBam") === "on";
+  const showPricesEur = formData.get("showPricesEur") === "on";
 
   const writeClient = getServerWriteClient();
   let patchBuilder = writeClient.patch(membership.tenant._id);
@@ -595,7 +597,11 @@ async function updateTenantLogoAction(formData: FormData) {
     });
   }
 
-  patchBuilder = patchBuilder.set({ hideDigitalMenuHeader });
+  patchBuilder = patchBuilder.set({
+    hideDigitalMenuHeader,
+    showPricesBam,
+    showPricesEur,
+  });
 
   await patchBuilder.commit();
 
@@ -733,6 +739,8 @@ export default async function DashboardPage() {
         tenantExchangeRate={membership.tenant.exchangeRateEurToBam || 0}
         tenantLogo={membership.tenant.logo}
         hideDigitalMenuHeader={membership.tenant.hideDigitalMenuHeader}
+        showPricesBam={membership.tenant.showPricesBam ?? true}
+        showPricesEur={membership.tenant.showPricesEur ?? true}
         categories={categories}
         subcategories={subcategories}
         menuItems={menuItems}

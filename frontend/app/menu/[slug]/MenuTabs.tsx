@@ -34,15 +34,33 @@ type SubTab = {
   count: number;
 };
 
-function PricePills({ bam, eur }: { bam: number; eur: number }) {
+function PricePills({
+  bam,
+  eur,
+  showPricesBam,
+  showPricesEur,
+}: {
+  bam: number;
+  eur: number;
+  showPricesBam: boolean;
+  showPricesEur: boolean;
+}) {
+  if (!showPricesBam && !showPricesEur) {
+    return null;
+  }
+
   return (
     <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 text-sm font-semibold">
-      <span className="rounded-full border border-amber-200/15 bg-amber-400/15 px-3 py-1 text-amber-100">
-        {bam.toFixed(2)} KM
-      </span>
-      <span className="rounded-full border border-sky-200/15 bg-sky-400/15 px-3 py-1 text-sky-100">
-        {eur.toFixed(2)} EUR
-      </span>
+      {showPricesBam && (
+        <span className="rounded-full border border-amber-200/15 bg-amber-400/15 px-3 py-1 text-amber-100">
+          {bam.toFixed(2)} KM
+        </span>
+      )}
+      {showPricesEur && (
+        <span className="rounded-full border border-sky-200/15 bg-sky-400/15 px-3 py-1 text-sky-100">
+          {eur.toFixed(2)} EUR
+        </span>
+      )}
     </div>
   );
 }
@@ -50,9 +68,13 @@ function PricePills({ bam, eur }: { bam: number; eur: number }) {
 function ItemCard({
   item,
   exchangeRateEurToBam,
+  showPricesBam,
+  showPricesEur,
 }: {
   item: Item;
   exchangeRateEurToBam: number;
+  showPricesBam: boolean;
+  showPricesEur: boolean;
 }) {
   const converted = convertPrice(
     item.price,
@@ -65,7 +87,7 @@ function ItemCard({
   return (
     <li
       key={item._id}
-      className="rounded-2xl border border-amber-100/10 bg-[#151b1f]/75 p-4 backdrop-blur-sm"
+      className="rounded-2xl border border-amber-100/10 bg-[#151b1f]/75 px-4 py-3 backdrop-blur-sm"
     >
       <div className="flex items-start gap-3">
         {item.imageUrl && (
@@ -85,7 +107,12 @@ function ItemCard({
               {item.name}
             </h3>
             {!hasImageOrDesc && (
-              <PricePills bam={converted.bam} eur={converted.eur} />
+              <PricePills
+                bam={converted.bam}
+                eur={converted.eur}
+                showPricesBam={showPricesBam}
+                showPricesEur={showPricesEur}
+              />
             )}
           </div>
           {item.description && (
@@ -95,7 +122,12 @@ function ItemCard({
           )}
           {hasImageOrDesc && (
             <div className="mt-1 flex justify-end">
-              <PricePills bam={converted.bam} eur={converted.eur} />
+              <PricePills
+                bam={converted.bam}
+                eur={converted.eur}
+                showPricesBam={showPricesBam}
+                showPricesEur={showPricesEur}
+              />
             </div>
           )}
         </div>
@@ -108,6 +140,8 @@ export function MenuTabs({
   categories,
   venueName,
   hideDigitalMenuHeader,
+  showPricesBam,
+  showPricesEur,
   exchangeRateEurToBam,
   messages,
   locale,
@@ -117,6 +151,8 @@ export function MenuTabs({
   categories: Category[];
   venueName: string;
   hideDigitalMenuHeader?: boolean;
+  showPricesBam: boolean;
+  showPricesEur: boolean;
   exchangeRateEurToBam: number;
   messages: {
     digitalMenu: string;
@@ -167,7 +203,7 @@ export function MenuTabs({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="hidden items-center justify-between gap-6 rounded-[28px] border border-amber-100/10 bg-[#1b191a]/70 px-6 py-5 backdrop-blur-sm md:flex">
         <div className="min-w-0">
           {!hideDigitalMenuHeader && (
@@ -311,14 +347,16 @@ export function MenuTabs({
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {activeSubTab === "all" && active.items.length > 0 && (
-          <ul className="space-y-3">
+          <ul className="space-y-2">
             {active.items.map((item) => (
               <ItemCard
                 key={item._id}
                 item={item}
                 exchangeRateEurToBam={exchangeRateEurToBam}
+                showPricesBam={showPricesBam}
+                showPricesEur={showPricesEur}
               />
             ))}
           </ul>
@@ -339,12 +377,14 @@ export function MenuTabs({
                   {messages.noItemsAvailable}
                 </p>
               ) : (
-                <ul className="space-y-3">
+                <ul className="space-y-2">
                   {sub.items.map((item) => (
                     <ItemCard
                       key={item._id}
                       item={item}
                       exchangeRateEurToBam={exchangeRateEurToBam}
+                      showPricesBam={showPricesBam}
+                      showPricesEur={showPricesEur}
                     />
                   ))}
                 </ul>

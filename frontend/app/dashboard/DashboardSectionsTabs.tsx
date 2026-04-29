@@ -43,6 +43,8 @@ type Props = {
   tenantExchangeRate: number;
   tenantLogo?: string;
   hideDigitalMenuHeader?: boolean;
+  showPricesBam: boolean;
+  showPricesEur: boolean;
   categories: Category[];
   subcategories: Subcategory[];
   menuItems: MenuItem[];
@@ -81,6 +83,8 @@ export function DashboardSectionsTabs({
   tenantExchangeRate,
   tenantLogo,
   hideDigitalMenuHeader,
+  showPricesBam,
+  showPricesEur,
   categories,
   subcategories,
   menuItems,
@@ -458,6 +462,34 @@ export function DashboardSectionsTabs({
               <p className="text-xs text-slate-600">
                 Ako je uključeno, naslov "Digitalni Meni" se neće prikazati u
                 meniju.
+              </p>
+
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  name="showPricesBam"
+                  defaultChecked={showPricesBam}
+                  className="h-4 w-4 rounded border-slate-300 accent-emerald-600"
+                />
+                <span className="text-sm text-slate-700">
+                  Prikazuj cijene u KM
+                </span>
+              </label>
+
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  name="showPricesEur"
+                  defaultChecked={showPricesEur}
+                  className="h-4 w-4 rounded border-slate-300 accent-emerald-600"
+                />
+                <span className="text-sm text-slate-700">
+                  Prikazuj cijene u EUR
+                </span>
+              </label>
+
+              <p className="text-xs text-slate-600">
+                Default je uključeno za obje valute.
               </p>
             </div>
 

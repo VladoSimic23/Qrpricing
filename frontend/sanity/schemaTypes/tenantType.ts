@@ -49,6 +49,22 @@ export const tenantType = defineType({
         "Ako je uključeno, naslov 'Digitalni Meni' neće biti prikazan",
     }),
     defineField({
+      name: "showPricesBam",
+      title: "Prikazi cijene u KM",
+      type: "boolean",
+      initialValue: true,
+      description:
+        "Ako je isključeno, cijene u KM se neće prikazivati u meniju.",
+    }),
+    defineField({
+      name: "showPricesEur",
+      title: "Prikazi cijene u EUR",
+      type: "boolean",
+      initialValue: true,
+      description:
+        "Ako je isključeno, cijene u EUR se neće prikazivati u meniju.",
+    }),
+    defineField({
       name: "isActive",
       title: "Aktivan",
       type: "boolean",
