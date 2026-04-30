@@ -1,7 +1,11 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const protectedRoutes = createRouteMatcher(["/dashboard(.*)", "/studio(.*)"]);
+const protectedRoutes = createRouteMatcher([
+  "/admin(.*)",
+  "/dashboard(.*)",
+  "/studio(.*)",
+]);
 
 export default clerkMiddleware(async (auth, request) => {
   if (!protectedRoutes(request)) {
@@ -13,7 +17,10 @@ export default clerkMiddleware(async (auth, request) => {
     return redirectToSignIn({ returnBackUrl: request.url });
   }
 
-  if (request.nextUrl.pathname.startsWith("/studio")) {
+  if (
+    request.nextUrl.pathname.startsWith("/studio") ||
+    request.nextUrl.pathname.startsWith("/admin")
+  ) {
     const superAdminId = process.env.SUPER_ADMIN_CLERK_USER_ID;
     if (superAdminId && superAdminId !== userId) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
