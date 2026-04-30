@@ -328,7 +328,7 @@ export function DashboardItemTabs({
                 className="rounded bg-emerald-500 px-3 py-2 text-sm text-white transition hover:bg-emerald-600 disabled:opacity-70"
               />
             </ToastForm>
-            {/* Existing subcategories */
+            {/* Existing subcategories */}
             {activeSubs.length > 0 && (
               <ul className="space-y-2">
                 {activeSubs.map((sub) => (
