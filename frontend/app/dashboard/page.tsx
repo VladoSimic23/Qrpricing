@@ -728,9 +728,6 @@ export default async function DashboardPage() {
             /menu/{membership.tenant.slug}
           </Link>
         </p>
-        <p className="mt-3 text-xs text-slate-300">
-          Svaki submit gumb prikazuje loading dok se akcija izvrsava.
-        </p>
       </section>
 
       <DashboardSectionsTabs

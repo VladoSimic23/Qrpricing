@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FormActionButton } from "./FormActionButton";
+import { ToastForm } from "./ToastForm";
 import { formatPricePair } from "@/lib/pricing";
 
 type Category = { _id: string; title: string; sortOrder: number };
@@ -57,8 +58,11 @@ function ItemForm({
 }) {
   const catSubs = subcategories.filter((s) => s.categoryId === item.categoryId);
   return (
-    <form
+    <ToastForm
       action={updateItemAction}
+      successMessage="Artikal je uspješno ažuriran!"
+      deleteAction={deleteItemAction}
+      deleteSuccessMessage="Artikal je uspješno obrisan!"
       className="grid gap-2"
       encType="multipart/form-data"
     >
@@ -183,11 +187,11 @@ function ItemForm({
         <FormActionButton
           idleLabel="Obriši"
           loadingLabel="Brisem..."
-          formAction={deleteItemAction}
+          data-toast-action="delete"
           className="rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600 disabled:opacity-70"
         />
       </div>
-    </form>
+    </ToastForm>
   );
 }
 
@@ -295,8 +299,9 @@ export function DashboardItemTabs({
               Podkategorije — {activeCategory.title}
             </p>
             {/* Add subcategory form */}
-            <form
+            <ToastForm
               action={createSubcategoryAction}
+              successMessage="Podkategorija je uspješno dodana!"
               className="mb-3 flex flex-wrap items-end gap-2"
             >
               <input type="hidden" name="categoryId" value={activeId} />
@@ -322,8 +327,8 @@ export function DashboardItemTabs({
                 loadingLabel="Dodajem..."
                 className="rounded bg-emerald-500 px-3 py-2 text-sm text-white transition hover:bg-emerald-600 disabled:opacity-70"
               />
-            </form>
-            {/* Existing subcategories */}
+            </ToastForm>
+            {/* Existing subcategories */
             {activeSubs.length > 0 && (
               <ul className="space-y-2">
                 {activeSubs.map((sub) => (
@@ -331,8 +336,11 @@ export function DashboardItemTabs({
                     key={sub._id}
                     className="rounded-lg border border-slate-200 bg-white p-2"
                   >
-                    <form
+                    <ToastForm
                       action={updateSubcategoryAction}
+                      successMessage="Podkategorija je uspješno ažurirana!"
+                      deleteAction={deleteSubcategoryAction}
+                      deleteSuccessMessage="Podkategorija je uspješno obrisana!"
                       className="flex flex-wrap items-center gap-2"
                     >
                       <input
@@ -366,10 +374,10 @@ export function DashboardItemTabs({
                       <FormActionButton
                         idleLabel="Obriši"
                         loadingLabel="Brisem..."
-                        formAction={deleteSubcategoryAction}
+                        data-toast-action="delete"
                         className="rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600 disabled:opacity-70"
                       />
-                    </form>
+                    </ToastForm>
                   </li>
                 ))}
               </ul>

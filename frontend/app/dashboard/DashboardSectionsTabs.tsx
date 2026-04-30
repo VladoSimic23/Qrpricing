@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { DashboardItemTabs } from "./DashboardItemTabs";
 import { FormActionButton } from "./FormActionButton";
+import { ToastForm } from "./ToastForm";
 
 type Category = {
   _id: string;
@@ -108,49 +109,23 @@ export function DashboardSectionsTabs({
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       {!isExchangeRateSet && (
-        <div className="mb-6 rounded-2xl border-l-4 border-l-amber-500 border border-amber-200 bg-amber-50 p-4">
+        <div className="mb-6 rounded-2xl border border-amber-200 border-l-4 border-l-amber-500 bg-amber-50 p-4">
           <h3 className="font-semibold text-amber-900">
             ⚠️ Obavezno: Postavi tečaj valuta
           </h3>
           <p className="mt-2 text-sm text-amber-800">
-            Prije nego što počneš dodavati artikle, moraš uneti trenutni tečaj
-            EUR → KM. To osigurava da se cijene pravilno prikazuju u oba
-            novčića.
+            Prije nego što počneš dodavati artikle, postavi tečaj EUR → KM u{" "}
+            <button
+              type="button"
+              onClick={() => setActiveTab("settings")}
+              className="font-semibold underline"
+            >
+              Postavkama
+            </button>
+            .
           </p>
         </div>
       )}
-
-      <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-        <h2 className="text-base font-semibold text-slate-900">
-          Postavke valuta
-        </h2>
-        <p className="mt-1 text-sm text-slate-600">
-          Unesi trenutni tecaj da se cijene pravilno prikazuju u KM i EUR.
-        </p>
-        <form
-          action={updateExchangeRateAction}
-          className="mt-3 flex flex-wrap items-end gap-2"
-        >
-          <label className="flex min-w-[220px] flex-1 flex-col gap-1 text-sm text-slate-700">
-            Tecaj EUR -&gt; KM
-            <input
-              name="exchangeRateEurToBam"
-              type="number"
-              step="0.00001"
-              min="0.00001"
-              required
-              placeholder={isExchangeRateSet ? "" : "npr. 1.95"}
-              defaultValue={isExchangeRateSet ? tenantExchangeRate : ""}
-              className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-            />
-          </label>
-          <FormActionButton
-            idleLabel="Spremi tecaj"
-            loadingLabel="Spremam..."
-            className="h-[42px] rounded-full bg-slate-900 px-5 text-sm text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
-          />
-        </form>
-      </div>
 
       <div className="mb-6 flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2">
         {DASHBOARD_TABS.map((tab) => (
@@ -172,8 +147,9 @@ export function DashboardSectionsTabs({
       {activeTab === "add-item" && (
         <div className="rounded-2xl border border-slate-200 bg-white p-6">
           <h2 className="text-xl font-semibold text-slate-900">Dodaj artikl</h2>
-          <form
+          <ToastForm
             action={createMenuItemAction}
+            successMessage="Artikal je uspješno dodan!"
             className="mt-4 flex flex-col gap-3"
             encType="multipart/form-data"
           >
@@ -262,7 +238,7 @@ export function DashboardSectionsTabs({
               disabled={categories.length === 0 || !isExchangeRateSet}
               className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
             />
-          </form>
+          </ToastForm>
           {categories.length === 0 && (
             <p className="mt-3 text-sm text-amber-700">
               Prvo kreiraj barem jednu kategoriju.
@@ -270,7 +246,15 @@ export function DashboardSectionsTabs({
           )}
           {isExchangeRateSet === false && (
             <p className="mt-3 text-sm text-amber-700">
-              Postavi tečaj valuta gore prije nego što možeš dodati artikle.
+              Postavi tečaj valuta u{" "}
+              <button
+                type="button"
+                onClick={() => setActiveTab("settings")}
+                className="font-semibold underline"
+              >
+                Postavkama
+              </button>{" "}
+              prije nego što možeš dodati artikle.
             </p>
           )}
         </div>
@@ -281,8 +265,9 @@ export function DashboardSectionsTabs({
           <h2 className="text-xl font-semibold text-slate-900">
             Dodaj kategoriju
           </h2>
-          <form
+          <ToastForm
             action={createCategoryAction}
+            successMessage="Kategorija je uspješno dodana!"
             className="mt-4 flex flex-col gap-3"
           >
             <input
@@ -307,7 +292,7 @@ export function DashboardSectionsTabs({
               loadingLabel="Spremam..."
               className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
             />
-          </form>
+          </ToastForm>
         </div>
       )}
 
@@ -320,7 +305,13 @@ export function DashboardSectionsTabs({
                 key={category._id}
                 className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3"
               >
-                <form action={updateCategoryAction} className="grid gap-2">
+                <ToastForm
+                  action={updateCategoryAction}
+                  successMessage="Kategorija je uspješno ažurirana!"
+                  deleteAction={deleteCategoryAction}
+                  deleteSuccessMessage="Kategorija je uspješno obrisana!"
+                  className="grid gap-2"
+                >
                   <input type="hidden" name="categoryId" value={category._id} />
                   <div className="text-xs text-slate-600">Uredi kategoriju</div>
                   <div className="grid gap-2 sm:grid-cols-[1fr_1fr_110px_auto_auto]">
@@ -350,11 +341,11 @@ export function DashboardSectionsTabs({
                     <FormActionButton
                       idleLabel="Obriši"
                       loadingLabel="Brisem..."
-                      formAction={deleteCategoryAction}
+                      data-toast-action="delete"
                       className="rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600 disabled:opacity-70"
                     />
                   </div>
-                </form>
+                </ToastForm>
               </li>
             ))}
             {categories.length === 0 && (
@@ -386,8 +377,41 @@ export function DashboardSectionsTabs({
       {activeTab === "settings" && (
         <div className="rounded-2xl border border-slate-200 bg-white p-6">
           <h2 className="text-xl font-semibold text-slate-900">Postavke</h2>
-          <form
+
+          <ToastForm
+            action={updateExchangeRateAction}
+            successMessage="Tečaj je uspješno ažuriran!"
+            className="mt-4 flex flex-col gap-3"
+          >
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">
+                Tečaj EUR → KM
+              </label>
+              <input
+                name="exchangeRateEurToBam"
+                type="number"
+                step="0.00001"
+                min="0.00001"
+                required
+                defaultValue={
+                  tenantExchangeRate > 0 ? tenantExchangeRate : 1.95
+                }
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              />
+              <p className="text-xs text-slate-600">
+                Unesi trenutni tečaj da se cijene pravilno prikazuju u KM i EUR.
+              </p>
+            </div>
+            <FormActionButton
+              idleLabel="Spremi tečaj"
+              loadingLabel="Spremam..."
+              className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+            />
+          </ToastForm>
+
+          <ToastForm
             action={updateTenantNameAction}
+            successMessage="Naziv restorana je uspješno ažuriran!"
             className="mt-4 flex flex-col gap-3"
           >
             <div className="space-y-2">
@@ -411,10 +435,11 @@ export function DashboardSectionsTabs({
               loadingLabel="Spremam..."
               className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
             />
-          </form>
+          </ToastForm>
 
-          <form
+          <ToastForm
             action={updateTenantLogoAction}
+            successMessage="Postavke su uspješno ažurirane!"
             className="mt-8 flex flex-col gap-4 border-t border-slate-200 pt-6"
             encType="multipart/form-data"
           >
@@ -498,7 +523,7 @@ export function DashboardSectionsTabs({
               loadingLabel="Spremam..."
               className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
             />
-          </form>
+          </ToastForm>
         </div>
       )}
     </section>

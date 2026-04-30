@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { generateMetadata as generateSeoMetadata } from "@/lib/seo";
 
+import { ToastProvider } from "./Toast";
+
 export const metadata: Metadata = generateSeoMetadata({
   title: "Dashboard - QR Cjenik",
   description:
@@ -16,5 +18,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <ToastProvider>{children}</ToastProvider>;
 }
