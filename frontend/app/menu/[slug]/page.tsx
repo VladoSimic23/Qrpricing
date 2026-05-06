@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { messages, resolveLocale, supportedLocales } from "@/lib/i18n";
 import { normalizeExchangeRate } from "@/lib/pricing";
@@ -44,6 +44,13 @@ type MenuPayload = {
 };
 
 export const revalidate = 7200;
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#0b1418",
+};
 
 export async function generateMetadata({
   params,
