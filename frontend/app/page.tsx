@@ -61,7 +61,7 @@ export default async function Home({
         {/* Navigation Bar / Login State */}
         <div className="mb-16 flex items-center justify-between">
           <p className="font-display text-2xl font-extrabold tracking-wide text-emerald-400 sm:text-3xl">
-            DigitalMeni
+            DigitalCjenik
           </p>
           {userId ? (
             <div className="flex items-center gap-4">
@@ -456,6 +456,122 @@ export default async function Home({
         </div>
       </section> */}
 
+      {/* 6.5 BESPLATNI PRVI MJESEC */}
+      <section className="bg-slate-900 py-24">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="relative rounded-3xl border border-emerald-500/20 bg-emerald-950/30 p-10 lg:p-16 overflow-hidden">
+            {/* Background glow */}
+            <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <div className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400">
+                  Posebna ponuda za nove klijente
+                </div>
+                <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
+                  Prvi mjesec{" "}
+                  <span className="text-emerald-400">potpuno besplatno</span>
+                </h2>
+                <p className="text-lg text-slate-300 leading-relaxed">
+                  Isprobajte platformu bez ikakvog rizika. Jedini trošak koji
+                  snosite je nabava naljepnica s QR kodom za stolove — sve
+                  ostalo je na nama.
+                </p>
+              </div>
+
+              <div className="space-y-5">
+                {/* Item 1 */}
+                <div className="flex items-start gap-4 rounded-2xl border border-slate-700 bg-slate-900/70 p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">Platforma — 0 €</p>
+                    <p className="text-sm text-slate-400 mt-0.5">
+                      30 dana bez pretplate, bez kartica, bez obaveza.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Item 2 */}
+                <div className="flex items-start gap-4 rounded-2xl border border-slate-700 bg-slate-900/70 p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">
+                      Naljepnice s QR kodom — vaš jedini trošak
+                    </p>
+                    <p className="text-sm text-slate-400 mt-0.5">
+                      Kvalitetne vodootporne naljepnice za svaki stol u lokalu.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Item 3 */}
+                <div className="flex items-start gap-4 rounded-2xl border border-slate-700 bg-slate-900/70 p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">
+                      Otkaz u bilo trenutku
+                    </p>
+                    <p className="text-sm text-slate-400 mt-0.5">
+                      Nema ugovorne obveze ni penala — slobodni ste u svakom
+                      trenutku.
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  href={withLang("/sign-up", locale)}
+                  className="mt-2 flex w-full items-center justify-center rounded-full bg-emerald-500 px-8 py-4 text-base font-bold text-slate-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 hover:scale-[1.02] transition-all"
+                >
+                  Zatražite besplatni probni period
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 7. FOOTER */}
       <footer className="border-t border-slate-800 bg-slate-950 pt-16 pb-8">
         <div className="mx-auto max-w-6xl px-6">
@@ -477,7 +593,7 @@ export default async function Home({
             </div>
 
             <div className="flex flex-col gap-6 md:pl-16 md:border-l border-slate-800">
-              <a
+              {/* <a
                 href="tel:+385991234567"
                 className="group flex items-center text-lg text-slate-300 hover:text-emerald-400 transition-colors"
               >
@@ -495,7 +611,7 @@ export default async function Home({
                   />
                 </svg>
                 +385 99 123 4567
-              </a>
+              </a> */}
               <a
                 href="mailto:vladosimic525@gmail.com"
                 className="group flex items-center text-lg text-slate-300 hover:text-emerald-400 transition-colors"
@@ -513,24 +629,25 @@ export default async function Home({
                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                info@digitalmeni.com
+                info@digitalcjenik.com
               </a>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row justify-between border-t border-slate-800 pt-8 text-sm text-slate-500">
             <p>
-              &copy; {new Date().getFullYear()} QR CJENIK. Sva prava pridržana.
+              &copy; {new Date().getFullYear()} DIGITAL CJENIK. Sva prava
+              pridržana.
             </p>
             <div className="mt-4 flex gap-6 md:mt-0">
               <Link
-                href="/terms"
+                href="/terms-of-service"
                 className="hover:text-emerald-400 transition-colors"
               >
                 Terms of Service
               </Link>
               <Link
-                href="/privacy"
+                href="/privacy-policy"
                 className="hover:text-emerald-400 transition-colors"
               >
                 Privacy Policy

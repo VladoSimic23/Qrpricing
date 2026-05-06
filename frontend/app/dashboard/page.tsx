@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 
@@ -11,11 +11,17 @@ import {
   requireSignedInUserId,
   toSlug,
 } from "@/lib/tenant";
+import { getMenuCacheTag } from "@/lib/menu-cache";
 import { normalizeCurrency } from "@/lib/pricing";
 import {
   getServerWriteClient,
   serverReadClient,
 } from "@/sanity/lib/serverClient";
+
+function refreshTenantMenu(slug: string) {
+  updateTag(getMenuCacheTag(slug));
+  revalidatePath(`/menu/${slug}`);
+}
 
 type Category = {
   _id: string;
@@ -129,7 +135,7 @@ async function createCategoryAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function createMenuItemAction(formData: FormData) {
@@ -228,7 +234,7 @@ async function createMenuItemAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function updateCategoryAction(formData: FormData) {
@@ -264,7 +270,7 @@ async function updateCategoryAction(formData: FormData) {
     .commit();
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function deleteCategoryAction(formData: FormData) {
@@ -294,7 +300,7 @@ async function deleteCategoryAction(formData: FormData) {
   await writeClient.delete(categoryId);
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function createSubcategoryAction(formData: FormData) {
@@ -334,7 +340,7 @@ async function createSubcategoryAction(formData: FormData) {
   });
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function updateSubcategoryAction(formData: FormData) {
@@ -370,7 +376,7 @@ async function updateSubcategoryAction(formData: FormData) {
     .commit();
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function deleteSubcategoryAction(formData: FormData) {
@@ -400,7 +406,7 @@ async function deleteSubcategoryAction(formData: FormData) {
   await writeClient.delete(subCategoryId);
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function updateMenuItemAction(formData: FormData) {
@@ -510,7 +516,7 @@ async function updateMenuItemAction(formData: FormData) {
   await patchBuilder.commit();
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function deleteMenuItemAction(formData: FormData) {
@@ -540,7 +546,7 @@ async function deleteMenuItemAction(formData: FormData) {
   await writeClient.delete(itemId);
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function updateExchangeRateAction(formData: FormData) {
@@ -563,7 +569,7 @@ async function updateExchangeRateAction(formData: FormData) {
     .commit();
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function updateTenantLogoAction(formData: FormData) {
@@ -606,7 +612,7 @@ async function updateTenantLogoAction(formData: FormData) {
   await patchBuilder.commit();
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 async function updateTenantNameAction(formData: FormData) {
@@ -629,7 +635,7 @@ async function updateTenantNameAction(formData: FormData) {
   await writeClient.patch(membership.tenant._id).set({ name }).commit();
 
   revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
+  refreshTenantMenu(membership.tenant.slug);
 }
 
 export default async function DashboardPage() {

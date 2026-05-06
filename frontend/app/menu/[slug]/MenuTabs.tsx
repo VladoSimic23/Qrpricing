@@ -50,14 +50,14 @@ function PricePills({
   }
 
   return (
-    <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 text-sm font-semibold">
+    <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5 text-xs font-semibold md:gap-2 md:text-sm">
       {showPricesBam && (
-        <span className="rounded-full border border-amber-200/15 bg-amber-400/15 px-3 py-1 text-amber-100">
+        <span className="rounded-full border border-amber-200/15 bg-amber-400/15 px-2.5 py-0.5 text-amber-100 md:px-3 md:py-1">
           {bam.toFixed(2)} KM
         </span>
       )}
       {showPricesEur && (
-        <span className="rounded-full border border-sky-200/15 bg-sky-400/15 px-3 py-1 text-sky-100">
+        <span className="rounded-full border border-sky-200/15 bg-sky-400/15 px-2.5 py-0.5 text-sky-100 md:px-3 md:py-1">
           {eur.toFixed(2)} EUR
         </span>
       )}
@@ -103,7 +103,7 @@ function ItemCard({
         )}
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex items-start justify-between gap-4">
-            <h3 className="text-[17px] font-semibold leading-snug text-[#fff6e8] md:text-[15px]">
+            <h3 className="text-[15px] font-semibold leading-snug text-[#fff6e8] md:text-[15px]">
               {item.name}
             </h3>
             {!hasImageOrDesc && (
@@ -174,24 +174,53 @@ export function MenuTabs({
 }) {
   const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
   const [activeSubTab, setActiveSubTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const active = categories.find((c) => c._id === activeId) ?? categories[0];
 
   if (!active) return null;
 
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const searchPlaceholder =
+    locale === "en" ? "Search items..." : "Pretrazi artikle...";
+
+  const itemMatchesQuery = (item: Item) => {
+    if (!normalizedQuery) {
+      return true;
+    }
+
+    return (
+      item.name.toLowerCase().includes(normalizedQuery) ||
+      item.description?.toLowerCase().includes(normalizedQuery)
+    );
+  };
+
+  const filteredRootItems = active.items.filter(itemMatchesQuery);
+  const filteredSubcategories = active.subcategories.map((sub) => ({
+    ...sub,
+    items: sub.items.filter(itemMatchesQuery),
+  }));
+  const visibleSubcategories = filteredSubcategories.filter(
+    (sub) => sub.items.length > 0,
+  );
+
   const allItemsCount =
-    active.items.length +
-    active.subcategories.reduce((sum, sub) => sum + sub.items.length, 0);
+    filteredRootItems.length +
+    visibleSubcategories.reduce((sum, sub) => sum + sub.items.length, 0);
 
   const subTabs: SubTab[] = [
     { key: "all", title: messages.all, count: allItemsCount },
-    ...active.subcategories.map((sub) => ({
+    ...visibleSubcategories.map((sub) => ({
       key: `sub-${sub._id}`,
       title: sub.title,
       count: sub.items.length,
     })),
   ];
 
-  const hasSubcategories = active.subcategories.length > 0;
+  const hasSubcategories = visibleSubcategories.length > 0;
+  const resolvedActiveSubTab = subTabs.some((tab) => tab.key === activeSubTab)
+    ? activeSubTab
+    : "all";
 
   const selectSubTab = (key: string) => {
     setActiveSubTab(key);
@@ -217,6 +246,26 @@ export function MenuTabs({
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen((prev) => !prev)}
+            aria-label={isSearchOpen ? messages.close : searchPlaceholder}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-amber-100/15 bg-[#141213]/90 text-amber-100/80 transition hover:border-amber-100/30 hover:text-amber-100"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.2-3.2" />
+            </svg>
+          </button>
           <span className="text-xs font-medium uppercase tracking-[0.22em] text-amber-100/55">
             {messages.languageLabel}
           </span>
@@ -251,20 +300,42 @@ export function MenuTabs({
                 {venueName}
               </p>
             </div>
-            <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
-              {supportedLocales.slice(0, 2).map((code) => (
-                <Link
-                  key={code}
-                  href={`/menu/${slug}?lang=${code}`}
-                  className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
-                    code === locale
-                      ? "bg-amber-300/20 text-amber-100"
-                      : "text-amber-100/70"
-                  }`}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen((prev) => !prev)}
+                aria-label={isSearchOpen ? messages.close : searchPlaceholder}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-100/15 bg-[#141213]/90 text-amber-100/80"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
-                  {code}
-                </Link>
-              ))}
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M20 20l-3.2-3.2" />
+                </svg>
+              </button>
+              <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
+                {supportedLocales.slice(0, 2).map((code) => (
+                  <Link
+                    key={code}
+                    href={`/menu/${slug}?lang=${code}`}
+                    className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+                      code === locale
+                        ? "bg-amber-300/20 text-amber-100"
+                        : "text-amber-100/70"
+                    }`}
+                  >
+                    {code}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -293,7 +364,7 @@ export function MenuTabs({
                     type="button"
                     onClick={() => selectSubTab(tab.key)}
                     className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                      tab.key === activeSubTab
+                      tab.key === resolvedActiveSubTab
                         ? "border-amber-300/50 bg-amber-300/15 text-amber-100"
                         : "border-amber-100/15 bg-[#1a1f23] text-amber-50/65"
                     }`}
@@ -331,14 +402,14 @@ export function MenuTabs({
               type="button"
               onClick={() => selectSubTab(tab.key)}
               className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                tab.key === activeSubTab
+                tab.key === resolvedActiveSubTab
                   ? "border-amber-300/50 bg-amber-300/15 text-amber-100"
                   : "border-amber-100/15 bg-[#1b2125] text-amber-50/65 hover:bg-[#20272d]"
               }`}
             >
               {tab.title}
               <span
-                className={`ml-1.5 text-[11px] ${tab.key === activeSubTab ? "text-amber-200" : "text-amber-50/45"}`}
+                className={`ml-1.5 text-[11px] ${tab.key === resolvedActiveSubTab ? "text-amber-200" : "text-amber-50/45"}`}
               >
                 {tab.count}
               </span>
@@ -347,10 +418,22 @@ export function MenuTabs({
         </div>
       )}
 
+      {isSearchOpen && (
+        <div className="rounded-2xl border border-amber-100/10 bg-[#171c20] px-3 py-2">
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder={searchPlaceholder}
+            className="w-full rounded-xl border border-amber-100/10 bg-[#11171a] px-4 py-2.5 text-sm text-amber-50 placeholder:text-amber-100/45 outline-none transition focus:border-amber-200/40"
+          />
+        </div>
+      )}
+
       <div className="space-y-3">
-        {activeSubTab === "all" && active.items.length > 0 && (
+        {resolvedActiveSubTab === "all" && filteredRootItems.length > 0 && (
           <ul className="space-y-2">
-            {active.items.map((item) => (
+            {filteredRootItems.map((item) => (
               <ItemCard
                 key={item._id}
                 item={item}
@@ -362,33 +445,28 @@ export function MenuTabs({
           </ul>
         )}
 
-        {active.subcategories
+        {visibleSubcategories
           .filter(
             (sub) =>
-              activeSubTab === "all" || activeSubTab === `sub-${sub._id}`,
+              resolvedActiveSubTab === "all" ||
+              resolvedActiveSubTab === `sub-${sub._id}`,
           )
           .map((sub) => (
             <div key={sub._id}>
               <p className="mb-2 text-[15px] font-semibold text-amber-100/65">
                 {sub.title}
               </p>
-              {sub.items.length === 0 ? (
-                <p className="rounded-xl border border-amber-100/10 bg-[#17181b] px-3 py-3 text-sm text-amber-50/65">
-                  {messages.noItemsAvailable}
-                </p>
-              ) : (
-                <ul className="space-y-2">
-                  {sub.items.map((item) => (
-                    <ItemCard
-                      key={item._id}
-                      item={item}
-                      exchangeRateEurToBam={exchangeRateEurToBam}
-                      showPricesBam={showPricesBam}
-                      showPricesEur={showPricesEur}
-                    />
-                  ))}
-                </ul>
-              )}
+              <ul className="space-y-2">
+                {sub.items.map((item) => (
+                  <ItemCard
+                    key={item._id}
+                    item={item}
+                    exchangeRateEurToBam={exchangeRateEurToBam}
+                    showPricesBam={showPricesBam}
+                    showPricesEur={showPricesEur}
+                  />
+                ))}
+              </ul>
             </div>
           ))}
 

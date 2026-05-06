@@ -2,10 +2,11 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 
-import { client } from "@/sanity/lib/client";
+import { getMenuCacheTag, MENU_REVALIDATE_SECONDS } from "@/lib/menu-cache";
 import { messages, resolveLocale, supportedLocales } from "@/lib/i18n";
 import { normalizeExchangeRate } from "@/lib/pricing";
 import { siteConfig } from "@/lib/seo";
+import { serverReadClient } from "@/sanity/lib/serverClient";
 import { MenuTabs } from "./MenuTabs";
 
 type MenuPayload = {
@@ -43,7 +44,7 @@ type MenuPayload = {
   }[];
 };
 
-export const revalidate = 60;
+export const revalidate = MENU_REVALIDATE_SECONDS;
 
 export async function generateMetadata({
   params,
@@ -56,9 +57,10 @@ export async function generateMetadata({
   const { lang } = await searchParams;
   const requestHeaders = await headers();
   const locale = resolveLocale(lang, requestHeaders.get("accept-language"));
+  const menuCacheTag = getMenuCacheTag(slug);
 
   try {
-    const menu = await client.fetch<MenuPayload | null>(
+    const menu = await serverReadClient.fetch<MenuPayload | null>(
       `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{
         "name": select(
           $locale == "en" => coalesce(nameEn, name),
@@ -67,6 +69,12 @@ export async function generateMetadata({
         "logo": logo.asset->url
       }`,
       { slug, locale },
+      {
+        next: {
+          revalidate: MENU_REVALIDATE_SECONDS,
+          tags: [menuCacheTag],
+        },
+      },
     );
 
     if (!menu) {
@@ -144,8 +152,9 @@ export default async function PublicMenuPage({
   const requestHeaders = await headers();
   const locale = resolveLocale(lang, requestHeaders.get("accept-language"));
   const t = messages[locale].menu;
+  const menuCacheTag = getMenuCacheTag(slug);
 
-  const menu = await client.fetch<MenuPayload | null>(
+  const menu = await serverReadClient.fetch<MenuPayload | null>(
     `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{
       "name": select(
         $locale == "en" => coalesce(nameEn, name),
@@ -202,6 +211,12 @@ export default async function PublicMenuPage({
       }
     }`,
     { slug, locale },
+    {
+      next: {
+        revalidate: MENU_REVALIDATE_SECONDS,
+        tags: [menuCacheTag],
+      },
+    },
   );
 
   if (!menu) {
