@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 
-import { getMenuCacheTag, MENU_REVALIDATE_SECONDS } from "@/lib/menu-cache";
 import { messages, resolveLocale, supportedLocales } from "@/lib/i18n";
 import { normalizeExchangeRate } from "@/lib/pricing";
 import { siteConfig } from "@/lib/seo";
@@ -44,7 +43,7 @@ type MenuPayload = {
   }[];
 };
 
-export const revalidate = MENU_REVALIDATE_SECONDS;
+export const revalidate = 7200;
 
 export async function generateMetadata({
   params,
@@ -57,7 +56,6 @@ export async function generateMetadata({
   const { lang } = await searchParams;
   const requestHeaders = await headers();
   const locale = resolveLocale(lang, requestHeaders.get("accept-language"));
-  const menuCacheTag = getMenuCacheTag(slug);
 
   try {
     const menu = await serverReadClient.fetch<MenuPayload | null>(
@@ -69,12 +67,6 @@ export async function generateMetadata({
         "logo": logo.asset->url
       }`,
       { slug, locale },
-      {
-        next: {
-          revalidate: MENU_REVALIDATE_SECONDS,
-          tags: [menuCacheTag],
-        },
-      },
     );
 
     if (!menu) {
@@ -152,7 +144,6 @@ export default async function PublicMenuPage({
   const requestHeaders = await headers();
   const locale = resolveLocale(lang, requestHeaders.get("accept-language"));
   const t = messages[locale].menu;
-  const menuCacheTag = getMenuCacheTag(slug);
 
   const menu = await serverReadClient.fetch<MenuPayload | null>(
     `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{
@@ -211,12 +202,6 @@ export default async function PublicMenuPage({
       }
     }`,
     { slug, locale },
-    {
-      next: {
-        revalidate: MENU_REVALIDATE_SECONDS,
-        tags: [menuCacheTag],
-      },
-    },
   );
 
   if (!menu) {
