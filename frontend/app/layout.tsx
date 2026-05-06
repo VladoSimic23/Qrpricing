@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist_Mono, Manrope, Sora } from "next/font/google";
 import Script from "next/script";
@@ -21,6 +21,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = generateMetadata();
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#0f172a",
+};
 
 export default function RootLayout({
   children,
@@ -48,10 +55,6 @@ export default function RootLayout({
             href="https://fonts.gstatic.com"
             crossOrigin="anonymous"
           />
-
-          {/* Meta tagovi za mobilne uređaje */}
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="theme-color" content="#0f172a" />
 
           {/* Structured Data - Organization */}
           <Script
