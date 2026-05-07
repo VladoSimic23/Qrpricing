@@ -1,6 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { DashboardItemTabs } from "./DashboardItemTabs";
 import { FormActionButton } from "./FormActionButton";
@@ -62,6 +79,10 @@ type Props = {
   createSubcategoryAction: (formData: FormData) => Promise<void>;
   updateSubcategoryAction: (formData: FormData) => Promise<void>;
   deleteSubcategoryAction: (formData: FormData) => Promise<void>;
+  reorderAction: (
+    type: "menuCategory" | "menuSubcategory" | "menuItem",
+    orderedIds: string[],
+  ) => Promise<void>;
 };
 
 type DashboardTab =
@@ -78,6 +99,88 @@ const DASHBOARD_TABS: { id: DashboardTab; label: string }[] = [
   { id: "items-by-category", label: "Artikli po kategorijama" },
   { id: "settings", label: "Postavke" },
 ];
+
+function SortableCategoryItem({
+  category,
+  updateCategoryAction,
+  deleteCategoryAction,
+}: {
+  category: Category;
+  updateCategoryAction: (formData: FormData) => Promise<void>;
+  deleteCategoryAction: (formData: FormData) => Promise<void>;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={`rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 ${isDragging ? "shadow-md" : ""}`}
+    >
+      <ToastForm
+        action={updateCategoryAction}
+        successMessage="Kategorija je uspješno ažurirana!"
+        deleteAction={deleteCategoryAction}
+        deleteSuccessMessage="Kategorija je uspješno obrisana!"
+        className="grid gap-2"
+      >
+        <input type="hidden" name="categoryId" value={category._id} />
+        <div className="flex items-center justify-between text-xs text-slate-600">
+          <div className="flex items-center gap-2">
+            <span
+              {...attributes}
+              {...listeners}
+              className="cursor-move p-1 hover:bg-slate-200 rounded"
+              title="Povuci za promjenu redoslijeda"
+            >
+              ☰
+            </span>
+            <span>Uredi kategoriju</span>
+          </div>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto_auto]">
+          <input
+            name="title"
+            defaultValue={category.title}
+            required
+            className="rounded border border-slate-300 px-3 py-2 text-sm"
+          />
+          <input
+            name="titleEn"
+            defaultValue={category.titleEn}
+            placeholder="EN"
+            className="rounded border border-slate-300 px-3 py-2 text-sm"
+          />
+          <FormActionButton
+            idleLabel="Spremi"
+            loadingLabel="Spremam..."
+            className="rounded bg-blue-500 px-3 py-2 text-xs text-white transition hover:bg-blue-600 disabled:opacity-70"
+          />
+          <FormActionButton
+            idleLabel="Obriši"
+            loadingLabel="Brisem..."
+            data-toast-action="delete"
+            className="rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600 disabled:opacity-70"
+          />
+        </div>
+      </ToastForm>
+    </li>
+  );
+}
 
 export function DashboardSectionsTabs({
   tenantId,
@@ -103,10 +206,40 @@ export function DashboardSectionsTabs({
   createSubcategoryAction,
   updateSubcategoryAction,
   deleteSubcategoryAction,
+  reorderAction,
 }: Props) {
   const [activeTab, setActiveTab] = useState<DashboardTab>("add-item");
+  const [localCategories, setLocalCategories] =
+    useState<Category[]>(categories);
+
+  useEffect(() => {
+    setLocalCategories(categories);
+  }, [categories]);
 
   const isExchangeRateSet = tenantExchangeRate && tenantExchangeRate > 0;
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleDragEndCategories = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = localCategories.findIndex((c) => c._id === active.id);
+      const newIndex = localCategories.findIndex((c) => c._id === over.id);
+      const newCategories = arrayMove(localCategories, oldIndex, newIndex);
+      setLocalCategories(newCategories);
+      await reorderAction(
+        "menuCategory",
+        newCategories.map((c) => c._id),
+      );
+    }
+  };
 
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
@@ -217,12 +350,6 @@ export function DashboardSectionsTabs({
                 </option>
               ))}
             </select>
-            <input
-              name="sortOrder"
-              type="number"
-              defaultValue={0}
-              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-            />
             <div>
               <label className="mb-1 block text-sm text-slate-600">
                 Slika artikla (opcijski)
@@ -295,53 +422,33 @@ export function DashboardSectionsTabs({
       {activeTab === "categories" && (
         <div className="rounded-2xl border border-slate-200 bg-white p-6">
           <h2 className="text-xl font-semibold text-slate-900">Kategorije</h2>
-          <ul className="mt-4 space-y-3">
-            {categories.map((category) => (
-              <li
-                key={category._id}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3"
-              >
-                <ToastForm
-                  action={updateCategoryAction}
-                  successMessage="Kategorija je uspješno ažurirana!"
-                  deleteAction={deleteCategoryAction}
-                  deleteSuccessMessage="Kategorija je uspješno obrisana!"
-                  className="grid gap-2"
-                >
-                  <input type="hidden" name="categoryId" value={category._id} />
-                  <div className="text-xs text-slate-600">Uredi kategoriju</div>
-                  <div className="grid gap-2 sm:grid-cols-[1fr_1fr_110px_auto_auto]">
-                    <input
-                      name="title"
-                      defaultValue={category.title}
-                      required
-                      className="rounded border border-slate-300 px-3 py-2 text-sm"
-                    />
-                    <input
-                      name="titleEn"
-                      defaultValue={category.titleEn}
-                      placeholder="EN"
-                      className="rounded border border-slate-300 px-3 py-2 text-sm"
-                    />
-                    <FormActionButton
-                      idleLabel="Spremi"
-                      loadingLabel="Spremam..."
-                      className="rounded bg-blue-500 px-3 py-2 text-xs text-white transition hover:bg-blue-600 disabled:opacity-70"
-                    />
-                    <FormActionButton
-                      idleLabel="Obriši"
-                      loadingLabel="Brisem..."
-                      data-toast-action="delete"
-                      className="rounded bg-red-500 px-3 py-2 text-xs text-white transition hover:bg-red-600 disabled:opacity-70"
-                    />
-                  </div>
-                </ToastForm>
-              </li>
-            ))}
-            {categories.length === 0 && (
-              <li className="text-sm text-slate-500">Nema kategorija jos.</li>
-            )}
-          </ul>
+
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEndCategories}
+          >
+            <SortableContext
+              items={localCategories.map((c) => c._id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <ul className="mt-4 space-y-3">
+                {localCategories.map((category) => (
+                  <SortableCategoryItem
+                    key={category._id}
+                    category={category}
+                    updateCategoryAction={updateCategoryAction}
+                    deleteCategoryAction={deleteCategoryAction}
+                  />
+                ))}
+                {localCategories.length === 0 && (
+                  <li className="text-sm text-slate-500">
+                    Nema kategorija jos.
+                  </li>
+                )}
+              </ul>
+            </SortableContext>
+          </DndContext>
         </div>
       )}
 
@@ -360,6 +467,7 @@ export function DashboardSectionsTabs({
             createSubcategoryAction={createSubcategoryAction}
             updateSubcategoryAction={updateSubcategoryAction}
             deleteSubcategoryAction={deleteSubcategoryAction}
+            reorderAction={reorderAction}
           />
         </div>
       )}

@@ -1,6 +1,23 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { FormActionButton } from "./FormActionButton";
 import { ToastForm } from "./ToastForm";
 import { formatPricePair } from "@/lib/pricing";
@@ -39,6 +56,10 @@ type Props = {
   createSubcategoryAction: (formData: FormData) => Promise<void>;
   updateSubcategoryAction: (formData: FormData) => Promise<void>;
   deleteSubcategoryAction: (formData: FormData) => Promise<void>;
+  reorderAction: (
+    type: "menuCategory" | "menuSubcategory" | "menuItem",
+    orderedIds: string[],
+  ) => Promise<void>;
 };
 
 function ItemForm({
@@ -189,6 +210,90 @@ function ItemForm({
   );
 }
 
+function SortableMenuItem({
+  item,
+  isOpen,
+  onToggle,
+  categories,
+  subcategories,
+  updateItemAction,
+  deleteItemAction,
+  tenantExchangeRate,
+}: {
+  item: MenuItem;
+  isOpen: boolean;
+  onToggle: () => void;
+  categories: Category[];
+  subcategories: Subcategory[];
+  updateItemAction: (formData: FormData) => Promise<void>;
+  deleteItemAction: (formData: FormData) => Promise<void>;
+  tenantExchangeRate: number;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={`rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm ${isDragging ? "shadow-md" : ""}`}
+    >
+      <div className="flex w-full items-center justify-between gap-3 text-left">
+        <div className="flex items-center gap-3">
+          <span
+            {...attributes}
+            {...listeners}
+            className="cursor-move p-1 hover:bg-slate-200 rounded text-slate-500"
+            title="Povuci za promjenu redoslijeda"
+          >
+            ☰
+          </span>
+          <div>
+            <p className="font-medium text-slate-900">{item.name}</p>
+            <p className="text-xs text-slate-500">
+              {formatPricePair(item.price, item.currency, tenantExchangeRate)} ·{" "}
+              {item.isAvailable ? "Dostupno" : "Nedostupno"}
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={onToggle}
+          className="text-xs font-semibold text-slate-500 hover:text-slate-800 p-2"
+        >
+          {isOpen ? "Sakrij detalje" : "Prikazi detalje"}
+        </button>
+      </div>
+
+      {isOpen && (
+        <div className="mt-3 border-t border-slate-200 pt-3">
+          <ItemForm
+            item={item}
+            categories={categories}
+            subcategories={subcategories}
+            updateItemAction={updateItemAction}
+            deleteItemAction={deleteItemAction}
+            tenantExchangeRate={tenantExchangeRate}
+          />
+        </div>
+      )}
+    </li>
+  );
+}
+
 export function DashboardItemTabs({
   tenantExchangeRate,
   categories,
@@ -199,56 +304,72 @@ export function DashboardItemTabs({
   createSubcategoryAction,
   updateSubcategoryAction,
   deleteSubcategoryAction,
+  reorderAction,
 }: Props) {
   const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
 
+  const [localItems, setLocalItems] = useState<MenuItem[]>(menuItems);
+
+  useEffect(() => {
+    setLocalItems(menuItems);
+  }, [menuItems]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
   const activeCategory = categories.find((c) => c._id === activeId);
   const activeSubs = subcategories.filter((s) => s.categoryId === activeId);
-  const activeItems = menuItems.filter((item) => item.categoryId === activeId);
+
+  // Use localItems instead of menuItems
+  const activeItems = localItems.filter((item) => item.categoryId === activeId);
   const noSubItems = activeItems.filter((item) => !item.subCategoryId);
 
-  const renderAccordionItem = (item: MenuItem) => {
-    const isOpen = expandedItemId === item._id;
+  const handleDragEndItems = async (
+    event: DragEndEvent,
+    itemsSubset: MenuItem[],
+  ) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = itemsSubset.findIndex((i) => i._id === active.id);
+      const newIndex = itemsSubset.findIndex((i) => i._id === over.id);
+      const newOrderedSubset = arrayMove(itemsSubset, oldIndex, newIndex);
 
-    return (
-      <li
-        key={item._id}
-        className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm"
-      >
-        <button
-          type="button"
-          onClick={() =>
-            setExpandedItemId((prev) => (prev === item._id ? null : item._id))
-          }
-          className="flex w-full items-center justify-between gap-3 text-left"
-        >
-          <div>
-            <p className="font-medium text-slate-900">{item.name}</p>
-            <p className="text-xs text-slate-500">
-              {formatPricePair(item.price, item.currency, tenantExchangeRate)} ·{" "}
-              {item.isAvailable ? "Dostupno" : "Nedostupno"}
-            </p>
-          </div>
-          <span className="text-xs font-semibold text-slate-500">
-            {isOpen ? "Sakrij detalje" : "Prikazi detalje"}
-          </span>
-        </button>
+      // Update localItems state
+      const updatedLocalItems = [...localItems];
+      newOrderedSubset.forEach((reorderedItem) => {
+        const index = updatedLocalItems.findIndex(
+          (i) => i._id === reorderedItem._id,
+        );
+        if (index !== -1) updatedLocalItems[index] = reorderedItem;
+      });
+      // to maintain correct rendered order immediately we sort activeItems based on this new subset but a little tricky
+      // easiest way is to just map them back:
+      setLocalItems((prev) => {
+        const map = new Map(
+          newOrderedSubset.map((item, idx) => [item._id, idx]),
+        );
+        return prev
+          .map((item) => {
+            if (map.has(item._id)) {
+              return { ...item, sortOrder: map.get(item._id)! };
+            }
+            return item;
+          })
+          .sort((a, b) => a.sortOrder - b.sortOrder);
+      });
 
-        {isOpen && (
-          <div className="mt-3 border-t border-slate-200 pt-3">
-            <ItemForm
-              item={item}
-              categories={categories}
-              subcategories={subcategories}
-              updateItemAction={updateItemAction}
-              deleteItemAction={deleteItemAction}
-              tenantExchangeRate={tenantExchangeRate}
-            />
-          </div>
-        )}
-      </li>
-    );
+      await reorderAction(
+        "menuItem",
+        newOrderedSubset.map((i) => i._id),
+      );
+    }
   };
 
   if (categories.length === 0) {
@@ -377,9 +498,36 @@ export function DashboardItemTabs({
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
                 Bez podkategorije
               </p>
-              <ul className="space-y-4">
-                {noSubItems.map((item) => renderAccordionItem(item))}
-              </ul>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={(e) => handleDragEndItems(e, noSubItems)}
+              >
+                <SortableContext
+                  items={noSubItems.map((i) => i._id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <ul className="space-y-4">
+                    {noSubItems.map((item) => (
+                      <SortableMenuItem
+                        key={item._id}
+                        item={item}
+                        isOpen={expandedItemId === item._id}
+                        onToggle={() =>
+                          setExpandedItemId((prev) =>
+                            prev === item._id ? null : item._id,
+                          )
+                        }
+                        categories={categories}
+                        subcategories={subcategories}
+                        updateItemAction={updateItemAction}
+                        deleteItemAction={deleteItemAction}
+                        tenantExchangeRate={tenantExchangeRate}
+                      />
+                    ))}
+                  </ul>
+                </SortableContext>
+              </DndContext>
             </div>
           )}
 
@@ -396,9 +544,36 @@ export function DashboardItemTabs({
                 {subItems.length === 0 ? (
                   <p className="text-xs text-slate-400">Nema artikala.</p>
                 ) : (
-                  <ul className="space-y-4">
-                    {subItems.map((item) => renderAccordionItem(item))}
-                  </ul>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={(e) => handleDragEndItems(e, subItems)}
+                  >
+                    <SortableContext
+                      items={subItems.map((i) => i._id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <ul className="space-y-4">
+                        {subItems.map((item) => (
+                          <SortableMenuItem
+                            key={item._id}
+                            item={item}
+                            isOpen={expandedItemId === item._id}
+                            onToggle={() =>
+                              setExpandedItemId((prev) =>
+                                prev === item._id ? null : item._id,
+                              )
+                            }
+                            categories={categories}
+                            subcategories={subcategories}
+                            updateItemAction={updateItemAction}
+                            deleteItemAction={deleteItemAction}
+                            tenantExchangeRate={tenantExchangeRate}
+                          />
+                        ))}
+                      </ul>
+                    </SortableContext>
+                  </DndContext>
                 )}
               </div>
             );

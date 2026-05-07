@@ -847,6 +847,7 @@ export default async function DashboardPage() {
         createSubcategoryAction={createSubcategoryAction}
         updateSubcategoryAction={updateSubcategoryAction}
         deleteSubcategoryAction={deleteSubcategoryAction}
+        reorderAction={reorderAction}
       />
     </main>
   );
