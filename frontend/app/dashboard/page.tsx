@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 
@@ -294,7 +295,20 @@ async function deleteCategoryAction(formData: FormData) {
   }
 
   const writeClient = getServerWriteClient();
-  await writeClient.delete(categoryId);
+
+  const relatedDocs = await serverReadClient.fetch<{ _id: string }[]>(
+    `*[_type in ["menuItem", "menuSubcategory"] && category._ref == $categoryId]{_id}`,
+    { categoryId },
+  );
+
+  const tx = writeClient.transaction();
+
+  for (const doc of relatedDocs) {
+    tx.delete(doc._id); // Delete the items and subcategories rather than keeping them orphaned
+  }
+
+  tx.delete(categoryId);
+  await tx.commit();
 
   revalidatePath("/dashboard");
 
@@ -403,7 +417,20 @@ async function deleteSubcategoryAction(formData: FormData) {
   }
 
   const writeClient = getServerWriteClient();
-  await writeClient.delete(subCategoryId);
+
+  const itemsToUpdate = await serverReadClient.fetch<{ _id: string }[]>(
+    `*[_type == "menuItem" && subCategory._ref == $subCategoryId]{_id}`,
+    { subCategoryId },
+  );
+
+  const tx = writeClient.transaction();
+
+  for (const item of itemsToUpdate) {
+    tx.patch(item._id, (p) => p.unset(["subCategory"]));
+  }
+
+  tx.delete(subCategoryId);
+  await tx.commit();
 
   revalidatePath("/dashboard");
 
@@ -620,6 +647,26 @@ async function updateTenantLogoAction(formData: FormData) {
   revalidatePath(`/menu/${membership.tenant.slug}`);
 }
 
+async function reorderAction(
+  type: "menuCategory" | "menuSubcategory" | "menuItem",
+  orderedIds: string[],
+) {
+  "use server";
+  const membership = await getCurrentMembership();
+  if (!membership?.tenant?._id) return;
+
+  const writeClient = getServerWriteClient();
+  const tx = writeClient.transaction();
+
+  orderedIds.forEach((id, index) => {
+    tx.patch(id, (p) => p.set({ sortOrder: index }));
+  });
+
+  await tx.commit();
+  revalidatePath("/dashboard");
+  revalidatePath(`/menu/${membership.tenant.slug}`);
+}
+
 async function updateTenantNameAction(formData: FormData) {
   "use server";
 
@@ -642,6 +689,40 @@ async function updateTenantNameAction(formData: FormData) {
   revalidatePath("/dashboard");
 
   revalidatePath(`/menu/${membership.tenant.slug}`);
+}
+
+async function deleteTenantAction() {
+  "use server";
+
+  const membership = await getCurrentMembership();
+  if (!membership?.tenant?._id) {
+    throw new Error("Nemas pristup tenantu.");
+  }
+  if (membership.role !== "owner") {
+    throw new Error("Samo vlasnik moze obrisati restoran.");
+  }
+
+  const tenantId = membership.tenant._id;
+  const writeClient = getServerWriteClient();
+
+  const docsToDelete = await serverReadClient.fetch<{ _id: string }[]>(
+    `*[_type in ["menuCategory", "menuSubcategory", "menuItem", "tenantMember"] && tenant._ref == $tenantId]{_id}`,
+    { tenantId },
+  );
+
+  const tx = writeClient.transaction();
+
+  for (const doc of docsToDelete) {
+    tx.delete(doc._id);
+  }
+
+  tx.delete(tenantId);
+
+  await tx.commit();
+
+  revalidatePath("/");
+  revalidatePath("/dashboard");
+  redirect("/dashboard");
 }
 
 export default async function DashboardPage() {
@@ -762,6 +843,7 @@ export default async function DashboardPage() {
         updateMenuItemAction={updateMenuItemAction}
         deleteMenuItemAction={deleteMenuItemAction}
         updateTenantNameAction={updateTenantNameAction}
+        deleteTenantAction={deleteTenantAction}
         createSubcategoryAction={createSubcategoryAction}
         updateSubcategoryAction={updateSubcategoryAction}
         deleteSubcategoryAction={deleteSubcategoryAction}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { convertPrice } from "@/lib/pricing";
@@ -70,11 +70,13 @@ function ItemCard({
   exchangeRateEurToBam,
   showPricesBam,
   showPricesEur,
+  onImageClick,
 }: {
   item: Item;
   exchangeRateEurToBam: number;
   showPricesBam: boolean;
   showPricesEur: boolean;
+  onImageClick?: (imageUrl: string, imageName: string) => void;
 }) {
   const converted = convertPrice(
     item.price,
@@ -91,7 +93,12 @@ function ItemCard({
     >
       <div className="flex items-start gap-3">
         {item.imageUrl && (
-          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl ring-1 ring-amber-50/15">
+          <button
+            type="button"
+            onClick={() => onImageClick?.(item.imageUrl!, item.name)}
+            aria-label={`Uvecaj sliku artikla ${item.name}`}
+            className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl ring-1 ring-amber-50/15 transition hover:opacity-90"
+          >
             <Image
               src={item.imageUrl}
               alt={item.name}
@@ -99,7 +106,7 @@ function ItemCard({
               sizes="80px"
               className="object-cover"
             />
-          </div>
+          </button>
         )}
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex items-start justify-between gap-4">
@@ -176,7 +183,26 @@ export function MenuTabs({
   const [activeSubTab, setActiveSubTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
   const active = categories.find((c) => c._id === activeId) ?? categories[0];
+
+  useEffect(() => {
+    if (!selectedImage) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedImage(null);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedImage]);
 
   if (!active) return null;
 
@@ -440,6 +466,7 @@ export function MenuTabs({
                 exchangeRateEurToBam={exchangeRateEurToBam}
                 showPricesBam={showPricesBam}
                 showPricesEur={showPricesEur}
+                onImageClick={(url, name) => setSelectedImage({ url, name })}
               />
             ))}
           </ul>
@@ -464,6 +491,9 @@ export function MenuTabs({
                     exchangeRateEurToBam={exchangeRateEurToBam}
                     showPricesBam={showPricesBam}
                     showPricesEur={showPricesEur}
+                    onImageClick={(url, name) =>
+                      setSelectedImage({ url, name })
+                    }
                   />
                 ))}
               </ul>
@@ -476,6 +506,52 @@ export function MenuTabs({
           </p>
         )}
       </div>
+
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setSelectedImage(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Prikaz slike artikla ${selectedImage.name}`}
+        >
+          <div
+            className="relative w-full max-w-4xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setSelectedImage(null)}
+              aria-label="Zatvori sliku"
+              className="absolute -top-12 right-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-amber-100/30 bg-[#15171a] text-amber-100"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6L6 18" />
+                <path d="M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div className="relative h-[75vh] w-full overflow-hidden rounded-2xl border border-amber-100/20 bg-[#0f1113]">
+              <Image
+                src={selectedImage.url}
+                alt={selectedImage.name}
+                fill
+                sizes="100vw"
+                className="object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

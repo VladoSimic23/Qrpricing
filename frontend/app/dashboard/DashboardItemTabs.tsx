@@ -150,12 +150,6 @@ function ItemForm({
             </option>
           ))}
         </select>
-        <input
-          name="sortOrder"
-          type="number"
-          defaultValue={item.sortOrder}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-        />
       </div>
       <div className="grid gap-2 sm:grid-cols-2">
         <select
@@ -316,12 +310,6 @@ export function DashboardItemTabs({
                 placeholder="Naziv podkategorije (EN)"
                 className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               />
-              <input
-                name="sortOrder"
-                type="number"
-                placeholder="Redoslijed"
-                className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-              />
               <FormActionButton
                 idleLabel="+ Dodaj"
                 loadingLabel="Dodajem..."
@@ -359,12 +347,6 @@ export function DashboardItemTabs({
                         defaultValue={sub.titleEn}
                         placeholder="EN"
                         className="rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                      />
-                      <input
-                        name="sortOrder"
-                        type="number"
-                        defaultValue={sub.sortOrder}
-                        className="w-20 rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                       />
                       <FormActionButton
                         idleLabel="Spremi"

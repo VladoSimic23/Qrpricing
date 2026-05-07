@@ -52,6 +52,7 @@ type Props = {
   updateExchangeRateAction: (formData: FormData) => Promise<void>;
   updateTenantLogoAction: (formData: FormData) => Promise<void>;
   updateTenantNameAction: (formData: FormData) => Promise<void>;
+  deleteTenantAction: () => Promise<void>;
   createCategoryAction: (formData: FormData) => Promise<void>;
   createMenuItemAction: (formData: FormData) => Promise<void>;
   updateCategoryAction: (formData: FormData) => Promise<void>;
@@ -92,6 +93,7 @@ export function DashboardSectionsTabs({
   updateExchangeRateAction,
   updateTenantLogoAction,
   updateTenantNameAction,
+  deleteTenantAction,
   createCategoryAction,
   createMenuItemAction,
   updateCategoryAction,
@@ -281,12 +283,6 @@ export function DashboardSectionsTabs({
               placeholder="Naziv (EN)"
               className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
-            <input
-              name="sortOrder"
-              type="number"
-              defaultValue={0}
-              className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-            />
             <FormActionButton
               idleLabel="Spremi kategoriju"
               loadingLabel="Spremam..."
@@ -325,12 +321,6 @@ export function DashboardSectionsTabs({
                       name="titleEn"
                       defaultValue={category.titleEn}
                       placeholder="EN"
-                      className="rounded border border-slate-300 px-3 py-2 text-sm"
-                    />
-                    <input
-                      name="sortOrder"
-                      type="number"
-                      defaultValue={category.sortOrder}
                       className="rounded border border-slate-300 px-3 py-2 text-sm"
                     />
                     <FormActionButton
@@ -481,12 +471,12 @@ export function DashboardSectionsTabs({
                   className="h-4 w-4 rounded border-slate-300 accent-emerald-600"
                 />
                 <span className="text-sm text-slate-700">
-                  Sakrij naslov "Digitalni Meni"
+                  Sakrij naslov &quot;Digitalni Meni&quot;
                 </span>
               </label>
               <p className="text-xs text-slate-600">
-                Ako je uključeno, naslov "Digitalni Meni" se neće prikazati u
-                meniju.
+                Ako je uključeno, naslov &quot;Digitalni Meni&quot; se neće
+                prikazati u meniju.
               </p>
 
               <label className="flex items-center gap-3">
@@ -524,6 +514,34 @@ export function DashboardSectionsTabs({
               className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
             />
           </ToastForm>
+
+          <div className="mt-12 rounded-xl border border-red-200 bg-red-50 p-6">
+            <h3 className="text-lg font-semibold text-red-700">
+              Opasna zona (Danger zone)
+            </h3>
+            <p className="mt-2 text-sm text-red-600">
+              Ova akcija je nepovratna. Brisanje restorana i menija izbrisati će
+              sve podatke zauvijek iz baze podataka i vaš cjenik više neće biti
+              dostupan.
+            </p>
+            <form
+              action={async () => {
+                if (
+                  window.confirm(
+                    "Jeste li sigurni da želite obrisati cjenik i cijeli restoran? Ova akcija je nepovratna i izbrisat će sve vaše podatke zauvijek!",
+                  )
+                ) {
+                  await deleteTenantAction();
+                }
+              }}
+            >
+              <FormActionButton
+                idleLabel="Obriši cjenik i restoran"
+                loadingLabel="Brišem..."
+                className="mt-4 w-fit rounded-full bg-red-600 px-6 py-2 text-white font-medium transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
+              />
+            </form>
+          </div>
         </div>
       )}
     </section>
