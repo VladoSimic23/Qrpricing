@@ -19,7 +19,14 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { PlusCircle, FolderPlus, Folder, List, Settings } from "lucide-react";
+import {
+  PlusCircle,
+  FolderPlus,
+  Folder,
+  List,
+  Settings,
+  ChevronDown,
+} from "lucide-react";
 
 import { DashboardItemTabs } from "./DashboardItemTabs";
 import { FormActionButton } from "./FormActionButton";
@@ -150,7 +157,7 @@ function SortableCategoryItem({
             <span
               {...attributes}
               {...listeners}
-              className="cursor-move p-1 hover:bg-slate-200 rounded"
+              className="cursor-move p-1 hover:bg-slate-200 rounded touch-none"
               title="Povuci za promjenu redoslijeda"
             >
               ☰
@@ -215,6 +222,7 @@ export function DashboardSectionsTabs({
   reorderAction,
 }: Props) {
   const [activeTab, setActiveTab] = useState<DashboardTab>("add-item");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [localCategories, setLocalCategories] =
     useState<Category[]>(categories);
 
@@ -273,15 +281,50 @@ export function DashboardSectionsTabs({
 
       {/* Main Layout matches the Sidebar approach */}
       <div className="flex flex-col md:flex-row gap-6">
+        {/* Mobile Dropdown Trigger */}
+        <div className="md:hidden">
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-medium text-slate-700 shadow-sm"
+          >
+            <span className="flex items-center gap-2">
+              {(() => {
+                const activeTabObj = DASHBOARD_TABS.find(
+                  (t) => t.id === activeTab,
+                );
+                const ActiveIcon = activeTabObj?.icon || Settings;
+                return (
+                  <>
+                    <ActiveIcon size={18} className="text-emerald-600" />
+                    {activeTabObj?.label}
+                  </>
+                );
+              })()}
+            </span>
+            <ChevronDown
+              size={18}
+              className={`transition-transform ${isMobileMenuOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+        </div>
+
         {/* Sidebar Nav */}
-        <div className="md:w-64 md:shrink-0 flex flex-col gap-1 rounded-2xl border border-slate-200 bg-slate-50 p-2 h-fit">
+        <div
+          className={`md:w-64 md:shrink-0 flex-col gap-1 rounded-2xl border border-slate-200 bg-slate-50 p-2 h-fit ${
+            isMobileMenuOpen ? "flex" : "hidden md:flex"
+          }`}
+        >
           {DASHBOARD_TABS.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition text-left ${
                   tab.id === activeTab
                     ? "bg-white text-slate-900 shadow border border-slate-200"

@@ -257,7 +257,7 @@ function SortableMenuItem({
           <span
             {...attributes}
             {...listeners}
-            className="cursor-move p-1 hover:bg-slate-200 rounded text-slate-500"
+            className="cursor-move p-1 hover:bg-slate-200 rounded text-slate-500 touch-none"
             title="Povuci za promjenu redoslijeda"
           >
             ☰
