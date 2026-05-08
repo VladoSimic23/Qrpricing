@@ -154,6 +154,7 @@ export function MenuTabs({
   locale,
   slug,
   supportedLocales,
+  activeLanguages,
 }: {
   categories: Category[];
   venueName: string;
@@ -178,6 +179,7 @@ export function MenuTabs({
   locale: string;
   slug: string;
   supportedLocales: readonly string[];
+  activeLanguages: string[];
 }) {
   const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
   const [activeSubTab, setActiveSubTab] = useState("all");
@@ -292,24 +294,31 @@ export function MenuTabs({
               <path d="M20 20l-3.2-3.2" />
             </svg>
           </button>
-          <span className="text-xs font-medium uppercase tracking-[0.22em] text-amber-100/55">
-            {messages.languageLabel}
-          </span>
-          <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
-            {supportedLocales.slice(0, 2).map((code) => (
-              <Link
-                key={code}
-                href={`/menu/${slug}?lang=${code}`}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition ${
-                  code === locale
-                    ? "bg-amber-300/20 text-amber-100"
-                    : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"
-                }`}
-              >
-                {code}
-              </Link>
-            ))}
-          </div>
+          {activeLanguages.length > 1 && (
+            <>
+              <span className="text-xs font-medium uppercase tracking-[0.22em] text-amber-100/55">
+                {messages.languageLabel}
+              </span>
+              <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
+                {supportedLocales
+                  .filter((code) => activeLanguages.includes(code))
+                  .slice(0, 2)
+                  .map((code) => (
+                    <Link
+                      key={code}
+                      href={`/menu/${slug}?lang=${code}`}
+                      className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition ${
+                        code === locale
+                          ? "bg-amber-300/20 text-amber-100"
+                          : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"
+                      }`}
+                    >
+                      {code}
+                    </Link>
+                  ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -347,21 +356,26 @@ export function MenuTabs({
                   <path d="M20 20l-3.2-3.2" />
                 </svg>
               </button>
-              <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
-                {supportedLocales.slice(0, 2).map((code) => (
-                  <Link
-                    key={code}
-                    href={`/menu/${slug}?lang=${code}`}
-                    className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
-                      code === locale
-                        ? "bg-amber-300/20 text-amber-100"
-                        : "text-amber-100/70"
-                    }`}
-                  >
-                    {code}
-                  </Link>
-                ))}
-              </div>
+              {activeLanguages.length > 1 && (
+                <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
+                  {supportedLocales
+                    .filter((code) => activeLanguages.includes(code))
+                    .slice(0, 2)
+                    .map((code) => (
+                      <Link
+                        key={code}
+                        href={`/menu/${slug}?lang=${code}`}
+                        className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+                          code === locale
+                            ? "bg-amber-300/20 text-amber-100"
+                            : "text-amber-100/70"
+                        }`}
+                      >
+                        {code}
+                      </Link>
+                    ))}
+                </div>
+              )}
             </div>
           </div>
 

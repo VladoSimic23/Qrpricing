@@ -61,6 +61,7 @@ type Props = {
     type: "menuCategory" | "menuSubcategory" | "menuItem",
     orderedIds: string[],
   ) => Promise<void>;
+  activeLanguages: string[];
 };
 
 function ItemForm({
@@ -77,8 +78,12 @@ function ItemForm({
   updateItemAction: (formData: FormData) => Promise<void>;
   deleteItemAction: (formData: FormData) => Promise<void>;
   tenantExchangeRate: number;
+  activeLanguages: string[];
 }) {
   const catSubs = subcategories.filter((s) => s.categoryId === item.categoryId);
+  const isHrActive = activeLanguages.includes("hr");
+  const isEnActive = activeLanguages.includes("en");
+
   return (
     <ToastForm
       action={updateItemAction}
@@ -103,31 +108,39 @@ function ItemForm({
           className="h-20 w-20 rounded object-cover"
         />
       )}
-      <input
-        name="name"
-        required
-        defaultValue={item.name}
-        placeholder="Naziv (HR)"
-        className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-      />
-      <input
-        name="nameEn"
-        defaultValue={item.nameEn}
-        placeholder="Naziv (EN)"
-        className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-      />
-      <textarea
-        name="description"
-        defaultValue={item.description}
-        placeholder="Opis (HR)"
-        className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-      />
-      <textarea
-        name="descriptionEn"
-        defaultValue={item.descriptionEn}
-        placeholder="Opis (EN)"
-        className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-      />
+      {isHrActive && (
+        <input
+          name="name"
+          required
+          defaultValue={item.name}
+          placeholder="Naziv (HR)"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+        />
+      )}
+      {isEnActive && (
+        <input
+          name="nameEn"
+          defaultValue={item.nameEn}
+          placeholder="Naziv (EN)"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+        />
+      )}
+      {isHrActive && (
+        <textarea
+          name="description"
+          defaultValue={item.description}
+          placeholder="Opis (HR)"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+        />
+      )}
+      {isEnActive && (
+        <textarea
+          name="descriptionEn"
+          defaultValue={item.descriptionEn}
+          placeholder="Opis (EN)"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+        />
+      )}
       <div className="grid gap-2 sm:grid-cols-2">
         <input
           name="price"
@@ -288,6 +301,7 @@ function SortableMenuItem({
             updateItemAction={updateItemAction}
             deleteItemAction={deleteItemAction}
             tenantExchangeRate={tenantExchangeRate}
+            activeLanguages={activeLanguages}
           />
         </div>
       )}
@@ -306,6 +320,7 @@ export function DashboardItemTabs({
   updateSubcategoryAction,
   deleteSubcategoryAction,
   reorderAction,
+  activeLanguages,
 }: Props) {
   const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
@@ -424,17 +439,21 @@ export function DashboardItemTabs({
               className="mb-3 flex flex-wrap items-end gap-2"
             >
               <input type="hidden" name="categoryId" value={activeId} />
-              <input
-                name="title"
-                required
-                placeholder="Naziv podkategorije"
-                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-              />
-              <input
-                name="titleEn"
-                placeholder="Naziv podkategorije (EN)"
-                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-              />
+              {activeLanguages.includes("hr") && (
+                <input
+                  name="title"
+                  required
+                  placeholder="Naziv podkategorije (HR)"
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                />
+              )}
+              {activeLanguages.includes("en") && (
+                <input
+                  name="titleEn"
+                  placeholder="Naziv podkategorije (EN)"
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                />
+              )}
               <FormActionButton
                 idleLabel="+ Dodaj"
                 loadingLabel="Dodajem..."
@@ -461,18 +480,22 @@ export function DashboardItemTabs({
                         name="subCategoryId"
                         value={sub._id}
                       />
-                      <input
-                        name="title"
-                        required
-                        defaultValue={sub.title}
-                        className="flex-1 rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                      />
-                      <input
-                        name="titleEn"
-                        defaultValue={sub.titleEn}
-                        placeholder="EN"
-                        className="rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                      />
+                      {activeLanguages.includes("hr") && (
+                        <input
+                          name="title"
+                          required
+                          defaultValue={sub.title}
+                          className="flex-1 rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                        />
+                      )}
+                      {activeLanguages.includes("en") && (
+                        <input
+                          name="titleEn"
+                          defaultValue={sub.titleEn}
+                          placeholder="EN"
+                          className="rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                        />
+                      )}
                       <FormActionButton
                         idleLabel="Spremi"
                         loadingLabel="Spremam..."

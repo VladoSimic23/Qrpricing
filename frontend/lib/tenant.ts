@@ -16,6 +16,7 @@ export type TenantMembership = {
     hideDigitalMenuHeader?: boolean;
     showPricesBam?: boolean;
     showPricesEur?: boolean;
+    activeLanguages?: string[];
   };
 };
 
@@ -31,7 +32,8 @@ const membershipQuery = `*[_type == "tenantMember" && clerkUserId == $userId][0]
     "logo": logo.asset->url,
     hideDigitalMenuHeader,
     showPricesBam,
-    showPricesEur
+    showPricesEur,
+    activeLanguages
   }
 }`;
 

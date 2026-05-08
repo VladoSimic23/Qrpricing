@@ -15,6 +15,7 @@ type MenuPayload = {
   hideDigitalMenuHeader?: boolean;
   showPricesBam?: boolean;
   showPricesEur?: boolean;
+  activeLanguages?: string[];
   categories: {
     _id: string;
     title: string;
@@ -62,9 +63,20 @@ export async function generateMetadata({
   const { slug } = await params;
   const { lang } = await searchParams;
   const requestHeaders = await headers();
-  const locale = resolveLocale(lang, requestHeaders.get("accept-language"));
 
   try {
+    const tempMenu = await serverReadClient.fetch<{
+      activeLanguages?: string[];
+    } | null>(
+      `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{ activeLanguages }`,
+      { slug },
+    );
+    const activeLanguages = tempMenu?.activeLanguages || ["hr", "en"];
+    let locale = resolveLocale(lang, requestHeaders.get("accept-language"));
+    if (!activeLanguages.includes(locale) && activeLanguages.length > 0) {
+      locale = activeLanguages[0] as typeof locale;
+    }
+
     const menu = await serverReadClient.fetch<MenuPayload | null>(
       `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{
         "name": select(
@@ -149,8 +161,23 @@ export default async function PublicMenuPage({
   const { slug } = await params;
   const { lang } = await searchParams;
   const requestHeaders = await headers();
-  const locale = resolveLocale(lang, requestHeaders.get("accept-language"));
-  const t = messages[locale].menu;
+
+  // Prvo dohvacamo tenanta kako bismo znali aktivne jezike
+  const tempMenu = await serverReadClient.fetch<{
+    activeLanguages?: string[];
+  } | null>(
+    `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{ activeLanguages }`,
+    { slug },
+  );
+
+  const activeLanguages = tempMenu?.activeLanguages || ["hr", "en"];
+  let locale = resolveLocale(lang, requestHeaders.get("accept-language"));
+
+  if (!activeLanguages.includes(locale) && activeLanguages.length > 0) {
+    locale = activeLanguages[0] as typeof locale;
+  }
+
+  const t = messages[locale as keyof typeof messages].menu;
 
   const menu = await serverReadClient.fetch<MenuPayload | null>(
     `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{
@@ -163,6 +190,7 @@ export default async function PublicMenuPage({
       hideDigitalMenuHeader,
       showPricesBam,
       showPricesEur,
+      activeLanguages,
       "categories": *[_type == "menuCategory" && tenant._ref == ^._id] | order(sortOrder asc, title asc){
         _id,
         "title": select(
@@ -238,6 +266,7 @@ export default async function PublicMenuPage({
               locale={locale}
               slug={slug}
               supportedLocales={supportedLocales}
+              activeLanguages={menu.activeLanguages || ["hr", "en"]}
             />
           </section>
         ) : (

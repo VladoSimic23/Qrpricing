@@ -72,6 +72,7 @@ type Props = {
   hideDigitalMenuHeader?: boolean;
   showPricesBam: boolean;
   showPricesEur: boolean;
+  activeLanguages: string[];
   categories: Category[];
   subcategories: Subcategory[];
   menuItems: MenuItem[];
@@ -117,10 +118,12 @@ function SortableCategoryItem({
   category,
   updateCategoryAction,
   deleteCategoryAction,
+  activeLanguages,
 }: {
   category: Category;
   updateCategoryAction: (formData: FormData) => Promise<void>;
   deleteCategoryAction: (formData: FormData) => Promise<void>;
+  activeLanguages: string[];
 }) {
   const {
     attributes,
@@ -137,6 +140,9 @@ function SortableCategoryItem({
     zIndex: isDragging ? 10 : 1,
     opacity: isDragging ? 0.8 : 1,
   };
+
+  const isHrActive = activeLanguages.includes("hr");
+  const isEnActive = activeLanguages.includes("en");
 
   return (
     <li
@@ -166,18 +172,23 @@ function SortableCategoryItem({
           </div>
         </div>
         <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto_auto]">
-          <input
-            name="title"
-            defaultValue={category.title}
-            required
-            className="rounded border border-slate-300 px-3 py-2 text-sm"
-          />
-          <input
-            name="titleEn"
-            defaultValue={category.titleEn}
-            placeholder="EN"
-            className="rounded border border-slate-300 px-3 py-2 text-sm"
-          />
+          {isHrActive && (
+            <input
+              name="title"
+              defaultValue={category.title}
+              required
+              className="rounded border border-slate-300 px-3 py-2 text-sm"
+              placeholder="HR"
+            />
+          )}
+          {isEnActive && (
+            <input
+              name="titleEn"
+              defaultValue={category.titleEn}
+              placeholder="EN"
+              className="rounded border border-slate-300 px-3 py-2 text-sm"
+            />
+          )}
           <FormActionButton
             idleLabel="Spremi"
             loadingLabel="Spremam..."
@@ -220,11 +231,15 @@ export function DashboardSectionsTabs({
   updateSubcategoryAction,
   deleteSubcategoryAction,
   reorderAction,
+  activeLanguages,
 }: Props) {
   const [activeTab, setActiveTab] = useState<DashboardTab>("add-item");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [localCategories, setLocalCategories] =
     useState<Category[]>(categories);
+
+  const isHrActive = activeLanguages?.includes("hr") ?? true;
+  const isEnActive = activeLanguages?.includes("en") ?? true;
 
   useEffect(() => {
     setLocalCategories(categories);
@@ -356,27 +371,35 @@ export function DashboardSectionsTabs({
                 className="mt-4 flex flex-col gap-3"
                 encType="multipart/form-data"
               >
-                <input
-                  name="name"
-                  required
-                  placeholder="Naziv artikla (HR)"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                />
-                <input
-                  name="nameEn"
-                  placeholder="Naziv artikla (EN)"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                />
-                <textarea
-                  name="description"
-                  placeholder="Opis (HR)"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                />
-                <textarea
-                  name="descriptionEn"
-                  placeholder="Opis (EN)"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                />
+                {isHrActive && (
+                  <input
+                    name="name"
+                    required
+                    placeholder="Naziv artikla (HR)"
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  />
+                )}
+                {isEnActive && (
+                  <input
+                    name="nameEn"
+                    placeholder="Naziv artikla (EN)"
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  />
+                )}
+                {isHrActive && (
+                  <textarea
+                    name="description"
+                    placeholder="Opis (HR)"
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  />
+                )}
+                {isEnActive && (
+                  <textarea
+                    name="descriptionEn"
+                    placeholder="Opis (EN)"
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  />
+                )}
                 <input
                   name="price"
                   type="number"
@@ -467,17 +490,21 @@ export function DashboardSectionsTabs({
                 successMessage="Kategorija je uspješno dodana!"
                 className="mt-4 flex flex-col gap-3"
               >
-                <input
-                  name="title"
-                  required
-                  placeholder="Naziv (HR)"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                />
-                <input
-                  name="titleEn"
-                  placeholder="Naziv (EN)"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                />
+                {isHrActive && (
+                  <input
+                    name="title"
+                    required
+                    placeholder="Naziv (HR)"
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  />
+                )}
+                {isEnActive && (
+                  <input
+                    name="titleEn"
+                    placeholder="Naziv (EN)"
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  />
+                )}
                 <FormActionButton
                   idleLabel="Spremi kategoriju"
                   loadingLabel="Spremam..."
@@ -509,6 +536,7 @@ export function DashboardSectionsTabs({
                         category={category}
                         updateCategoryAction={updateCategoryAction}
                         deleteCategoryAction={deleteCategoryAction}
+                        activeLanguages={activeLanguages}
                       />
                     ))}
                     {localCategories.length === 0 && (
@@ -538,6 +566,7 @@ export function DashboardSectionsTabs({
                 updateSubcategoryAction={updateSubcategoryAction}
                 deleteSubcategoryAction={deleteSubcategoryAction}
                 reorderAction={reorderAction}
+                activeLanguages={activeLanguages}
               />
             </div>
           )}
@@ -686,6 +715,34 @@ export function DashboardSectionsTabs({
 
                   <p className="text-xs text-slate-600">
                     Default je uključeno za obje valute.
+                  </p>
+                </div>
+
+                <div className="space-y-2 border-t border-slate-200 pt-4">
+                  <h4 className="text-sm font-semibold text-slate-900">
+                    Aktivni jezici
+                  </h4>
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      name="activeLanguagesHr"
+                      defaultChecked={activeLanguages.includes("hr")}
+                      className="h-4 w-4 rounded border-slate-300 accent-emerald-600"
+                    />
+                    <span className="text-sm text-slate-700">Hrvatski</span>
+                  </label>
+
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      name="activeLanguagesEn"
+                      defaultChecked={activeLanguages.includes("en")}
+                      className="h-4 w-4 rounded border-slate-300 accent-emerald-600"
+                    />
+                    <span className="text-sm text-slate-700">Engleski</span>
+                  </label>
+                  <p className="text-xs text-slate-600">
+                    Neaktivni jezici će biti izbačeni sa cjenika.
                   </p>
                 </div>
 

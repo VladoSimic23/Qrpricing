@@ -70,6 +70,22 @@ export const tenantType = defineType({
       type: "boolean",
       initialValue: true,
     }),
+    defineField({
+      name: "activeLanguages",
+      title: "Aktivni jezici",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        list: [
+          { title: "Hrvatski", value: "hr" },
+          { title: "Engleski", value: "en" },
+        ],
+        layout: "grid",
+      },
+      initialValue: ["hr", "en"],
+      description:
+        "Odaberite koji će jezici biti prikazani. Neaktivni jezici bit će skriveni, ali uneseni podaci ostaju sačuvani.",
+    }),
   ],
   preview: {
     select: { title: "name", subtitle: "slug.current" },

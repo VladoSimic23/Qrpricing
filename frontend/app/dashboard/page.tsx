@@ -615,6 +615,12 @@ async function updateTenantLogoAction(formData: FormData) {
   const hideDigitalMenuHeader = formData.get("hideDigitalMenuHeader") === "on";
   const showPricesBam = formData.get("showPricesBam") === "on";
   const showPricesEur = formData.get("showPricesEur") === "on";
+  const activeLanguagesHr = formData.get("activeLanguagesHr") === "on";
+  const activeLanguagesEn = formData.get("activeLanguagesEn") === "on";
+
+  const activeLanguages = [];
+  if (activeLanguagesHr) activeLanguages.push("hr");
+  if (activeLanguagesEn) activeLanguages.push("en");
 
   const writeClient = getServerWriteClient();
   let patchBuilder = writeClient.patch(membership.tenant._id);
@@ -638,6 +644,7 @@ async function updateTenantLogoAction(formData: FormData) {
     hideDigitalMenuHeader,
     showPricesBam,
     showPricesEur,
+    activeLanguages,
   });
 
   await patchBuilder.commit();
@@ -836,6 +843,7 @@ export default async function DashboardPage() {
         hideDigitalMenuHeader={membership.tenant.hideDigitalMenuHeader}
         showPricesBam={membership.tenant.showPricesBam ?? true}
         showPricesEur={membership.tenant.showPricesEur ?? true}
+        activeLanguages={membership.tenant.activeLanguages || ["hr", "en"]}
         categories={categories}
         subcategories={subcategories}
         menuItems={menuItems}
