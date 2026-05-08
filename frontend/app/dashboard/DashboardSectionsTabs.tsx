@@ -65,7 +65,6 @@ type MenuItem = {
 };
 
 type Props = {
-  tenantId: string;
   tenantName: string;
   tenantExchangeRate: number;
   tenantLogo?: string;
@@ -207,7 +206,6 @@ function SortableCategoryItem({
 }
 
 export function DashboardSectionsTabs({
-  tenantId,
   tenantName,
   tenantExchangeRate,
   tenantLogo,

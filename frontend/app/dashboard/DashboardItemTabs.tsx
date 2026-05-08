@@ -71,6 +71,7 @@ function ItemForm({
   updateItemAction,
   deleteItemAction,
   tenantExchangeRate,
+  activeLanguages,
 }: {
   item: MenuItem;
   categories: Category[];
@@ -233,6 +234,7 @@ function SortableMenuItem({
   updateItemAction,
   deleteItemAction,
   tenantExchangeRate,
+  activeLanguages,
 }: {
   item: MenuItem;
   isOpen: boolean;
@@ -242,6 +244,7 @@ function SortableMenuItem({
   updateItemAction: (formData: FormData) => Promise<void>;
   deleteItemAction: (formData: FormData) => Promise<void>;
   tenantExchangeRate: number;
+  activeLanguages: string[];
 }) {
   const {
     attributes,
@@ -550,6 +553,7 @@ export function DashboardItemTabs({
                         updateItemAction={updateItemAction}
                         deleteItemAction={deleteItemAction}
                         tenantExchangeRate={tenantExchangeRate}
+                        activeLanguages={activeLanguages}
                       />
                     ))}
                   </ul>
@@ -596,6 +600,7 @@ export function DashboardItemTabs({
                             updateItemAction={updateItemAction}
                             deleteItemAction={deleteItemAction}
                             tenantExchangeRate={tenantExchangeRate}
+                            activeLanguages={activeLanguages}
                           />
                         ))}
                       </ul>

@@ -836,7 +836,6 @@ export default async function DashboardPage() {
       </section>
 
       <DashboardSectionsTabs
-        tenantId={membership.tenant._id}
         tenantName={membership.tenant.name}
         tenantExchangeRate={membership.tenant.exchangeRateEurToBam || 0}
         tenantLogo={membership.tenant.logo}
