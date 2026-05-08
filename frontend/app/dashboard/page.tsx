@@ -753,7 +753,7 @@ export default async function DashboardPage() {
             className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
           />
           <FormActionButton
-            idleLabel="Kreiraj tenant"
+            idleLabel="Izradi cjenik"
             loadingLabel="Kreiram..."
             className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
           />
@@ -817,7 +817,12 @@ export default async function DashboardPage() {
         </h1>
         <p className="mt-2 text-slate-200">
           Javni meni:
-          <Link className="underline" href={`/menu/${membership.tenant.slug}`}>
+          <Link
+            className="underline"
+            href={`/menu/${membership.tenant.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             /menu/{membership.tenant.slug}
           </Link>
         </p>
