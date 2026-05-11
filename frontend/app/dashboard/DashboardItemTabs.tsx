@@ -440,6 +440,7 @@ export function DashboardItemTabs({
               action={createSubcategoryAction}
               successMessage="Podkategorija je uspješno dodana!"
               className="mb-3 flex flex-wrap items-end gap-2"
+              resetOnSuccess
             >
               <input type="hidden" name="categoryId" value={activeId} />
               {activeLanguages.includes("hr") && (

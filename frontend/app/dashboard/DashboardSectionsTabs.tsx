@@ -368,6 +368,7 @@ export function DashboardSectionsTabs({
                 successMessage="Artikal je uspješno dodan!"
                 className="mt-4 flex flex-col gap-3"
                 encType="multipart/form-data"
+                resetOnSuccess
               >
                 {isHrActive && (
                   <input
@@ -487,6 +488,7 @@ export function DashboardSectionsTabs({
                 action={createCategoryAction}
                 successMessage="Kategorija je uspješno dodana!"
                 className="mt-4 flex flex-col gap-3"
+                resetOnSuccess
               >
                 {isHrActive && (
                   <input

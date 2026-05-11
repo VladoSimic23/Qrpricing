@@ -13,6 +13,7 @@ type ToastFormProps = {
   children: ReactNode;
   encType?: string;
   onSuccess?: () => void;
+  resetOnSuccess?: boolean;
 };
 
 export function ToastForm({
@@ -24,13 +25,15 @@ export function ToastForm({
   children,
   encType,
   onSuccess,
+  resetOnSuccess,
 }: ToastFormProps) {
   const { showToast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
     const submitter = (e.nativeEvent as SubmitEvent)
       .submitter as HTMLButtonElement | null;
     const isDelete = submitter?.dataset?.toastAction === "delete";
@@ -44,6 +47,9 @@ export function ToastForm({
         await actionToCall(formData);
         showToast(message, "success");
         onSuccess?.();
+        if (resetOnSuccess) {
+          formElement.reset();
+        }
       } catch (err) {
         showToast(
           err instanceof Error ? err.message : "Greška pri izvršavanju akcije.",
