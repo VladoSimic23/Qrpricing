@@ -312,6 +312,87 @@ function SortableMenuItem({
   );
 }
 
+function SortableSubcategoryItem({
+  sub,
+  activeLanguages,
+  updateSubcategoryAction,
+  deleteSubcategoryAction,
+}: {
+  sub: Subcategory;
+  activeLanguages: string[];
+  updateSubcategoryAction: (formData: FormData) => Promise<void>;
+  deleteSubcategoryAction: (formData: FormData) => Promise<void>;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: sub._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={`rounded-lg border border-slate-200 bg-white p-2 ${isDragging ? "shadow-md" : ""}`}
+    >
+      <ToastForm
+        action={updateSubcategoryAction}
+        successMessage="Podkategorija je uspješno ažurirana!"
+        deleteAction={deleteSubcategoryAction}
+        deleteSuccessMessage="Podkategorija je uspješno obrisana!"
+        className="flex flex-wrap items-center gap-2"
+      >
+        <span
+          {...attributes}
+          {...listeners}
+          className="cursor-move p-1 hover:bg-slate-100 rounded text-slate-500 touch-none flex-shrink-0"
+          title="Povuci za promjenu redoslijeda"
+        >
+          ☰
+        </span>
+        <input type="hidden" name="subCategoryId" value={sub._id} />
+        {activeLanguages.includes("hr") && (
+          <input
+            name="title"
+            required
+            defaultValue={sub.title}
+            className="flex-1 rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+          />
+        )}
+        {activeLanguages.includes("en") && (
+          <input
+            name="titleEn"
+            defaultValue={sub.titleEn}
+            placeholder="EN"
+            className="rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+          />
+        )}
+        <FormActionButton
+          idleLabel="Spremi"
+          loadingLabel="Spremam..."
+          className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600 disabled:opacity-70"
+        />
+        <FormActionButton
+          idleLabel="Obriši"
+          loadingLabel="Brisem..."
+          data-toast-action="delete"
+          className="rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600 disabled:opacity-70"
+        />
+      </ToastForm>
+    </li>
+  );
+}
+
 export function DashboardItemTabs({
   tenantExchangeRate,
   categories,
@@ -329,10 +410,16 @@ export function DashboardItemTabs({
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
 
   const [localItems, setLocalItems] = useState<MenuItem[]>(menuItems);
+  const [localSubcategories, setLocalSubcategories] =
+    useState<Subcategory[]>(subcategories);
 
   useEffect(() => {
     setLocalItems(menuItems);
   }, [menuItems]);
+
+  useEffect(() => {
+    setLocalSubcategories(subcategories);
+  }, [subcategories]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -347,7 +434,9 @@ export function DashboardItemTabs({
   );
 
   const activeCategory = categories.find((c) => c._id === activeId);
-  const activeSubs = subcategories.filter((s) => s.categoryId === activeId);
+  const activeSubs = localSubcategories.filter(
+    (s) => s.categoryId === activeId,
+  );
 
   // Use localItems instead of menuItems
   const activeItems = localItems.filter((item) => item.categoryId === activeId);
@@ -389,6 +478,34 @@ export function DashboardItemTabs({
 
       await reorderAction(
         "menuItem",
+        newOrderedSubset.map((i) => i._id),
+      );
+    }
+  };
+
+  const handleDragEndSubcategories = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = activeSubs.findIndex((s) => s._id === active.id);
+      const newIndex = activeSubs.findIndex((s) => s._id === over.id);
+      const newOrderedSubset = arrayMove(activeSubs, oldIndex, newIndex);
+
+      setLocalSubcategories((prev) => {
+        const map = new Map(
+          newOrderedSubset.map((item, idx) => [item._id, idx]),
+        );
+        return prev
+          .map((item) => {
+            if (map.has(item._id)) {
+              return { ...item, sortOrder: map.get(item._id)! };
+            }
+            return item;
+          })
+          .sort((a, b) => a.sortOrder - b.sortOrder);
+      });
+
+      await reorderAction(
+        "menuSubcategory",
         newOrderedSubset.map((i) => i._id),
       );
     }
@@ -466,55 +583,28 @@ export function DashboardItemTabs({
             </ToastForm>
             {/* Existing subcategories */}
             {activeSubs.length > 0 && (
-              <ul className="space-y-2">
-                {activeSubs.map((sub) => (
-                  <li
-                    key={sub._id}
-                    className="rounded-lg border border-slate-200 bg-white p-2"
-                  >
-                    <ToastForm
-                      action={updateSubcategoryAction}
-                      successMessage="Podkategorija je uspješno ažurirana!"
-                      deleteAction={deleteSubcategoryAction}
-                      deleteSuccessMessage="Podkategorija je uspješno obrisana!"
-                      className="flex flex-wrap items-center gap-2"
-                    >
-                      <input
-                        type="hidden"
-                        name="subCategoryId"
-                        value={sub._id}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEndSubcategories}
+              >
+                <SortableContext
+                  items={activeSubs.map((s) => s._id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <ul className="space-y-2">
+                    {activeSubs.map((sub) => (
+                      <SortableSubcategoryItem
+                        key={sub._id}
+                        sub={sub}
+                        activeLanguages={activeLanguages}
+                        updateSubcategoryAction={updateSubcategoryAction}
+                        deleteSubcategoryAction={deleteSubcategoryAction}
                       />
-                      {activeLanguages.includes("hr") && (
-                        <input
-                          name="title"
-                          required
-                          defaultValue={sub.title}
-                          className="flex-1 rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                        />
-                      )}
-                      {activeLanguages.includes("en") && (
-                        <input
-                          name="titleEn"
-                          defaultValue={sub.titleEn}
-                          placeholder="EN"
-                          className="rounded border border-slate-300 px-2 py-1 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                        />
-                      )}
-                      <FormActionButton
-                        idleLabel="Spremi"
-                        loadingLabel="Spremam..."
-                        className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600 disabled:opacity-70"
-                      />
-                      <FormActionButton
-                        idleLabel="Obriši"
-                        loadingLabel="Brisem..."
-                        data-toast-action="delete"
-                        className="rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600 disabled:opacity-70"
-                      />
-                    </ToastForm>
-                  </li>
-                ))}
-              </ul>
+                    ))}
+                  </ul>
+                </SortableContext>
+              </DndContext>
             )}
             {activeSubs.length === 0 && (
               <p className="text-xs text-slate-400">
