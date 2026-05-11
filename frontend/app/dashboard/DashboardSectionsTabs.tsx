@@ -154,6 +154,7 @@ function SortableCategoryItem({
         successMessage="Kategorija je uspješno ažurirana!"
         deleteAction={deleteCategoryAction}
         deleteSuccessMessage="Kategorija je uspješno obrisana!"
+        deleteConfirmMessage="Jeste li sigurni da želite obrisati ovu kategoriju? Svi artikli i podkategorije unutar nje bit će obrisani."
         className="grid gap-2"
       >
         <input type="hidden" name="categoryId" value={category._id} />

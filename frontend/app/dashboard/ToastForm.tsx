@@ -14,6 +14,7 @@ type ToastFormProps = {
   encType?: string;
   onSuccess?: () => void;
   resetOnSuccess?: boolean;
+  deleteConfirmMessage?: string;
 };
 
 export function ToastForm({
@@ -26,6 +27,7 @@ export function ToastForm({
   encType,
   onSuccess,
   resetOnSuccess,
+  deleteConfirmMessage,
 }: ToastFormProps) {
   const { showToast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -37,6 +39,12 @@ export function ToastForm({
     const submitter = (e.nativeEvent as SubmitEvent)
       .submitter as HTMLButtonElement | null;
     const isDelete = submitter?.dataset?.toastAction === "delete";
+
+    if (isDelete && deleteConfirmMessage) {
+      if (!window.confirm(deleteConfirmMessage)) {
+        return;
+      }
+    }
 
     const actionToCall = isDelete && deleteAction ? deleteAction : action;
     const message =

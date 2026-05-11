@@ -350,6 +350,7 @@ function SortableSubcategoryItem({
         successMessage="Podkategorija je uspješno ažurirana!"
         deleteAction={deleteSubcategoryAction}
         deleteSuccessMessage="Podkategorija je uspješno obrisana!"
+        deleteConfirmMessage="Jeste li sigurni da želite obrisati ovu podkategoriju? Svi artikli unutar nje bit će obrisani."
         className="flex flex-wrap items-center gap-2"
       >
         <span
