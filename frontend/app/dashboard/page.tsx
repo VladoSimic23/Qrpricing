@@ -654,6 +654,30 @@ async function updateTenantLogoAction(formData: FormData) {
   revalidatePath(`/menu/${membership.tenant.slug}`);
 }
 
+async function updateSocialLinksAction(formData: FormData) {
+  "use server";
+
+  const membership = await getCurrentMembership();
+  if (!membership?.tenant?._id) {
+    throw new Error("Nemas pristup tenantu.");
+  }
+
+  const facebookUrl = String(formData.get("facebookUrl") || "").trim();
+  const instagramUrl = String(formData.get("instagramUrl") || "").trim();
+  const tiktokUrl = String(formData.get("tiktokUrl") || "").trim();
+  const websiteUrl = String(formData.get("websiteUrl") || "").trim();
+
+  const writeClient = getServerWriteClient();
+  await writeClient
+    .patch(membership.tenant._id)
+    .set({ facebookUrl, instagramUrl, tiktokUrl, websiteUrl })
+    .commit();
+
+  revalidatePath("/dashboard");
+
+  revalidatePath(`/menu/${membership.tenant.slug}`);
+}
+
 async function reorderAction(
   type: "menuCategory" | "menuSubcategory" | "menuItem",
   orderedIds: string[],
@@ -843,11 +867,16 @@ export default async function DashboardPage() {
         showPricesBam={membership.tenant.showPricesBam ?? true}
         showPricesEur={membership.tenant.showPricesEur ?? true}
         activeLanguages={membership.tenant.activeLanguages || ["hr", "en"]}
+        facebookUrl={membership.tenant.facebookUrl}
+        instagramUrl={membership.tenant.instagramUrl}
+        tiktokUrl={membership.tenant.tiktokUrl}
+        websiteUrl={membership.tenant.websiteUrl}
         categories={categories}
         subcategories={subcategories}
         menuItems={menuItems}
         updateExchangeRateAction={updateExchangeRateAction}
         updateTenantLogoAction={updateTenantLogoAction}
+        updateSocialLinksAction={updateSocialLinksAction}
         createCategoryAction={createCategoryAction}
         createMenuItemAction={createMenuItemAction}
         updateCategoryAction={updateCategoryAction}

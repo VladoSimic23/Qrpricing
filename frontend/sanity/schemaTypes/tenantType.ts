@@ -86,6 +86,30 @@ export const tenantType = defineType({
       description:
         "Odaberite koji će jezici biti prikazani. Neaktivni jezici bit će skriveni, ali uneseni podaci ostaju sačuvani.",
     }),
+    defineField({
+      name: "facebookUrl",
+      title: "Facebook (URL)",
+      type: "url",
+      description: "Link na vaš Facebook profil",
+    }),
+    defineField({
+      name: "instagramUrl",
+      title: "Instagram (URL)",
+      type: "url",
+      description: "Link na vaš Instagram profil",
+    }),
+    defineField({
+      name: "tiktokUrl",
+      title: "TikTok (URL)",
+      type: "url",
+      description: "Link na vaš TikTok profil",
+    }),
+    defineField({
+      name: "websiteUrl",
+      title: "Web stranica (URL)",
+      type: "url",
+      description: "Link na vašu web stranicu",
+    }),
   ],
   preview: {
     select: { title: "name", subtitle: "slug.current" },

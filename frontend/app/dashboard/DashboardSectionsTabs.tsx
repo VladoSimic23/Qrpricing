@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   DndContext,
   closestCenter,
@@ -72,11 +73,16 @@ type Props = {
   showPricesBam: boolean;
   showPricesEur: boolean;
   activeLanguages: string[];
+  facebookUrl?: string;
+  instagramUrl?: string;
+  tiktokUrl?: string;
+  websiteUrl?: string;
   categories: Category[];
   subcategories: Subcategory[];
   menuItems: MenuItem[];
   updateExchangeRateAction: (formData: FormData) => Promise<void>;
   updateTenantLogoAction: (formData: FormData) => Promise<void>;
+  updateSocialLinksAction: (formData: FormData) => Promise<void>;
   updateTenantNameAction: (formData: FormData) => Promise<void>;
   deleteTenantAction: () => Promise<void>;
   createCategoryAction: (formData: FormData) => Promise<void>;
@@ -213,11 +219,16 @@ export function DashboardSectionsTabs({
   hideDigitalMenuHeader,
   showPricesBam,
   showPricesEur,
+  facebookUrl,
+  instagramUrl,
+  tiktokUrl,
+  websiteUrl,
   categories,
   subcategories,
   menuItems,
   updateExchangeRateAction,
   updateTenantLogoAction,
+  updateSocialLinksAction,
   updateTenantNameAction,
   deleteTenantAction,
   createCategoryAction,
@@ -655,10 +666,12 @@ export function DashboardSectionsTabs({
                       <p className="mb-2 text-xs text-slate-600">
                         Trenutni logo:
                       </p>
-                      <img
+                      <Image
                         src={tenantLogo}
                         alt="Trenutni logo"
-                        className="h-16 rounded border border-slate-200 object-contain"
+                        width={200}
+                        height={64}
+                        className="h-16 w-auto rounded border border-slate-200 object-contain"
                       />
                     </div>
                   )}
@@ -749,6 +762,81 @@ export function DashboardSectionsTabs({
 
                 <FormActionButton
                   idleLabel="Spremi postavke"
+                  loadingLabel="Spremam..."
+                  className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+                />
+              </ToastForm>
+
+              <ToastForm
+                action={updateSocialLinksAction}
+                successMessage="Društvene mreže su uspješno ažurirane!"
+                className="mt-8 flex flex-col gap-4 border-t border-slate-200 pt-6"
+              >
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-slate-900">
+                    Društvene mreže i linkovi
+                  </h4>
+                  <p className="text-xs text-slate-600 mb-2">
+                    Dodajte linkove na vaše društvene mreže koji će se
+                    prikazivati u podnožju (footeru) vašeg menija. Sva polja su
+                    opcionalna.
+                  </p>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-slate-700">
+                      Instagram URL
+                    </label>
+                    <input
+                      name="instagramUrl"
+                      type="url"
+                      defaultValue={instagramUrl}
+                      placeholder="https://instagram.com/vas-profil"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-slate-700">
+                      Facebook URL
+                    </label>
+                    <input
+                      name="facebookUrl"
+                      type="url"
+                      defaultValue={facebookUrl}
+                      placeholder="https://facebook.com/vas-profil"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-slate-700">
+                      TikTok URL
+                    </label>
+                    <input
+                      name="tiktokUrl"
+                      type="url"
+                      defaultValue={tiktokUrl}
+                      placeholder="https://tiktok.com/@vas-profil"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-slate-700">
+                      Web stranica URL
+                    </label>
+                    <input
+                      name="websiteUrl"
+                      type="url"
+                      defaultValue={websiteUrl}
+                      placeholder="https://vasa-stranica.com"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  </div>
+                </div>
+
+                <FormActionButton
+                  idleLabel="Spremi društvene mreže"
                   loadingLabel="Spremam..."
                   className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
                 />

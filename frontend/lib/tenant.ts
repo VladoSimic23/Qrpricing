@@ -17,6 +17,10 @@ export type TenantMembership = {
     showPricesBam?: boolean;
     showPricesEur?: boolean;
     activeLanguages?: string[];
+    facebookUrl?: string;
+    instagramUrl?: string;
+    tiktokUrl?: string;
+    websiteUrl?: string;
   };
 };
 
@@ -33,7 +37,11 @@ const membershipQuery = `*[_type == "tenantMember" && clerkUserId == $userId][0]
     hideDigitalMenuHeader,
     showPricesBam,
     showPricesEur,
-    activeLanguages
+    activeLanguages,
+    facebookUrl,
+    instagramUrl,
+    tiktokUrl,
+    websiteUrl
   }
 }`;
 

@@ -1,6 +1,41 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import type { Metadata, Viewport } from "next";
+import { Music2, Globe } from "lucide-react";
+
+const FacebookIcon = ({ size = 24 }: { size?: number }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+  </svg>
+);
+
+const InstagramIcon = ({ size = 24 }: { size?: number }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
 
 import { messages, resolveLocale, supportedLocales } from "@/lib/i18n";
 import { normalizeExchangeRate } from "@/lib/pricing";
@@ -16,6 +51,10 @@ type MenuPayload = {
   showPricesBam?: boolean;
   showPricesEur?: boolean;
   activeLanguages?: string[];
+  facebookUrl?: string;
+  instagramUrl?: string;
+  tiktokUrl?: string;
+  websiteUrl?: string;
   categories: {
     _id: string;
     title: string;
@@ -191,6 +230,10 @@ export default async function PublicMenuPage({
       showPricesBam,
       showPricesEur,
       activeLanguages,
+      facebookUrl,
+      instagramUrl,
+      tiktokUrl,
+      websiteUrl,
       "categories": *[_type == "menuCategory" && tenant._ref == ^._id] | order(sortOrder asc, title asc){
         _id,
         "title": select(
@@ -275,6 +318,69 @@ export default async function PublicMenuPage({
           </p>
         )}
       </section>
+
+      <footer className="mt-8 pb-12 flex flex-col items-center justify-center gap-6 px-4">
+        {(menu.facebookUrl ||
+          menu.instagramUrl ||
+          menu.tiktokUrl ||
+          menu.websiteUrl) && (
+          <div className="flex items-center gap-5">
+            {menu.instagramUrl && (
+              <a
+                href={menu.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#f7efe4]/60 hover:text-emerald-400 transition-colors"
+              >
+                <InstagramIcon size={24} />
+              </a>
+            )}
+            {menu.facebookUrl && (
+              <a
+                href={menu.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#f7efe4]/60 hover:text-emerald-400 transition-colors"
+              >
+                <FacebookIcon size={24} />
+              </a>
+            )}
+            {menu.tiktokUrl && (
+              <a
+                href={menu.tiktokUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#f7efe4]/60 hover:text-emerald-400 transition-colors"
+              >
+                <Music2 size={24} />
+              </a>
+            )}
+            {menu.websiteUrl && (
+              <a
+                href={menu.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#f7efe4]/60 hover:text-emerald-400 transition-colors"
+              >
+                <Globe size={24} />
+              </a>
+            )}
+          </div>
+        )}
+        <div className="text-center text-xs text-[#f7efe4]/40">
+          <p>
+            Kreirano pomoću{" "}
+            <a
+              href="https://digitalcjenik.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-emerald-400 transition-colors underline underline-offset-2"
+            >
+              digitalcjenik.com
+            </a>
+          </p>
+        </div>
+      </footer>
     </main>
   );
 }
