@@ -133,42 +133,17 @@ export default async function Home({
             </div>
           </div>
 
-          <div className="flex-1 right-visual-mockup relative w-full max-w-md lg:max-w-full">
+          <div className="flex-1 right-visual-mockup relative w-full max-w-md lg:max-w-full flex justify-center items-center">
             <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-tr from-emerald-500/30 to-blue-500/10 blur-2xl opacity-60"></div>
-            <div className="relative mx-auto w-[280px] sm:w-[320px] rounded-[2.5rem] border-[8px] border-slate-800 bg-slate-900 shadow-2xl overflow-hidden aspect-[9/19] flex flex-col pt-6">
-              <div className="absolute top-0 inset-x-0 h-6 bg-slate-800 rounded-b-xl w-32 mx-auto"></div>
-              {/* Mockup Screen Content */}
-              <div className="px-5 py-4 flex-1 overflow-hidden opacity-90">
-                <div className="h-32 rounded-2xl bg-slate-800 mb-6 flex items-center justify-center">
-                  <span className="text-slate-600 font-bold tracking-widest text-sm">
-                    VAŠ LOKAL
-                  </span>
-                </div>
-                <div className="space-y-4">
-                  <div className="h-6 w-24 bg-slate-700 rounded-full"></div>
-                  <div className="flex justify-between items-center py-2 border-b border-slate-800">
-                    <div className="space-y-2">
-                      <div className="h-4 w-32 bg-slate-200 rounded"></div>
-                      <div className="h-3 w-40 bg-slate-700 rounded"></div>
-                    </div>
-                    <div className="h-5 w-12 bg-emerald-500/80 rounded"></div>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b border-slate-800">
-                    <div className="space-y-2">
-                      <div className="h-4 w-28 bg-slate-200 rounded"></div>
-                      <div className="h-3 w-32 bg-slate-700 rounded"></div>
-                    </div>
-                    <div className="h-5 w-12 bg-emerald-500/80 rounded"></div>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b border-slate-800">
-                    <div className="space-y-2">
-                      <div className="h-4 w-36 bg-slate-200 rounded"></div>
-                      <div className="h-3 w-48 bg-slate-700 rounded"></div>
-                    </div>
-                    <div className="h-5 w-12 bg-emerald-500/80 rounded"></div>
-                  </div>
-                </div>
-              </div>
+            <div className="relative mx-auto rounded-[2.5rem] border-[8px] border-slate-800 bg-slate-900 shadow-2xl overflow-hidden aspect-[9/19] w-[280px] sm:w-[320px] transition-transform hover:scale-[1.02]">
+              <Image
+                src="/hero.jpg"
+                alt="Digitalni meni aplikacija u praksi"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 280px, 320px"
+                priority
+              />
             </div>
           </div>
         </div>
@@ -399,7 +374,7 @@ export default async function Home({
         id="demo"
         className="relative mx-auto max-w-5xl px-6 py-24 text-center"
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none rounded-[3rem]"></div>
+        <div className="absolute inset-0 from-emerald-500/5 to-transparent pointer-events-none rounded-[3rem]"></div>
 
         <h2 className="text-4xl font-extrabold text-white mb-6 relative z-10">
           Probaj odmah! Skeniraj kod.
@@ -411,12 +386,12 @@ export default async function Home({
 
         <div className="mx-auto w-64 h-64 bg-white rounded-3xl p-4 shadow-2xl shadow-emerald-500/20 relative z-10 hover:scale-105 transition-transform cursor-pointer group">
           <Link
-            href={withLang("/menu/ime-restorana", locale)}
+            href={withLang("/menu/naziv-objekta", locale)}
             className="block w-full h-full relative"
             aria-label="Otvori demo meni"
           >
             <Image
-              src="/test.png"
+              src="/qrmock.svg"
               alt="Demo QR kod"
               fill
               className="object-contain rounded-xl"
