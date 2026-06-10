@@ -16,6 +16,11 @@ type TenantWaiterConfig = {
   telegramThreadId?: number;
 };
 
+type TelegramApiResponse = {
+  ok: boolean;
+  description?: string;
+};
+
 function normalizeTable(raw?: string) {
   const value = (raw || "").trim().slice(0, 24);
   return value || null;
@@ -97,26 +102,64 @@ export async function POST(request: Request) {
       telegramPayload.message_thread_id = tenant.telegramThreadId;
     }
 
-    const telegramResponse = await fetch(
-      `https://api.telegram.org/bot${botToken}/sendMessage`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const sendTelegramMessage = async (payload: typeof telegramPayload) => {
+      const response = await fetch(
+        `https://api.telegram.org/bot${botToken}/sendMessage`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(telegramPayload),
-      },
-    );
+      );
+
+      let telegramResult: TelegramApiResponse | null = null;
+      try {
+        telegramResult = (await response.json()) as TelegramApiResponse;
+      } catch {
+        telegramResult = null;
+      }
+
+      return { response, telegramResult };
+    };
+
+    let { response: telegramResponse, telegramResult } =
+      await sendTelegramMessage(telegramPayload);
+
+    const threadError =
+      tenant.telegramThreadId &&
+      !telegramResponse.ok &&
+      (telegramResult?.description || "")
+        .toLowerCase()
+        .includes("message thread not found");
+
+    if (threadError) {
+      const fallbackPayload = { ...telegramPayload };
+      delete fallbackPayload.message_thread_id;
+      ({ response: telegramResponse, telegramResult } =
+        await sendTelegramMessage(fallbackPayload));
+    }
 
     if (!telegramResponse.ok) {
+      const description =
+        telegramResult?.description || "Unknown Telegram error";
+      console.error("[call-waiter] Telegram send failed", {
+        slug,
+        tenantId: tenant._id,
+        status: telegramResponse.status,
+        description,
+      });
+
       return NextResponse.json(
-        { error: "Telegram send failed" },
+        { error: `Telegram send failed: ${description}` },
         { status: 502 },
       );
     }
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (error) {
+    console.error("[call-waiter] Unexpected error", error);
     return NextResponse.json(
       { error: "Unexpected server error" },
       { status: 500 },

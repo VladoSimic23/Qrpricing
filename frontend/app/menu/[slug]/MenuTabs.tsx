@@ -291,13 +291,25 @@ export function MenuTabs({
       });
 
       if (!response.ok) {
-        throw new Error("Call waiter request failed");
+        let errorText = "";
+        try {
+          const payload = (await response.json()) as { error?: string };
+          errorText = payload.error || "";
+        } catch {
+          errorText = "";
+        }
+
+        throw new Error(errorText || "Call waiter request failed");
       }
 
       setWaiterStatus(messages.callWaiterSuccess);
       window.setTimeout(() => setWaiterStatus(null), 5000);
-    } catch {
-      setWaiterStatus(messages.callWaiterError);
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? `${messages.callWaiterError} (${error.message})`
+          : messages.callWaiterError;
+      setWaiterStatus(message);
       window.setTimeout(() => setWaiterStatus(null), 5000);
     } finally {
       setIsCallingWaiter(false);
