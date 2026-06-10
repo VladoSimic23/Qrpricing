@@ -21,8 +21,10 @@ type TelegramApiResponse = {
   description?: string;
 };
 
-function normalizeTable(raw?: string) {
-  const value = (raw || "").trim().slice(0, 24);
+function normalizeTable(raw: unknown) {
+  const value = String(raw ?? "")
+    .trim()
+    .slice(0, 24);
   return value || null;
 }
 
@@ -37,8 +39,17 @@ function escapeHtml(value: string) {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as CallWaiterPayload;
-    const slug = (body.slug || "").trim();
+    let body: CallWaiterPayload = {};
+    try {
+      body = (await request.json()) as CallWaiterPayload;
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const slug =
+      typeof body.slug === "string"
+        ? body.slug.trim()
+        : String(body.slug || "").trim();
 
     if (!slug) {
       return NextResponse.json({ error: "Missing slug" }, { status: 400 });
@@ -71,7 +82,9 @@ export async function POST(request: Request) {
     }
 
     const table = normalizeTable(body.table);
-    const isEn = (body.locale || "").toLowerCase().startsWith("en");
+    const locale =
+      typeof body.locale === "string" ? body.locale : String(body.locale || "");
+    const isEn = locale.toLowerCase().startsWith("en");
     const now = new Date().toLocaleTimeString(isEn ? "en-GB" : "hr-HR", {
       hour: "2-digit",
       minute: "2-digit",
@@ -144,15 +157,19 @@ export async function POST(request: Request) {
     if (!telegramResponse.ok) {
       const description =
         telegramResult?.description || "Unknown Telegram error";
+      const detailedDescription =
+        telegramResponse.status === 401
+          ? `${description} (Telegram bot token is invalid or revoked)`
+          : description;
       console.error("[call-waiter] Telegram send failed", {
         slug,
         tenantId: tenant._id,
         status: telegramResponse.status,
-        description,
+        description: detailedDescription,
       });
 
       return NextResponse.json(
-        { error: `Telegram send failed: ${description}` },
+        { error: `Telegram send failed: ${detailedDescription}` },
         { status: 502 },
       );
     }
