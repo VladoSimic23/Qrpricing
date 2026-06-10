@@ -77,12 +77,16 @@ type Props = {
   instagramUrl?: string;
   tiktokUrl?: string;
   websiteUrl?: string;
+  allowWaiterCall: boolean;
+  telegramChatId?: string;
+  telegramThreadId?: number;
   categories: Category[];
   subcategories: Subcategory[];
   menuItems: MenuItem[];
   updateExchangeRateAction: (formData: FormData) => Promise<void>;
   updateTenantLogoAction: (formData: FormData) => Promise<void>;
   updateSocialLinksAction: (formData: FormData) => Promise<void>;
+  updateWaiterCallSettingsAction: (formData: FormData) => Promise<void>;
   updateTenantNameAction: (formData: FormData) => Promise<void>;
   deleteTenantAction: () => Promise<void>;
   createCategoryAction: (formData: FormData) => Promise<void>;
@@ -223,12 +227,16 @@ export function DashboardSectionsTabs({
   instagramUrl,
   tiktokUrl,
   websiteUrl,
+  allowWaiterCall,
+  telegramChatId,
+  telegramThreadId,
   categories,
   subcategories,
   menuItems,
   updateExchangeRateAction,
   updateTenantLogoAction,
   updateSocialLinksAction,
+  updateWaiterCallSettingsAction,
   updateTenantNameAction,
   deleteTenantAction,
   createCategoryAction,
@@ -837,6 +845,68 @@ export function DashboardSectionsTabs({
 
                 <FormActionButton
                   idleLabel="Spremi društvene mreže"
+                  loadingLabel="Spremam..."
+                  className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+                />
+              </ToastForm>
+
+              <ToastForm
+                action={updateWaiterCallSettingsAction}
+                successMessage="Telegram postavke za poziv konobara su spremljene!"
+                className="mt-8 flex flex-col gap-4 border-t border-slate-200 pt-6"
+              >
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-slate-900">
+                    Pozovi konobara (Telegram)
+                  </h4>
+                  <p className="text-xs text-slate-600">
+                    Aktiviraj dugme u meniju koje šalje Telegram poruku osoblju.
+                    Za slanje mora biti postavljena server varijabla
+                    TELEGRAM_BOT_TOKEN.
+                  </p>
+
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      name="allowWaiterCall"
+                      defaultChecked={allowWaiterCall}
+                      className="h-4 w-4 rounded border-slate-300 accent-emerald-600"
+                    />
+                    <span className="text-sm text-slate-700">
+                      Omogući opciju &quot;Pozovi konobara&quot;
+                    </span>
+                  </label>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-slate-700">
+                      Telegram Chat ID
+                    </label>
+                    <input
+                      name="telegramChatId"
+                      defaultValue={telegramChatId}
+                      placeholder="npr. -1001234567890"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-slate-700">
+                      Telegram Topic Thread ID (opcionalno)
+                    </label>
+                    <input
+                      name="telegramThreadId"
+                      type="number"
+                      min="1"
+                      step="1"
+                      defaultValue={telegramThreadId}
+                      placeholder="npr. 12"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  </div>
+                </div>
+
+                <FormActionButton
+                  idleLabel="Spremi Telegram postavke"
                   loadingLabel="Spremam..."
                   className="w-fit rounded-full bg-slate-900 px-6 py-2 text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
                 />

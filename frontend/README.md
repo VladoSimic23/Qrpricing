@@ -35,6 +35,7 @@ Minimalno:
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 - `CLERK_SECRET_KEY`
 - `SANITY_API_WRITE_TOKEN`
+- `TELEGRAM_BOT_TOKEN` (ako koristis opciju "Pozovi konobara")
 
 Opcionalno:
 
@@ -57,6 +58,16 @@ npm run dev
 3. Dodaj kategorije i artikle.
 4. Pogledaj javni meni na `/menu/[slug]`.
 5. Kao admin koristi `/studio` za globalno upravljanje.
+
+## Pozovi konobara (Telegram)
+
+1. Kreiraj Telegram bota preko BotFather i uzmi token.
+2. Dodaj bota u grupu/kanal osoblja.
+3. U dashboardu (Postavke) upisi `Telegram Chat ID` i opcionalni `Thread ID`.
+4. U QR URL dodaj `?table=XX` (npr. `/menu/moj-lokal?table=12`) da poruka sadrzi broj stola.
+5. U `.env.local` postavi `TELEGRAM_BOT_TOKEN`.
+
+Kad gost klikne "Pozovi konobara", backend salje poruku direktno u Telegram.
 
 ## Napomena za produkciju
 

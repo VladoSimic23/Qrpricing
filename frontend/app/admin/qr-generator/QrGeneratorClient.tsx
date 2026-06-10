@@ -27,6 +27,7 @@ export function QrGeneratorClient({ tenants, baseUrl }: Props) {
   );
   const [size, setSize] = useState(320);
   const [customLabel, setCustomLabel] = useState(initialTenant?.name ?? "");
+  const [tableLabel, setTableLabel] = useState("");
   const [copied, setCopied] = useState(false);
   const previewId = useId();
   const svgContainerRef = useRef<HTMLDivElement | null>(null);
@@ -34,19 +35,11 @@ export function QrGeneratorClient({ tenants, baseUrl }: Props) {
   const selectedTenant =
     tenants.find((tenant) => tenant._id === selectedTenantId) ?? initialTenant;
   const menuUrl = selectedTenant
-    ? `${baseUrl}/menu/${selectedTenant.slug}`
+    ? `${baseUrl}/menu/${selectedTenant.slug}${tableLabel.trim() ? `?table=${encodeURIComponent(tableLabel.trim())}` : ""}`
     : "";
   const fileName = selectedTenant
     ? `${slugToFileName(selectedTenant.slug)}-menu-qr.svg`
     : "menu-qr.svg";
-
-  useEffect(() => {
-    if (!selectedTenant) {
-      return;
-    }
-
-    setCustomLabel(selectedTenant.name);
-  }, [selectedTenant]);
 
   useEffect(() => {
     if (!copied) {
@@ -126,7 +119,16 @@ export function QrGeneratorClient({ tenants, baseUrl }: Props) {
                 Klijent
                 <select
                   value={selectedTenantId}
-                  onChange={(event) => setSelectedTenantId(event.target.value)}
+                  onChange={(event) => {
+                    const nextTenantId = event.target.value;
+                    setSelectedTenantId(nextTenantId);
+                    const nextTenant = tenants.find(
+                      (tenant) => tenant._id === nextTenantId,
+                    );
+                    if (nextTenant) {
+                      setCustomLabel(nextTenant.name);
+                    }
+                  }}
                   className="rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
                 >
                   {tenants.map((tenant) => (
@@ -144,6 +146,16 @@ export function QrGeneratorClient({ tenants, baseUrl }: Props) {
                   onChange={(event) => setCustomLabel(event.target.value)}
                   className="rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
                   placeholder="Naziv klijenta"
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm text-slate-200">
+                Oznaka stola (opcionalno)
+                <input
+                  value={tableLabel}
+                  onChange={(event) => setTableLabel(event.target.value)}
+                  className="rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+                  placeholder="npr. 12"
                 />
               </label>
 
