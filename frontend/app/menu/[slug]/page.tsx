@@ -55,7 +55,6 @@ type MenuPayload = {
   instagramUrl?: string;
   tiktokUrl?: string;
   websiteUrl?: string;
-  allowWaiterCall?: boolean;
   categories: {
     _id: string;
     title: string;
@@ -196,10 +195,10 @@ export default async function PublicMenuPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ lang?: string; table?: string }>;
+  searchParams: Promise<{ lang?: string }>;
 }) {
   const { slug } = await params;
-  const { lang, table } = await searchParams;
+  const { lang } = await searchParams;
   const requestHeaders = await headers();
 
   // Prvo dohvacamo tenanta kako bismo znali aktivne jezike
@@ -235,7 +234,6 @@ export default async function PublicMenuPage({
       instagramUrl,
       tiktokUrl,
       websiteUrl,
-      allowWaiterCall,
       "categories": *[_type == "menuCategory" && tenant._ref == ^._id] | order(sortOrder asc, title asc){
         _id,
         "title": select(
@@ -312,8 +310,6 @@ export default async function PublicMenuPage({
               slug={slug}
               supportedLocales={supportedLocales}
               activeLanguages={menu.activeLanguages || ["hr", "en"]}
-              allowWaiterCall={menu.allowWaiterCall ?? false}
-              tableLabel={table?.trim() || undefined}
             />
           </section>
         ) : (

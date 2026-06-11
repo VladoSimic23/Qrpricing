@@ -678,51 +678,6 @@ async function updateSocialLinksAction(formData: FormData) {
   revalidatePath(`/menu/${membership.tenant.slug}`);
 }
 
-async function updateWaiterCallSettingsAction(formData: FormData) {
-  "use server";
-
-  const membership = await getCurrentMembership();
-  if (!membership?.tenant?._id) {
-    throw new Error("Nemas pristup tenantu.");
-  }
-
-  const allowWaiterCall = formData.get("allowWaiterCall") === "on";
-  const telegramChatId = String(formData.get("telegramChatId") || "").trim();
-  const telegramThreadRaw = String(
-    formData.get("telegramThreadId") || "",
-  ).trim();
-
-  if (allowWaiterCall && !telegramChatId) {
-    throw new Error(
-      "Za uključivanje opcije 'Pozovi konobara' moraš unijeti Telegram Chat ID.",
-    );
-  }
-
-  let telegramThreadId: number | null = null;
-  if (telegramThreadRaw) {
-    const parsed = Number(telegramThreadRaw);
-    if (!Number.isInteger(parsed) || parsed <= 0) {
-      throw new Error("Thread ID mora biti cijeli pozitivan broj.");
-    }
-    telegramThreadId = parsed;
-  }
-
-  const writeClient = getServerWriteClient();
-  const patch = writeClient.patch(membership.tenant._id).set({
-    allowWaiterCall,
-    telegramChatId,
-  });
-
-  if (telegramThreadId !== null) {
-    await patch.set({ telegramThreadId }).commit();
-  } else {
-    await patch.unset(["telegramThreadId"]).commit();
-  }
-
-  revalidatePath("/dashboard");
-  revalidatePath(`/menu/${membership.tenant.slug}`);
-}
-
 async function reorderAction(
   type: "menuCategory" | "menuSubcategory" | "menuItem",
   orderedIds: string[],
@@ -916,16 +871,12 @@ export default async function DashboardPage() {
         instagramUrl={membership.tenant.instagramUrl}
         tiktokUrl={membership.tenant.tiktokUrl}
         websiteUrl={membership.tenant.websiteUrl}
-        allowWaiterCall={membership.tenant.allowWaiterCall ?? false}
-        telegramChatId={membership.tenant.telegramChatId}
-        telegramThreadId={membership.tenant.telegramThreadId}
         categories={categories}
         subcategories={subcategories}
         menuItems={menuItems}
         updateExchangeRateAction={updateExchangeRateAction}
         updateTenantLogoAction={updateTenantLogoAction}
         updateSocialLinksAction={updateSocialLinksAction}
-        updateWaiterCallSettingsAction={updateWaiterCallSettingsAction}
         createCategoryAction={createCategoryAction}
         createMenuItemAction={createMenuItemAction}
         updateCategoryAction={updateCategoryAction}

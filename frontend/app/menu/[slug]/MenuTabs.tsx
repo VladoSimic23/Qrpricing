@@ -155,8 +155,6 @@ export function MenuTabs({
   slug,
   supportedLocales,
   activeLanguages,
-  allowWaiterCall,
-  tableLabel,
 }: {
   categories: Category[];
   venueName: string;
@@ -177,17 +175,11 @@ export function MenuTabs({
     openSubcategories: string;
     closeMobileMenu: string;
     languageLabel: string;
-    callWaiter: string;
-    callWaiterSending: string;
-    callWaiterSuccess: string;
-    callWaiterError: string;
   };
   locale: string;
   slug: string;
   supportedLocales: readonly string[];
   activeLanguages: string[];
-  allowWaiterCall: boolean;
-  tableLabel?: string;
 }) {
   const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
   const [activeSubTab, setActiveSubTab] = useState("all");
@@ -197,8 +189,6 @@ export function MenuTabs({
     url: string;
     name: string;
   } | null>(null);
-  const [isCallingWaiter, setIsCallingWaiter] = useState(false);
-  const [waiterStatus, setWaiterStatus] = useState<string | null>(null);
   const active = categories.find((c) => c._id === activeId) ?? categories[0];
 
   useEffect(() => {
@@ -267,53 +257,6 @@ export function MenuTabs({
   const selectCategory = (categoryId: string) => {
     setActiveId(categoryId);
     setActiveSubTab("all");
-  };
-
-  const handleCallWaiter = async () => {
-    if (isCallingWaiter) {
-      return;
-    }
-
-    setIsCallingWaiter(true);
-    setWaiterStatus(messages.callWaiterSending);
-
-    try {
-      const response = await fetch("/api/call-waiter", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          slug,
-          locale,
-          table: tableLabel,
-        }),
-      });
-
-      if (!response.ok) {
-        let errorText = "";
-        try {
-          const payload = (await response.json()) as { error?: string };
-          errorText = payload.error || "";
-        } catch {
-          errorText = "";
-        }
-
-        throw new Error(errorText || "Call waiter request failed");
-      }
-
-      setWaiterStatus(messages.callWaiterSuccess);
-      window.setTimeout(() => setWaiterStatus(null), 5000);
-    } catch (error) {
-      const message =
-        error instanceof Error && error.message
-          ? `${messages.callWaiterError} (${error.message})`
-          : messages.callWaiterError;
-      setWaiterStatus(message);
-      window.setTimeout(() => setWaiterStatus(null), 5000);
-    } finally {
-      setIsCallingWaiter(false);
-    }
   };
 
   return (
@@ -621,25 +564,6 @@ export function MenuTabs({
               />
             </div>
           </div>
-        </div>
-      )}
-
-      {allowWaiterCall && (
-        <div className="fixed bottom-4 left-0 right-0 z-40 mx-auto flex w-full max-w-md flex-col items-center px-4">
-          {waiterStatus && (
-            <p className="mb-2 w-full rounded-full border border-emerald-200/30 bg-[#11171a]/95 px-4 py-2 text-center text-xs text-emerald-100 shadow-lg backdrop-blur-sm">
-              {waiterStatus}
-            </p>
-          )}
-          <button
-            type="button"
-            onClick={() => void handleCallWaiter()}
-            disabled={isCallingWaiter}
-            className="w-full rounded-full border border-emerald-300/35 bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-xl shadow-emerald-500/20 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {isCallingWaiter ? messages.callWaiterSending : messages.callWaiter}
-            {tableLabel ? ` • Stol ${tableLabel}` : ""}
-          </button>
         </div>
       )}
     </div>

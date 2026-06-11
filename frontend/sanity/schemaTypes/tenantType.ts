@@ -110,28 +110,6 @@ export const tenantType = defineType({
       type: "url",
       description: "Link na vašu web stranicu",
     }),
-    defineField({
-      name: "allowWaiterCall",
-      title: "Omogući 'Pozovi konobara'",
-      type: "boolean",
-      initialValue: false,
-      description:
-        "Ako je uključeno, gosti će u digitalnom meniju vidjeti dugme za poziv konobara.",
-    }),
-    defineField({
-      name: "telegramChatId",
-      title: "Telegram Chat ID",
-      type: "string",
-      description:
-        "Chat ID grupe/kanala gdje bot šalje obavijesti o pozivu konobara (npr. -1001234567890).",
-    }),
-    defineField({
-      name: "telegramThreadId",
-      title: "Telegram Topic Thread ID (opcionalno)",
-      type: "number",
-      description:
-        "Ako koristite teme u Telegram grupi, upišite thread ID da poruke idu u tačan topic.",
-    }),
   ],
   preview: {
     select: { title: "name", subtitle: "slug.current" },

@@ -29,10 +29,6 @@ type MenuMessages = {
   openSubcategories: string;
   closeMobileMenu: string;
   languageLabel: string;
-  callWaiter: string;
-  callWaiterSending: string;
-  callWaiterSuccess: string;
-  callWaiterError: string;
 };
 
 export type AppMessages = {
@@ -69,10 +65,6 @@ export const messages: Record<Locale, AppMessages> = {
       openSubcategories: "Otvori podkategorije",
       closeMobileMenu: "Zatvori mobilni meni",
       languageLabel: "Jezik",
-      callWaiter: "Pozovi konobara",
-      callWaiterSending: "Šaljem poziv...",
-      callWaiterSuccess: "Konobar je obaviješten.",
-      callWaiterError: "Poziv nije poslan. Pokušaj ponovo.",
     },
   },
   en: {
@@ -103,10 +95,6 @@ export const messages: Record<Locale, AppMessages> = {
       openSubcategories: "Open subcategories",
       closeMobileMenu: "Close mobile menu",
       languageLabel: "Language",
-      callWaiter: "Call waiter",
-      callWaiterSending: "Sending call...",
-      callWaiterSuccess: "The waiter has been notified.",
-      callWaiterError: "Call failed. Please try again.",
     },
   },
 };

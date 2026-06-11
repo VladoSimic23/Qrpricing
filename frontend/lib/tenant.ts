@@ -21,9 +21,6 @@ export type TenantMembership = {
     instagramUrl?: string;
     tiktokUrl?: string;
     websiteUrl?: string;
-    allowWaiterCall?: boolean;
-    telegramChatId?: string;
-    telegramThreadId?: number;
   };
 };
 
@@ -44,10 +41,7 @@ const membershipQuery = `*[_type == "tenantMember" && clerkUserId == $userId][0]
     facebookUrl,
     instagramUrl,
     tiktokUrl,
-    websiteUrl,
-    allowWaiterCall,
-    telegramChatId,
-    telegramThreadId
+    websiteUrl
   }
 }`;
 
