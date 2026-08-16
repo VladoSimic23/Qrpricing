@@ -18,6 +18,24 @@ import {
   serverReadClient,
 } from "@/sanity/lib/serverClient";
 
+function parseSizeVariants(
+  formData: FormData,
+): { _type: "sizeVariant"; _key: string; label: string; price: number }[] {
+  const labels = formData.getAll("sizeLabel").map((v) => String(v).trim());
+  const prices = formData.getAll("sizePrice").map((v) => Number(v));
+
+  return labels
+    .map((label, i) => ({
+      _type: "sizeVariant" as const,
+      _key: `size-${i}-${Math.random().toString(36).slice(2, 8)}`,
+      label,
+      price: prices[i],
+    }))
+    .filter(
+      (v) => v.label.length > 0 && Number.isFinite(v.price) && v.price >= 0,
+    );
+}
+
 type Category = {
   _id: string;
   title: string;
@@ -39,6 +57,7 @@ type MenuItem = {
   nameEn?: string;
   price: number;
   currency: "EUR" | "BAM";
+  sizeVariants?: { label: string; price: number }[];
   isAvailable: boolean;
   categoryTitle: string;
   description?: string;
@@ -148,7 +167,9 @@ async function createMenuItemAction(formData: FormData) {
   const descriptionEn = String(formData.get("descriptionEn") || "").trim();
   const categoryId = String(formData.get("categoryId") || "").trim();
   const currency = normalizeCurrency(String(formData.get("currency") || "EUR"));
-  const price = Number(formData.get("price") || 0);
+  const sizeVariants = parseSizeVariants(formData);
+  const price =
+    sizeVariants.length > 0 ? 0 : Number(formData.get("price") || 0);
   const sortOrder = Number(formData.get("sortOrder") || 0);
   const imageFile = formData.get("image") as File | null;
   const subCategoryId = String(formData.get("subCategoryId") || "").trim();
@@ -157,8 +178,14 @@ async function createMenuItemAction(formData: FormData) {
     throw new Error("Naziv artikla i kategorija su obavezni.");
   }
 
-  if (!Number.isFinite(price) || price < 0) {
+  if (sizeVariants.length === 0 && (!Number.isFinite(price) || price < 0)) {
     throw new Error("Cijena mora biti broj veci ili jednak nuli.");
+  }
+
+  if (sizeVariants.length === 1) {
+    throw new Error(
+      "Unesi barem dvije velicine s cijenama (npr. mala i velika) ili iskljuci opciju velicina.",
+    );
   }
 
   if (
@@ -221,6 +248,7 @@ async function createMenuItemAction(formData: FormData) {
     ...(descriptionEn ? { descriptionEn } : {}),
     price,
     currency,
+    ...(sizeVariants.length > 0 ? { sizeVariants } : {}),
     isAvailable: true,
     sortOrder,
     ...(imageRef ? { image: imageRef } : {}),
@@ -453,7 +481,9 @@ async function updateMenuItemAction(formData: FormData) {
   const categoryId = String(formData.get("categoryId") || "").trim();
   const subCategoryId = String(formData.get("subCategoryId") || "").trim();
   const currency = normalizeCurrency(String(formData.get("currency") || "EUR"));
-  const price = Number(formData.get("price") || 0);
+  const sizeVariants = parseSizeVariants(formData);
+  const price =
+    sizeVariants.length > 0 ? 0 : Number(formData.get("price") || 0);
   const sortOrder = Number(formData.get("sortOrder") || 0);
   const isAvailable = formData.get("isAvailable") === "true";
 
@@ -461,8 +491,14 @@ async function updateMenuItemAction(formData: FormData) {
     throw new Error("ID artikla, naziv i kategorija su obavezni.");
   }
 
-  if (!Number.isFinite(price) || price < 0) {
+  if (sizeVariants.length === 0 && (!Number.isFinite(price) || price < 0)) {
     throw new Error("Cijena mora biti broj veci ili jednak nuli.");
+  }
+
+  if (sizeVariants.length === 1) {
+    throw new Error(
+      "Unesi barem dvije velicine s cijenama (npr. mala i velika) ili iskljuci opciju velicina.",
+    );
   }
 
   if (
@@ -517,6 +553,11 @@ async function updateMenuItemAction(formData: FormData) {
     isAvailable,
     category: { _type: "reference", _ref: categoryId },
   });
+
+  patchBuilder =
+    sizeVariants.length > 0
+      ? patchBuilder.set({ sizeVariants })
+      : patchBuilder.unset(["sizeVariants"]);
 
   if (imageFile && imageFile.size > 0) {
     if (!imageFile.type.startsWith("image/")) {
@@ -813,6 +854,7 @@ export default async function DashboardPage() {
         nameEn,
         price,
         currency,
+        sizeVariants[]{label, price},
         isAvailable,
         "categoryId": category._ref,
         "categoryTitle": category->title,

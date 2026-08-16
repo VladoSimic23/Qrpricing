@@ -11,6 +11,7 @@ type Item = {
   description?: string;
   price: number;
   currency: string;
+  sizeVariants?: { label: string; price: number }[];
   isAvailable: boolean;
   imageUrl?: string;
 };
@@ -40,8 +41,8 @@ function PricePills({
   showPricesBam,
   showPricesEur,
 }: {
-  bam: number;
-  eur: number;
+  bam: number[];
+  eur: number[];
   showPricesBam: boolean;
   showPricesEur: boolean;
 }) {
@@ -53,12 +54,12 @@ function PricePills({
     <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5 text-xs font-semibold md:gap-2 md:text-sm">
       {showPricesBam && (
         <span className="rounded-full border border-amber-200/15 bg-amber-400/15 px-2.5 py-0.5 text-amber-100 md:px-3 md:py-1">
-          {bam.toFixed(2)} KM
+          {bam.map((v) => v.toFixed(2)).join(" / ")} KM
         </span>
       )}
       {showPricesEur && (
         <span className="rounded-full border border-sky-200/15 bg-sky-400/15 px-2.5 py-0.5 text-sky-100 md:px-3 md:py-1">
-          {eur.toFixed(2)} EUR
+          {eur.map((v) => v.toFixed(2)).join(" / ")} EUR
         </span>
       )}
     </div>
@@ -78,11 +79,11 @@ function ItemCard({
   showPricesEur: boolean;
   onImageClick?: (imageUrl: string, imageName: string) => void;
 }) {
-  const converted = convertPrice(
-    item.price,
-    item.currency,
-    exchangeRateEurToBam,
-  );
+  const converted = (
+    item.sizeVariants && item.sizeVariants.length > 0
+      ? item.sizeVariants
+      : [{ price: item.price }]
+  ).map((v) => convertPrice(v.price, item.currency, exchangeRateEurToBam));
 
   const hasImageOrDesc = !!(item.imageUrl || item.description);
 
@@ -115,8 +116,8 @@ function ItemCard({
             </h3>
             {!hasImageOrDesc && (
               <PricePills
-                bam={converted.bam}
-                eur={converted.eur}
+                bam={converted.map((c) => c.bam)}
+                eur={converted.map((c) => c.eur)}
                 showPricesBam={showPricesBam}
                 showPricesEur={showPricesEur}
               />
@@ -130,8 +131,8 @@ function ItemCard({
           {hasImageOrDesc && (
             <div className="mt-1 flex justify-end">
               <PricePills
-                bam={converted.bam}
-                eur={converted.eur}
+                bam={converted.map((c) => c.bam)}
+                eur={converted.map((c) => c.eur)}
                 showPricesBam={showPricesBam}
                 showPricesEur={showPricesEur}
               />

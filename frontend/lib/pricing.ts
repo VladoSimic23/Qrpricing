@@ -48,3 +48,20 @@ export function formatPricePair(
   const { eur, bam } = convertPrice(amount, currency, eurToBamRate);
   return `${bam.toFixed(2)} KM / ${eur.toFixed(2)} EUR`;
 }
+
+export type SizeVariant = { label: string; price: number };
+
+export function formatItemPriceLabel(
+  item: { price: number; currency: string; sizeVariants?: SizeVariant[] },
+  eurToBamRate: number,
+): string {
+  if (item.sizeVariants && item.sizeVariants.length > 0) {
+    return item.sizeVariants
+      .map(
+        (v) =>
+          `${v.label}: ${formatPricePair(v.price, item.currency, eurToBamRate)}`,
+      )
+      .join(" · ");
+  }
+  return formatPricePair(item.price, item.currency, eurToBamRate);
+}

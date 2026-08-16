@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const menuItemType = defineType({
   name: "menuItem",
@@ -46,7 +46,51 @@ export const menuItemType = defineType({
       name: "price",
       title: "Cijena",
       type: "number",
-      validation: (rule) => rule.required().min(0),
+      description: "Koristi se ako artikl nema definirane veličine ispod.",
+      validation: (rule) =>
+        rule.min(0).custom((value, context) => {
+          const document = context.document as
+            | { sizeVariants?: unknown[] }
+            | undefined;
+          const hasVariants = (document?.sizeVariants?.length ?? 0) > 0;
+          if (!hasVariants && (value === undefined || value === null)) {
+            return "Cijena je obavezna ako artikl nema definirane veličine.";
+          }
+          return true;
+        }),
+    }),
+    defineField({
+      name: "sizeVariants",
+      title: "Veličine i cijene",
+      description:
+        "Dodaj ako artikl ima više veličina (npr. Mala/Velika) s različitim cijenama. Ako je popunjeno, koristi se umjesto cijene iznad.",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "sizeVariant",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Naziv veličine",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "price",
+              title: "Cijena",
+              type: "number",
+              validation: (rule) => rule.required().min(0),
+            }),
+          ],
+          preview: {
+            select: { label: "label", price: "price" },
+            prepare({ label, price }) {
+              return { title: `${label}: ${price ?? 0}` };
+            },
+          },
+        }),
+      ],
     }),
     defineField({
       name: "currency",

@@ -21,7 +21,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { FormActionButton } from "./FormActionButton";
 import { ToastForm } from "./ToastForm";
-import { formatPricePair } from "@/lib/pricing";
+import { SizeVariantsEditor } from "./SizeVariantsEditor";
+import { formatItemPriceLabel } from "@/lib/pricing";
 
 type Category = { _id: string; title: string; sortOrder: number };
 type Subcategory = {
@@ -37,6 +38,7 @@ type MenuItem = {
   nameEn?: string;
   price: number;
   currency: "EUR" | "BAM";
+  sizeVariants?: { label: string; price: number }[];
   isAvailable: boolean;
   categoryTitle: string;
   description?: string;
@@ -98,7 +100,7 @@ function ItemForm({
       <div className="flex items-center justify-between gap-2">
         <span className="font-medium">{item.name}</span>
         <span className="whitespace-nowrap text-xs text-slate-500">
-          {formatPricePair(item.price, item.currency, tenantExchangeRate)}
+          {formatItemPriceLabel(item, tenantExchangeRate)}
         </span>
       </div>
       {item.imageUrl && (
@@ -142,24 +144,12 @@ function ItemForm({
           className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
       )}
-      <div className="grid gap-2 sm:grid-cols-2">
-        <input
-          name="price"
-          type="number"
-          step="0.01"
-          min="0"
-          required
-          defaultValue={item.price}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+      <div className="grid gap-2">
+        <SizeVariantsEditor
+          defaultPrice={item.price}
+          defaultCurrency={item.currency}
+          defaultVariants={item.sizeVariants}
         />
-        <select
-          name="currency"
-          defaultValue={item.currency}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-        >
-          <option value="EUR">EUR</option>
-          <option value="BAM">KM</option>
-        </select>
       </div>
       <div className="grid gap-2 sm:grid-cols-3">
         <select
@@ -281,7 +271,7 @@ function SortableMenuItem({
           <div>
             <p className="font-medium text-slate-900">{item.name}</p>
             <p className="text-xs text-slate-500">
-              {formatPricePair(item.price, item.currency, tenantExchangeRate)} ·{" "}
+              {formatItemPriceLabel(item, tenantExchangeRate)} ·{" "}
               {item.isAvailable ? "Dostupno" : "Nedostupno"}
             </p>
           </div>

@@ -64,6 +64,7 @@ type MenuPayload = {
       description?: string;
       price: number;
       currency: string;
+      sizeVariants?: { label: string; price: number }[];
       isAvailable: boolean;
       imageUrl?: string;
     }[];
@@ -76,6 +77,7 @@ type MenuPayload = {
         description?: string;
         price: number;
         currency: string;
+        sizeVariants?: { label: string; price: number }[];
         isAvailable: boolean;
         imageUrl?: string;
       }[];
@@ -252,6 +254,7 @@ export default async function PublicMenuPage({
           ),
           price,
           currency,
+          sizeVariants[]{label, price},
           isAvailable,
           "imageUrl": image.asset->url
         },
@@ -273,6 +276,7 @@ export default async function PublicMenuPage({
             ),
             price,
             currency,
+            sizeVariants[]{label, price},
             isAvailable,
             "imageUrl": image.asset->url
           }

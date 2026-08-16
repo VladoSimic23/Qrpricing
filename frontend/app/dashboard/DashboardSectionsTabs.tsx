@@ -32,6 +32,7 @@ import {
 import { DashboardItemTabs } from "./DashboardItemTabs";
 import { FormActionButton } from "./FormActionButton";
 import { ToastForm } from "./ToastForm";
+import { SizeVariantsEditor } from "./SizeVariantsEditor";
 
 type Category = {
   _id: string;
@@ -54,6 +55,7 @@ type MenuItem = {
   nameEn?: string;
   price: number;
   currency: "EUR" | "BAM";
+  sizeVariants?: { label: string; price: number }[];
   isAvailable: boolean;
   categoryTitle: string;
   description?: string;
@@ -411,23 +413,7 @@ export function DashboardSectionsTabs({
                     className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                   />
                 )}
-                <input
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  required
-                  placeholder="0.00"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                />
-                <select
-                  name="currency"
-                  defaultValue="BAM"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                >
-                  <option value="EUR">EUR</option>
-                  <option value="BAM">KM</option>
-                </select>
+                <SizeVariantsEditor />
                 <select
                   name="categoryId"
                   required
