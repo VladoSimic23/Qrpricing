@@ -172,7 +172,6 @@ async function createMenuItemAction(formData: FormData) {
   const sizeVariants = parseSizeVariants(formData);
   const price =
     sizeVariants.length > 0 ? 0 : Number(formData.get("price") || 0);
-  const sortOrder = Number(formData.get("sortOrder") || 0);
   const imageFile = formData.get("image") as File | null;
   const subCategoryId = String(formData.get("subCategoryId") || "").trim();
 
@@ -225,6 +224,16 @@ async function createMenuItemAction(formData: FormData) {
       throw new Error("Podkategorija ne pripada odabranoj kategoriji.");
     }
   }
+
+  const lastItemSortOrder = await serverReadClient.fetch<number | null>(
+    `*[_type == "menuItem" && tenant._ref == $tenantId && category._ref == $categoryId && subCategory._ref == $subCategoryId] | order(sortOrder desc)[0].sortOrder`,
+    {
+      tenantId: membership.tenant._id,
+      categoryId,
+      subCategoryId: subCategoryId || null,
+    },
+  );
+  const sortOrder = (lastItemSortOrder ?? -1) + 1;
 
   const writeClient = getServerWriteClient();
 
