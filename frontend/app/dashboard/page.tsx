@@ -502,7 +502,6 @@ async function updateMenuItemAction(formData: FormData) {
   const sizeVariants = parseSizeVariants(formData);
   const price =
     sizeVariants.length > 0 ? 0 : Number(formData.get("price") || 0);
-  const sortOrder = Number(formData.get("sortOrder") || 0);
   const isAvailable = formData.get("isAvailable") === "true";
 
   if (!itemId || !name || !categoryId) {
@@ -574,7 +573,6 @@ async function updateMenuItemAction(formData: FormData) {
     descriptionEn,
     price,
     currency,
-    sortOrder,
     isAvailable,
     category: { _type: "reference", _ref: categoryId },
   });
