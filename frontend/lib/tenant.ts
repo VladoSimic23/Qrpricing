@@ -16,6 +16,7 @@ export type TenantMembership = {
     hideDigitalMenuHeader?: boolean;
     showPricesBam?: boolean;
     showPricesEur?: boolean;
+    alcoholNotice?: string;
     activeLanguages?: string[];
     facebookUrl?: string;
     instagramUrl?: string;
@@ -37,6 +38,7 @@ const membershipQuery = `*[_type == "tenantMember" && clerkUserId == $userId][0]
     hideDigitalMenuHeader,
     showPricesBam,
     showPricesEur,
+    alcoholNotice,
     activeLanguages,
     facebookUrl,
     instagramUrl,

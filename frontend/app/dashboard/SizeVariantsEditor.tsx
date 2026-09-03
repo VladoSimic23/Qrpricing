@@ -10,6 +10,8 @@ type Props = {
   defaultPrice?: number;
   defaultCurrency?: "EUR" | "BAM";
   defaultVariants?: SizeVariant[];
+  showPricesBam: boolean;
+  showPricesEur: boolean;
 };
 
 const inputClass =
@@ -19,7 +21,10 @@ export function SizeVariantsEditor({
   defaultPrice,
   defaultCurrency,
   defaultVariants,
+  showPricesBam,
+  showPricesEur,
 }: Props) {
+  const defaultSelectedCurrency = showPricesEur ? "EUR" : "BAM";
   const [enabled, setEnabled] = useState(
     !!defaultVariants && defaultVariants.length > 0,
   );
@@ -110,11 +115,11 @@ export function SizeVariantsEditor({
 
       <select
         name="currency"
-        defaultValue={defaultCurrency || "BAM"}
+        defaultValue={defaultSelectedCurrency}
         className={inputClass}
       >
-        <option value="EUR">EUR</option>
-        <option value="BAM">KM</option>
+        {showPricesEur && <option value="EUR">EUR</option>}
+        {showPricesBam && <option value="BAM">KM</option>}
       </select>
     </div>
   );

@@ -332,7 +332,7 @@ export function MenuTabs({
                   {messages.digitalMenu}
                 </p>
               )}
-              <p className="truncate text-[13px] font-medium text-amber-100/70">
+              <p className="truncate text-[18px] font-medium text-amber-100/70">
                 {venueName}
               </p>
             </div>

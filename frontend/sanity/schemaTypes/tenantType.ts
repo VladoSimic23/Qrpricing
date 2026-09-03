@@ -52,7 +52,7 @@ export const tenantType = defineType({
       name: "showPricesBam",
       title: "Prikazi cijene u KM",
       type: "boolean",
-      initialValue: true,
+      initialValue: false,
       description:
         "Ako je isključeno, cijene u KM se neće prikazivati u meniju.",
     }),
@@ -63,6 +63,14 @@ export const tenantType = defineType({
       initialValue: true,
       description:
         "Ako je isključeno, cijene u EUR se neće prikazivati u meniju.",
+    }),
+    defineField({
+      name: "alcoholNotice",
+      title: "Poruka o zabrani tocenja alkohola",
+      type: "text",
+      rows: 3,
+      description:
+        "Opcionalna poruka koja se prikazuje u podnozju javnog menija.",
     }),
     defineField({
       name: "isActive",

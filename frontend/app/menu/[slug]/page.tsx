@@ -50,6 +50,7 @@ type MenuPayload = {
   hideDigitalMenuHeader?: boolean;
   showPricesBam?: boolean;
   showPricesEur?: boolean;
+  alcoholNotice?: string;
   activeLanguages?: string[];
   facebookUrl?: string;
   instagramUrl?: string;
@@ -231,6 +232,7 @@ export default async function PublicMenuPage({
       hideDigitalMenuHeader,
       showPricesBam,
       showPricesEur,
+      alcoholNotice,
       activeLanguages,
       facebookUrl,
       instagramUrl,
@@ -306,7 +308,7 @@ export default async function PublicMenuPage({
               categories={nonEmptyCategories}
               venueName={menu.name}
               hideDigitalMenuHeader={menu.hideDigitalMenuHeader}
-              showPricesBam={menu.showPricesBam ?? true}
+              showPricesBam={menu.showPricesBam ?? false}
               showPricesEur={menu.showPricesEur ?? true}
               exchangeRateEurToBam={exchangeRateEurToBam}
               messages={t}
@@ -324,6 +326,11 @@ export default async function PublicMenuPage({
       </section>
 
       <footer className="mt-8 pb-12 flex flex-col items-center justify-center gap-6 px-4">
+        {menu.alcoholNotice && (
+          <p className="max-w-xl rounded-lg border border-amber-100/15 bg-[#151b1f]/70 px-4 py-3 text-center text-sm leading-relaxed text-amber-50/75">
+            {menu.alcoholNotice}
+          </p>
+        )}
         {(menu.facebookUrl ||
           menu.instagramUrl ||
           menu.tiktokUrl ||

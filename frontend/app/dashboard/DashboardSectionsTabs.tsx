@@ -74,6 +74,7 @@ type Props = {
   hideDigitalMenuHeader?: boolean;
   showPricesBam: boolean;
   showPricesEur: boolean;
+  alcoholNotice?: string;
   activeLanguages: string[];
   facebookUrl?: string;
   instagramUrl?: string;
@@ -221,6 +222,7 @@ export function DashboardSectionsTabs({
   hideDigitalMenuHeader,
   showPricesBam,
   showPricesEur,
+  alcoholNotice,
   facebookUrl,
   instagramUrl,
   tiktokUrl,
@@ -413,7 +415,10 @@ export function DashboardSectionsTabs({
                     className="rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                   />
                 )}
-                <SizeVariantsEditor />
+                <SizeVariantsEditor
+                  showPricesBam={showPricesBam}
+                  showPricesEur={showPricesEur}
+                />
                 <select
                   name="categoryId"
                   required
@@ -555,6 +560,8 @@ export function DashboardSectionsTabs({
               </h2>
               <DashboardItemTabs
                 tenantExchangeRate={tenantExchangeRate}
+                showPricesBam={showPricesBam}
+                showPricesEur={showPricesEur}
                 categories={categories}
                 subcategories={subcategories}
                 menuItems={menuItems}
@@ -714,7 +721,28 @@ export function DashboardSectionsTabs({
                   </label>
 
                   <p className="text-xs text-slate-600">
-                    Default je uključeno za obje valute.
+                    EUR je uključen prema zadanim postavkama. Potrebno je
+                    ostaviti uključenu barem jednu valutu.
+                  </p>
+                </div>
+
+                <div className="space-y-2 border-t border-slate-200 pt-4">
+                  <label
+                    htmlFor="alcoholNotice"
+                    className="block text-sm font-medium text-slate-700"
+                  >
+                    Poruka o zabrani tocenja alkohola
+                  </label>
+                  <textarea
+                    id="alcoholNotice"
+                    name="alcoholNotice"
+                    defaultValue={alcoholNotice}
+                    rows={3}
+                    placeholder="Zabranjeno je tocenje i usluzivanje alkohola osobama mlajim od 18 godina."
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  />
+                  <p className="text-xs text-slate-600">
+                    Poruka se prikazuje u podnozju javnog menija.
                   </p>
                 </div>
 

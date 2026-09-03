@@ -110,6 +110,8 @@ async function createTenantAction(formData: FormData) {
     name,
     slug: { _type: "slug", current: finalSlug },
     isActive: true,
+    showPricesBam: false,
+    showPricesEur: true,
   });
 
   await writeClient.create({
@@ -176,6 +178,13 @@ async function createMenuItemAction(formData: FormData) {
 
   if (!name || !categoryId) {
     throw new Error("Naziv artikla i kategorija su obavezni.");
+  }
+
+  if (
+    (currency === "EUR" && membership.tenant.showPricesEur === false) ||
+    (currency === "BAM" && membership.tenant.showPricesBam !== true)
+  ) {
+    throw new Error("Odabrana valuta nije uključena u postavkama cjenika.");
   }
 
   if (sizeVariants.length === 0 && (!Number.isFinite(price) || price < 0)) {
@@ -491,6 +500,13 @@ async function updateMenuItemAction(formData: FormData) {
     throw new Error("ID artikla, naziv i kategorija su obavezni.");
   }
 
+  if (
+    (currency === "EUR" && membership.tenant.showPricesEur === false) ||
+    (currency === "BAM" && membership.tenant.showPricesBam !== true)
+  ) {
+    throw new Error("Odabrana valuta nije uključena u postavkama cjenika.");
+  }
+
   if (sizeVariants.length === 0 && (!Number.isFinite(price) || price < 0)) {
     throw new Error("Cijena mora biti broj veci ili jednak nuli.");
   }
@@ -656,12 +672,17 @@ async function updateTenantLogoAction(formData: FormData) {
   const hideDigitalMenuHeader = formData.get("hideDigitalMenuHeader") === "on";
   const showPricesBam = formData.get("showPricesBam") === "on";
   const showPricesEur = formData.get("showPricesEur") === "on";
+  const alcoholNotice = String(formData.get("alcoholNotice") || "").trim();
   const activeLanguagesHr = formData.get("activeLanguagesHr") === "on";
   const activeLanguagesEn = formData.get("activeLanguagesEn") === "on";
 
   const activeLanguages = [];
   if (activeLanguagesHr) activeLanguages.push("hr");
   if (activeLanguagesEn) activeLanguages.push("en");
+
+  if (!showPricesBam && !showPricesEur) {
+    throw new Error("Uključi prikaz cijena u barem jednoj valuti.");
+  }
 
   const writeClient = getServerWriteClient();
   let patchBuilder = writeClient.patch(membership.tenant._id);
@@ -685,6 +706,7 @@ async function updateTenantLogoAction(formData: FormData) {
     hideDigitalMenuHeader,
     showPricesBam,
     showPricesEur,
+    alcoholNotice,
     activeLanguages,
   });
 
@@ -906,8 +928,9 @@ export default async function DashboardPage() {
         tenantExchangeRate={membership.tenant.exchangeRateEurToBam || 0}
         tenantLogo={membership.tenant.logo}
         hideDigitalMenuHeader={membership.tenant.hideDigitalMenuHeader}
-        showPricesBam={membership.tenant.showPricesBam ?? true}
+        showPricesBam={membership.tenant.showPricesBam ?? false}
         showPricesEur={membership.tenant.showPricesEur ?? true}
+        alcoholNotice={membership.tenant.alcoholNotice}
         activeLanguages={membership.tenant.activeLanguages || ["hr", "en"]}
         facebookUrl={membership.tenant.facebookUrl}
         instagramUrl={membership.tenant.instagramUrl}

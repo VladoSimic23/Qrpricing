@@ -51,6 +51,8 @@ type MenuItem = {
 };
 type Props = {
   tenantExchangeRate: number;
+  showPricesBam: boolean;
+  showPricesEur: boolean;
   categories: Category[];
   subcategories: Subcategory[];
   menuItems: MenuItem[];
@@ -73,6 +75,8 @@ function ItemForm({
   updateItemAction,
   deleteItemAction,
   tenantExchangeRate,
+  showPricesBam,
+  showPricesEur,
   activeLanguages,
 }: {
   item: MenuItem;
@@ -81,6 +85,8 @@ function ItemForm({
   updateItemAction: (formData: FormData) => Promise<void>;
   deleteItemAction: (formData: FormData) => Promise<void>;
   tenantExchangeRate: number;
+  showPricesBam: boolean;
+  showPricesEur: boolean;
   activeLanguages: string[];
 }) {
   const catSubs = subcategories.filter((s) => s.categoryId === item.categoryId);
@@ -149,6 +155,8 @@ function ItemForm({
           defaultPrice={item.price}
           defaultCurrency={item.currency}
           defaultVariants={item.sizeVariants}
+          showPricesBam={showPricesBam}
+          showPricesEur={showPricesEur}
         />
       </div>
       <div className="grid gap-2 sm:grid-cols-3">
@@ -224,6 +232,8 @@ function SortableMenuItem({
   updateItemAction,
   deleteItemAction,
   tenantExchangeRate,
+  showPricesBam,
+  showPricesEur,
   activeLanguages,
 }: {
   item: MenuItem;
@@ -234,6 +244,8 @@ function SortableMenuItem({
   updateItemAction: (formData: FormData) => Promise<void>;
   deleteItemAction: (formData: FormData) => Promise<void>;
   tenantExchangeRate: number;
+  showPricesBam: boolean;
+  showPricesEur: boolean;
   activeLanguages: string[];
 }) {
   const {
@@ -294,6 +306,8 @@ function SortableMenuItem({
             updateItemAction={updateItemAction}
             deleteItemAction={deleteItemAction}
             tenantExchangeRate={tenantExchangeRate}
+            showPricesBam={showPricesBam}
+            showPricesEur={showPricesEur}
             activeLanguages={activeLanguages}
           />
         </div>
@@ -386,6 +400,8 @@ function SortableSubcategoryItem({
 
 export function DashboardItemTabs({
   tenantExchangeRate,
+  showPricesBam,
+  showPricesEur,
   categories,
   subcategories,
   menuItems,
@@ -635,6 +651,8 @@ export function DashboardItemTabs({
                         updateItemAction={updateItemAction}
                         deleteItemAction={deleteItemAction}
                         tenantExchangeRate={tenantExchangeRate}
+                        showPricesBam={showPricesBam}
+                        showPricesEur={showPricesEur}
                         activeLanguages={activeLanguages}
                       />
                     ))}
@@ -682,6 +700,8 @@ export function DashboardItemTabs({
                             updateItemAction={updateItemAction}
                             deleteItemAction={deleteItemAction}
                             tenantExchangeRate={tenantExchangeRate}
+                            showPricesBam={showPricesBam}
+                            showPricesEur={showPricesEur}
                             activeLanguages={activeLanguages}
                           />
                         ))}
