@@ -85,6 +85,7 @@ function PricePills({
 function ItemCard({
   item,
   design,
+  highlighted = false,
   exchangeRateEurToBam,
   showPricesBam,
   showPricesEur,
@@ -92,6 +93,7 @@ function ItemCard({
 }: {
   item: Item;
   design: MenuDesign;
+  highlighted?: boolean;
   exchangeRateEurToBam: number;
   showPricesBam: boolean;
   showPricesEur: boolean;
@@ -110,9 +112,13 @@ function ItemCard({
     <li
       key={item._id}
       className={`rounded-2xl border px-4 py-3 transition-shadow ${
-        isEditorial
-          ? "border-stone-200 bg-white shadow-[0_8px_24px_rgba(82,67,45,0.06)]"
-          : "border-amber-100/10 bg-[#151b1f]/75 backdrop-blur-sm"
+        highlighted
+          ? isEditorial
+            ? "border-emerald-300 bg-emerald-50 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
+            : "border-emerald-300/30 bg-emerald-950/30 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
+          : isEditorial
+            ? "border-stone-200 bg-white shadow-[0_8px_24px_rgba(82,67,45,0.06)]"
+            : "border-amber-100/10 bg-[#151b1f]/75 backdrop-blur-sm"
       }`}
     >
       <div className="flex items-start gap-3">
@@ -175,6 +181,7 @@ function ItemCard({
 
 export function MenuTabs({
   categories,
+  dailyOffers,
   venueName,
   menuDesign,
   hideDigitalMenuHeader,
@@ -188,6 +195,7 @@ export function MenuTabs({
   activeLanguages,
 }: {
   categories: Category[];
+  dailyOffers: Item[];
   venueName: string;
   menuDesign?: MenuDesign;
   hideDigitalMenuHeader?: boolean;
@@ -240,8 +248,6 @@ export function MenuTabs({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [selectedImage]);
 
-  if (!active) return null;
-
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const searchPlaceholder =
     locale === "en" ? "Search items..." : "Pretrazi artikle...";
@@ -257,11 +263,12 @@ export function MenuTabs({
     );
   };
 
-  const filteredRootItems = active.items.filter(itemMatchesQuery);
-  const filteredSubcategories = active.subcategories.map((sub) => ({
-    ...sub,
-    items: sub.items.filter(itemMatchesQuery),
-  }));
+  const filteredRootItems = active?.items.filter(itemMatchesQuery) ?? [];
+  const filteredSubcategories =
+    active?.subcategories.map((sub) => ({
+      ...sub,
+      items: sub.items.filter(itemMatchesQuery),
+    })) ?? [];
   const visibleSubcategories = filteredSubcategories.filter(
     (sub) => sub.items.length > 0,
   );
@@ -498,6 +505,43 @@ export function MenuTabs({
           </div>
         </div>
       </div>
+
+      {dailyOffers.length > 0 && (
+        <section
+          className={`rounded-2xl border p-4 ${
+            isEditorial
+              ? "border-emerald-200 bg-emerald-50/60"
+              : "border-emerald-300/20 bg-emerald-950/20"
+          }`}
+        >
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2
+              className={`text-lg font-semibold ${isEditorial ? "text-emerald-900" : "text-emerald-100"}`}
+            >
+              Dnevna ponuda
+            </h2>
+            <span
+              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${isEditorial ? "bg-emerald-100 text-emerald-800" : "bg-emerald-300/15 text-emerald-200"}`}
+            >
+              Danas
+            </span>
+          </div>
+          <ul className="space-y-2">
+            {dailyOffers.map((item) => (
+              <ItemCard
+                key={item._id}
+                item={item}
+                design={design}
+                highlighted
+                exchangeRateEurToBam={exchangeRateEurToBam}
+                showPricesBam={showPricesBam}
+                showPricesEur={showPricesEur}
+                onImageClick={(url, name) => setSelectedImage({ url, name })}
+              />
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="hidden gap-2 overflow-x-auto pb-1 md:flex">
         {categories.map((cat) => (

@@ -62,7 +62,8 @@ type MenuItem = {
   categoryTitle: string;
   description?: string;
   descriptionEn?: string;
-  categoryId: string;
+  categoryId?: string;
+  isDailyOffer?: boolean;
   sortOrder: number;
   imageUrl?: string;
   subCategoryId?: string;
@@ -278,6 +279,100 @@ async function createMenuItemAction(formData: FormData) {
 
   revalidatePath("/dashboard");
 
+  revalidatePath(`/menu/${membership.tenant.slug}`);
+}
+
+async function createDailyOfferAction(formData: FormData) {
+  "use server";
+
+  const membership = await getCurrentMembership();
+  if (!membership?.tenant?._id) {
+    throw new Error("Nemas pristup tenantu.");
+  }
+
+  const name = String(formData.get("name") || "").trim();
+  const nameEn = String(formData.get("nameEn") || "").trim();
+  const description = String(formData.get("description") || "").trim();
+  const descriptionEn = String(formData.get("descriptionEn") || "").trim();
+  const currency = normalizeCurrency(String(formData.get("currency") || "EUR"));
+  const sizeVariants = parseSizeVariants(formData);
+  const price =
+    sizeVariants.length > 0 ? 0 : Number(formData.get("price") || 0);
+  const imageFile = formData.get("image") as File | null;
+
+  if (!name) {
+    throw new Error("Naziv artikla je obavezan.");
+  }
+
+  if (
+    (currency === "EUR" && membership.tenant.showPricesEur === false) ||
+    (currency === "BAM" && membership.tenant.showPricesBam !== true)
+  ) {
+    throw new Error("Odabrana valuta nije uključena u postavkama cjenika.");
+  }
+
+  if (sizeVariants.length === 0 && (!Number.isFinite(price) || price < 0)) {
+    throw new Error("Cijena mora biti broj veci ili jednak nuli.");
+  }
+
+  if (sizeVariants.length === 1) {
+    throw new Error(
+      "Unesi barem dvije velicine s cijenama (npr. mala i velika) ili iskljuci opciju velicina.",
+    );
+  }
+
+  if (
+    !membership.tenant.exchangeRateEurToBam ||
+    membership.tenant.exchangeRateEurToBam <= 0
+  ) {
+    throw new Error(
+      "Prvo unesi trenutni tecaj EUR -> KM u dashboard postavkama.",
+    );
+  }
+
+  const lastItemSortOrder = await serverReadClient.fetch<number | null>(
+    `*[_type == "menuItem" && tenant._ref == $tenantId && isDailyOffer == true] | order(sortOrder desc)[0].sortOrder`,
+    { tenantId: membership.tenant._id },
+  );
+  const sortOrder = (lastItemSortOrder ?? -1) + 1;
+  const writeClient = getServerWriteClient();
+
+  let imageRef:
+    | { _type: string; asset: { _type: string; _ref: string } }
+    | undefined;
+  if (imageFile && imageFile.size > 0) {
+    if (!imageFile.type.startsWith("image/")) {
+      throw new Error("Datoteka mora biti slika (JPEG, PNG, WebP...).");
+    }
+    if (imageFile.size > 5 * 1024 * 1024) {
+      throw new Error("Slika ne smije biti veća od 5MB.");
+    }
+    const asset = await writeClient.assets.upload("image", imageFile, {
+      filename: imageFile.name,
+    });
+    imageRef = {
+      _type: "image",
+      asset: { _type: "reference", _ref: asset._id },
+    };
+  }
+
+  await writeClient.create({
+    _type: "menuItem",
+    tenant: { _type: "reference", _ref: membership.tenant._id },
+    name,
+    description,
+    ...(nameEn ? { nameEn } : {}),
+    ...(descriptionEn ? { descriptionEn } : {}),
+    price,
+    currency,
+    ...(sizeVariants.length > 0 ? { sizeVariants } : {}),
+    isAvailable: true,
+    isDailyOffer: true,
+    sortOrder,
+    ...(imageRef ? { image: imageRef } : {}),
+  });
+
+  revalidatePath("/dashboard");
   revalidatePath(`/menu/${membership.tenant.slug}`);
 }
 
@@ -613,6 +708,89 @@ async function updateMenuItemAction(formData: FormData) {
   revalidatePath(`/menu/${membership.tenant.slug}`);
 }
 
+async function updateDailyOfferAction(formData: FormData) {
+  "use server";
+
+  const membership = await getCurrentMembership();
+  if (!membership?.tenant?._id) {
+    throw new Error("Nemas pristup tenantu.");
+  }
+
+  const itemId = String(formData.get("itemId") || "").trim();
+  const name = String(formData.get("name") || "").trim();
+  const nameEn = String(formData.get("nameEn") || "").trim();
+  const description = String(formData.get("description") || "").trim();
+  const descriptionEn = String(formData.get("descriptionEn") || "").trim();
+  const currency = normalizeCurrency(String(formData.get("currency") || "EUR"));
+  const sizeVariants = parseSizeVariants(formData);
+  const price =
+    sizeVariants.length > 0 ? 0 : Number(formData.get("price") || 0);
+  const isAvailable = formData.get("isAvailable") === "true";
+
+  if (!itemId || !name) {
+    throw new Error("ID artikla i naziv su obavezni.");
+  }
+  if (
+    (currency === "EUR" && membership.tenant.showPricesEur === false) ||
+    (currency === "BAM" && membership.tenant.showPricesBam !== true)
+  ) {
+    throw new Error("Odabrana valuta nije uključena u postavkama cjenika.");
+  }
+  if (sizeVariants.length === 0 && (!Number.isFinite(price) || price < 0)) {
+    throw new Error("Cijena mora biti broj veci ili jednak nuli.");
+  }
+  if (sizeVariants.length === 1) {
+    throw new Error(
+      "Unesi barem dvije velicine s cijenama (npr. mala i velika) ili iskljuci opciju velicina.",
+    );
+  }
+
+  const itemExists = await serverReadClient.fetch<number>(
+    `count(*[_type == "menuItem" && _id == $itemId && tenant._ref == $tenantId && isDailyOffer == true])`,
+    { itemId, tenantId: membership.tenant._id },
+  );
+  if (!itemExists) {
+    throw new Error("Artikal dnevne ponude ne postoji.");
+  }
+
+  const writeClient = getServerWriteClient();
+  let patchBuilder = writeClient.patch(itemId).set({
+    name,
+    nameEn,
+    description,
+    descriptionEn,
+    price,
+    currency,
+    isAvailable,
+    isDailyOffer: true,
+  });
+
+  patchBuilder =
+    sizeVariants.length > 0
+      ? patchBuilder.set({ sizeVariants })
+      : patchBuilder.unset(["sizeVariants"]);
+
+  const imageFile = formData.get("image") as File | null;
+  if (imageFile && imageFile.size > 0) {
+    if (!imageFile.type.startsWith("image/")) {
+      throw new Error("Datoteka mora biti slika (JPEG, PNG, WebP...).");
+    }
+    if (imageFile.size > 5 * 1024 * 1024) {
+      throw new Error("Slika ne smije biti veća od 5MB.");
+    }
+    const asset = await writeClient.assets.upload("image", imageFile, {
+      filename: imageFile.name,
+    });
+    patchBuilder = patchBuilder.set({
+      image: { _type: "image", asset: { _type: "reference", _ref: asset._id } },
+    });
+  }
+
+  await patchBuilder.unset(["category", "subCategory"]).commit();
+  revalidatePath("/dashboard");
+  revalidatePath(`/menu/${membership.tenant.slug}`);
+}
+
 async function deleteMenuItemAction(formData: FormData) {
   "use server";
 
@@ -875,6 +1053,7 @@ export default async function DashboardPage() {
         currency,
         sizeVariants[]{label, price},
         isAvailable,
+        isDailyOffer,
         "categoryId": category._ref,
         "categoryTitle": category->title,
         "subCategoryId": subCategory._ref,
@@ -941,9 +1120,11 @@ export default async function DashboardPage() {
         updateSocialLinksAction={updateSocialLinksAction}
         createCategoryAction={createCategoryAction}
         createMenuItemAction={createMenuItemAction}
+        createDailyOfferAction={createDailyOfferAction}
         updateCategoryAction={updateCategoryAction}
         deleteCategoryAction={deleteCategoryAction}
         updateMenuItemAction={updateMenuItemAction}
+        updateDailyOfferAction={updateDailyOfferAction}
         deleteMenuItemAction={deleteMenuItemAction}
         updateTenantNameAction={updateTenantNameAction}
         deleteTenantAction={deleteTenantAction}

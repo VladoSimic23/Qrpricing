@@ -24,11 +24,13 @@ import {
   FolderPlus,
   Folder,
   List,
+  CalendarDays,
   Settings,
   ChevronDown,
 } from "lucide-react";
 
 import { DashboardItemTabs } from "./DashboardItemTabs";
+import { DailyOfferPanel } from "./DailyOfferPanel";
 import { FormActionButton } from "./FormActionButton";
 import { ToastForm } from "./ToastForm";
 import { SizeVariantsEditor } from "./SizeVariantsEditor";
@@ -59,7 +61,8 @@ type MenuItem = {
   categoryTitle: string;
   description?: string;
   descriptionEn?: string;
-  categoryId: string;
+  categoryId?: string;
+  isDailyOffer?: boolean;
   sortOrder: number;
   imageUrl?: string;
   subCategoryId?: string;
@@ -89,9 +92,11 @@ type Props = {
   deleteTenantAction: () => Promise<void>;
   createCategoryAction: (formData: FormData) => Promise<void>;
   createMenuItemAction: (formData: FormData) => Promise<void>;
+  createDailyOfferAction: (formData: FormData) => Promise<void>;
   updateCategoryAction: (formData: FormData) => Promise<void>;
   deleteCategoryAction: (formData: FormData) => Promise<void>;
   updateMenuItemAction: (formData: FormData) => Promise<void>;
+  updateDailyOfferAction: (formData: FormData) => Promise<void>;
   deleteMenuItemAction: (formData: FormData) => Promise<void>;
   createSubcategoryAction: (formData: FormData) => Promise<void>;
   updateSubcategoryAction: (formData: FormData) => Promise<void>;
@@ -107,6 +112,7 @@ type DashboardTab =
   | "add-category"
   | "categories"
   | "items-by-category"
+  | "daily-offer"
   | "settings";
 
 const DASHBOARD_TABS: {
@@ -118,6 +124,7 @@ const DASHBOARD_TABS: {
   { id: "add-category", label: "Dodaj kategoriju", icon: FolderPlus },
   { id: "categories", label: "Kategorije", icon: Folder },
   { id: "items-by-category", label: "Artikli po kategorijama", icon: List },
+  { id: "daily-offer", label: "Dnevna ponuda", icon: CalendarDays },
   { id: "settings", label: "Postavke", icon: Settings },
 ];
 
@@ -236,9 +243,11 @@ export function DashboardSectionsTabs({
   deleteTenantAction,
   createCategoryAction,
   createMenuItemAction,
+  createDailyOfferAction,
   updateCategoryAction,
   deleteCategoryAction,
   updateMenuItemAction,
+  updateDailyOfferAction,
   deleteMenuItemAction,
   createSubcategoryAction,
   updateSubcategoryAction,
@@ -253,6 +262,11 @@ export function DashboardSectionsTabs({
 
   const isHrActive = activeLanguages?.includes("hr") ?? true;
   const isEnActive = activeLanguages?.includes("en") ?? true;
+  const regularMenuItems = menuItems.filter(
+    (item): item is MenuItem & { categoryId: string } =>
+      !item.isDailyOffer && Boolean(item.categoryId),
+  );
+  const dailyOfferItems = menuItems.filter((item) => item.isDailyOffer);
 
   useEffect(() => {
     setLocalCategories(categories);
@@ -563,7 +577,7 @@ export function DashboardSectionsTabs({
                 showPricesEur={showPricesEur}
                 categories={categories}
                 subcategories={subcategories}
-                menuItems={menuItems}
+                menuItems={regularMenuItems}
                 updateItemAction={updateMenuItemAction}
                 deleteItemAction={deleteMenuItemAction}
                 createSubcategoryAction={createSubcategoryAction}
@@ -571,6 +585,28 @@ export function DashboardSectionsTabs({
                 deleteSubcategoryAction={deleteSubcategoryAction}
                 reorderAction={reorderAction}
                 activeLanguages={activeLanguages}
+              />
+            </div>
+          )}
+
+          {activeTab === "daily-offer" && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+              <h2 className="text-xl font-semibold text-slate-900">
+                Dnevna ponuda
+              </h2>
+            </div>
+          )}
+
+          {activeTab === "daily-offer" && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+              <DailyOfferPanel
+                items={dailyOfferItems}
+                showPricesBam={showPricesBam}
+                showPricesEur={showPricesEur}
+                activeLanguages={activeLanguages}
+                createAction={createDailyOfferAction}
+                updateAction={updateDailyOfferAction}
+                deleteAction={deleteMenuItemAction}
               />
             </div>
           )}

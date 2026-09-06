@@ -17,7 +17,16 @@ export const menuItemType = defineType({
       title: "Kategorija",
       type: "reference",
       to: [{ type: "menuCategory" }],
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          const document = context.document as
+            | { isDailyOffer?: boolean }
+            | undefined;
+          if (!document?.isDailyOffer && !value) {
+            return "Kategorija je obavezna za redovne artikle.";
+          }
+          return true;
+        }),
     }),
     defineField({
       name: "name",
@@ -116,6 +125,12 @@ export const menuItemType = defineType({
       title: "Dostupno",
       type: "boolean",
       initialValue: true,
+    }),
+    defineField({
+      name: "isDailyOffer",
+      title: "Dnevna ponuda",
+      type: "boolean",
+      initialValue: false,
     }),
     defineField({
       name: "sortOrder",

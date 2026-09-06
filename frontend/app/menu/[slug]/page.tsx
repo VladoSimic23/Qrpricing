@@ -57,6 +57,16 @@ type MenuPayload = {
   instagramUrl?: string;
   tiktokUrl?: string;
   websiteUrl?: string;
+  dailyOffers: {
+    _id: string;
+    name: string;
+    description?: string;
+    price: number;
+    currency: string;
+    sizeVariants?: { label: string; price: number }[];
+    isAvailable: boolean;
+    imageUrl?: string;
+  }[];
   categories: {
     _id: string;
     title: string;
@@ -240,6 +250,22 @@ export default async function PublicMenuPage({
       instagramUrl,
       tiktokUrl,
       websiteUrl,
+      "dailyOffers": *[_type == "menuItem" && tenant._ref == ^._id && isDailyOffer == true && isAvailable != false] | order(sortOrder asc, name asc){
+        _id,
+        "name": select(
+          $locale == "en" => coalesce(nameEn, name),
+          name
+        ),
+        "description": select(
+          $locale == "en" => coalesce(descriptionEn, description),
+          description
+        ),
+        price,
+        currency,
+        sizeVariants[]{label, price},
+        isAvailable,
+        "imageUrl": image.asset->url
+      },
       "categories": *[_type == "menuCategory" && tenant._ref == ^._id] | order(sortOrder asc, title asc){
         _id,
         "title": select(
@@ -311,7 +337,7 @@ export default async function PublicMenuPage({
       }`}
     >
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 pb-10 sm:px-6 lg:px-8">
-        {nonEmptyCategories.length > 0 ? (
+        {nonEmptyCategories.length > 0 || menu.dailyOffers.length > 0 ? (
           <section className="px-0">
             <MenuTabs
               categories={nonEmptyCategories}
@@ -326,6 +352,7 @@ export default async function PublicMenuPage({
               slug={slug}
               supportedLocales={supportedLocales}
               activeLanguages={menu.activeLanguages || ["hr", "en"]}
+              dailyOffers={menu.dailyOffers}
             />
           </section>
         ) : (
