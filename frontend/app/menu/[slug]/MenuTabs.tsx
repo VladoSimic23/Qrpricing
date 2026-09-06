@@ -27,6 +27,7 @@ type Category = {
   title: string;
   items: Item[];
   subcategories: Subcategory[];
+  isDailyOffer?: boolean;
 };
 
 type SubTab = {
@@ -181,7 +182,6 @@ function ItemCard({
 
 export function MenuTabs({
   categories,
-  dailyOffers,
   venueName,
   menuDesign,
   hideDigitalMenuHeader,
@@ -195,7 +195,6 @@ export function MenuTabs({
   activeLanguages,
 }: {
   categories: Category[];
-  dailyOffers: Item[];
   venueName: string;
   menuDesign?: MenuDesign;
   hideDigitalMenuHeader?: boolean;
@@ -223,7 +222,11 @@ export function MenuTabs({
 }) {
   const design = menuDesign === "editorial" ? "editorial" : "classic";
   const isEditorial = design === "editorial";
-  const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
+  const [activeId, setActiveId] = useState(
+    categories.find((category) => !category.isDailyOffer)?._id ??
+      categories[0]?._id ??
+      "",
+  );
   const [activeSubTab, setActiveSubTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -506,43 +509,6 @@ export function MenuTabs({
         </div>
       </div>
 
-      {dailyOffers.length > 0 && (
-        <section
-          className={`rounded-2xl border p-4 ${
-            isEditorial
-              ? "border-emerald-200 bg-emerald-50/60"
-              : "border-emerald-300/20 bg-emerald-950/20"
-          }`}
-        >
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <h2
-              className={`text-lg font-semibold ${isEditorial ? "text-emerald-900" : "text-emerald-100"}`}
-            >
-              Dnevna ponuda
-            </h2>
-            <span
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${isEditorial ? "bg-emerald-100 text-emerald-800" : "bg-emerald-300/15 text-emerald-200"}`}
-            >
-              Danas
-            </span>
-          </div>
-          <ul className="space-y-2">
-            {dailyOffers.map((item) => (
-              <ItemCard
-                key={item._id}
-                item={item}
-                design={design}
-                highlighted
-                exchangeRateEurToBam={exchangeRateEurToBam}
-                showPricesBam={showPricesBam}
-                showPricesEur={showPricesEur}
-                onImageClick={(url, name) => setSelectedImage({ url, name })}
-              />
-            ))}
-          </ul>
-        </section>
-      )}
-
       <div className="hidden gap-2 overflow-x-auto pb-1 md:flex">
         {categories.map((cat) => (
           <button
@@ -622,6 +588,7 @@ export function MenuTabs({
                       exchangeRateEurToBam={exchangeRateEurToBam}
                       showPricesBam={showPricesBam}
                       showPricesEur={showPricesEur}
+                      highlighted={category.isDailyOffer}
                       onImageClick={(url, name) =>
                         setSelectedImage({ url, name })
                       }
@@ -645,6 +612,7 @@ export function MenuTabs({
                         exchangeRateEurToBam={exchangeRateEurToBam}
                         showPricesBam={showPricesBam}
                         showPricesEur={showPricesEur}
+                        highlighted={category.isDailyOffer}
                         onImageClick={(url, name) =>
                           setSelectedImage({ url, name })
                         }
@@ -665,6 +633,7 @@ export function MenuTabs({
                 exchangeRateEurToBam={exchangeRateEurToBam}
                 showPricesBam={showPricesBam}
                 showPricesEur={showPricesEur}
+                highlighted={active.isDailyOffer}
                 onImageClick={(url, name) => setSelectedImage({ url, name })}
               />
             ))}
@@ -693,6 +662,7 @@ export function MenuTabs({
                         exchangeRateEurToBam={exchangeRateEurToBam}
                         showPricesBam={showPricesBam}
                         showPricesEur={showPricesEur}
+                        highlighted={active.isDailyOffer}
                         onImageClick={(url, name) =>
                           setSelectedImage({ url, name })
                         }

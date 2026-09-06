@@ -326,6 +326,19 @@ export default async function PublicMenuPage({
     (c) =>
       c.items.length > 0 || c.subcategories.some((sub) => sub.items.length > 0),
   );
+  const categoriesWithDailyOffer =
+    menu.dailyOffers.length > 0
+      ? [
+          {
+            _id: "daily-offer",
+            title: locale === "en" ? "Daily offer" : "Dnevna ponuda",
+            items: menu.dailyOffers,
+            subcategories: [],
+            isDailyOffer: true,
+          },
+          ...nonEmptyCategories,
+        ]
+      : nonEmptyCategories;
   const isEditorial = menu.menuDesign === "editorial";
 
   return (
@@ -337,10 +350,10 @@ export default async function PublicMenuPage({
       }`}
     >
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 pb-10 sm:px-6 lg:px-8">
-        {nonEmptyCategories.length > 0 || menu.dailyOffers.length > 0 ? (
+        {categoriesWithDailyOffer.length > 0 ? (
           <section className="px-0">
             <MenuTabs
-              categories={nonEmptyCategories}
+              categories={categoriesWithDailyOffer}
               venueName={menu.name}
               hideDigitalMenuHeader={menu.hideDigitalMenuHeader}
               menuDesign={menu.menuDesign}
@@ -352,7 +365,6 @@ export default async function PublicMenuPage({
               slug={slug}
               supportedLocales={supportedLocales}
               activeLanguages={menu.activeLanguages || ["hr", "en"]}
-              dailyOffers={menu.dailyOffers}
             />
           </section>
         ) : (
