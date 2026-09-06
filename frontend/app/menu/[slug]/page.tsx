@@ -48,6 +48,7 @@ type MenuPayload = {
   exchangeRateEurToBam?: number;
   logo?: string;
   hideDigitalMenuHeader?: boolean;
+  menuDesign?: "classic" | "editorial";
   showPricesBam?: boolean;
   showPricesEur?: boolean;
   alcoholNotice?: string;
@@ -230,6 +231,7 @@ export default async function PublicMenuPage({
       exchangeRateEurToBam,
       "logo": logo.asset->url,
       hideDigitalMenuHeader,
+      menuDesign,
       showPricesBam,
       showPricesEur,
       alcoholNotice,
@@ -298,9 +300,16 @@ export default async function PublicMenuPage({
     (c) =>
       c.items.length > 0 || c.subcategories.some((sub) => sub.items.length > 0),
   );
+  const isEditorial = menu.menuDesign === "editorial";
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0b1418] via-[#101a1f] to-[#131114] text-[#f7efe4]">
+    <main
+      className={`min-h-screen ${
+        isEditorial
+          ? "bg-[#f3efe7] text-stone-900"
+          : "bg-gradient-to-b from-[#0b1418] via-[#101a1f] to-[#131114] text-[#f7efe4]"
+      }`}
+    >
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 pb-10 sm:px-6 lg:px-8">
         {nonEmptyCategories.length > 0 ? (
           <section className="px-0">
@@ -308,6 +317,7 @@ export default async function PublicMenuPage({
               categories={nonEmptyCategories}
               venueName={menu.name}
               hideDigitalMenuHeader={menu.hideDigitalMenuHeader}
+              menuDesign={menu.menuDesign}
               showPricesBam={menu.showPricesBam ?? false}
               showPricesEur={menu.showPricesEur ?? true}
               exchangeRateEurToBam={exchangeRateEurToBam}
@@ -325,9 +335,19 @@ export default async function PublicMenuPage({
         )}
       </section>
 
-      <footer className="mt-8 pb-12 flex flex-col items-center justify-center gap-6 px-4">
+      <footer
+        className={`mt-8 flex flex-col items-center justify-center gap-6 pb-12 px-4 ${
+          isEditorial ? "text-stone-600" : ""
+        }`}
+      >
         {menu.alcoholNotice && (
-          <p className="max-w-xl rounded-lg border border-amber-100/15 bg-[#151b1f]/70 px-4 py-3 text-center text-sm leading-relaxed text-amber-50/75">
+          <p
+            className={`max-w-xl rounded-lg px-4 py-3 text-center text-sm leading-relaxed ${
+              isEditorial
+                ? "border border-stone-200 bg-white text-stone-600"
+                : "border border-amber-100/15 bg-[#151b1f]/70 text-amber-50/75"
+            }`}
+          >
             {menu.alcoholNotice}
           </p>
         )}
@@ -341,7 +361,7 @@ export default async function PublicMenuPage({
                 href={menu.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#f7efe4]/60 hover:text-emerald-400 transition-colors"
+                className={`transition-colors hover:text-emerald-600 ${isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <InstagramIcon size={24} />
               </a>
@@ -351,7 +371,7 @@ export default async function PublicMenuPage({
                 href={menu.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#f7efe4]/60 hover:text-emerald-400 transition-colors"
+                className={`transition-colors hover:text-emerald-600 ${isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <FacebookIcon size={24} />
               </a>
@@ -361,7 +381,7 @@ export default async function PublicMenuPage({
                 href={menu.tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#f7efe4]/60 hover:text-emerald-400 transition-colors"
+                className={`transition-colors hover:text-emerald-600 ${isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <Music2 size={24} />
               </a>
@@ -371,7 +391,7 @@ export default async function PublicMenuPage({
                 href={menu.websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#f7efe4]/60 hover:text-emerald-400 transition-colors"
+                className={`transition-colors hover:text-emerald-600 ${isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <Globe size={24} />
               </a>

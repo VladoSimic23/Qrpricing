@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   DndContext,
   closestCenter,
@@ -70,8 +69,8 @@ type MenuItem = {
 type Props = {
   tenantName: string;
   tenantExchangeRate: number;
-  tenantLogo?: string;
   hideDigitalMenuHeader?: boolean;
+  menuDesign?: "classic" | "editorial";
   showPricesBam: boolean;
   showPricesEur: boolean;
   alcoholNotice?: string;
@@ -84,7 +83,7 @@ type Props = {
   subcategories: Subcategory[];
   menuItems: MenuItem[];
   updateExchangeRateAction: (formData: FormData) => Promise<void>;
-  updateTenantLogoAction: (formData: FormData) => Promise<void>;
+  updateMenuSettingsAction: (formData: FormData) => Promise<void>;
   updateSocialLinksAction: (formData: FormData) => Promise<void>;
   updateTenantNameAction: (formData: FormData) => Promise<void>;
   deleteTenantAction: () => Promise<void>;
@@ -218,8 +217,8 @@ function SortableCategoryItem({
 export function DashboardSectionsTabs({
   tenantName,
   tenantExchangeRate,
-  tenantLogo,
   hideDigitalMenuHeader,
+  menuDesign,
   showPricesBam,
   showPricesEur,
   alcoholNotice,
@@ -231,7 +230,7 @@ export function DashboardSectionsTabs({
   subcategories,
   menuItems,
   updateExchangeRateAction,
-  updateTenantLogoAction,
+  updateMenuSettingsAction,
   updateSocialLinksAction,
   updateTenantNameAction,
   deleteTenantAction,
@@ -641,45 +640,11 @@ export function DashboardSectionsTabs({
               </ToastForm>
 
               <ToastForm
-                action={updateTenantLogoAction}
+                action={updateMenuSettingsAction}
                 successMessage="Postavke su uspješno ažurirane!"
                 className="mt-8 flex flex-col gap-4 border-t border-slate-200 pt-6"
-                encType="multipart/form-data"
               >
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-slate-700">
-                    Logo restorana
-                  </label>
-                  <p className="text-xs text-slate-600">
-                    Ovdje učitaj logo koji će se prikazati umjesto naziva
-                    restorana u meniju.
-                  </p>
-                  {tenantLogo && (
-                    <div className="mt-2">
-                      <p className="mb-2 text-xs text-slate-600">
-                        Trenutni logo:
-                      </p>
-                      <Image
-                        src={tenantLogo}
-                        alt="Trenutni logo"
-                        width={200}
-                        height={64}
-                        className="h-16 w-auto rounded border border-slate-200 object-contain"
-                      />
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    name="logo"
-                    accept="image/*"
-                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                  />
-                  <p className="text-xs text-slate-500">
-                    Preporučena veličina: 200x100px, max 5MB
-                  </p>
-                </div>
-
-                <div className="space-y-2 border-t border-slate-200 pt-4">
                   <label className="flex items-center gap-3">
                     <input
                       type="checkbox"
@@ -691,10 +656,32 @@ export function DashboardSectionsTabs({
                       Sakrij naslov &quot;Digitalni Meni&quot;
                     </span>
                   </label>
+
                   <p className="text-xs text-slate-600">
                     Ako je uključeno, naslov &quot;Digitalni Meni&quot; se neće
                     prikazati u meniju.
                   </p>
+
+                  <div className="space-y-2 border-t border-slate-200 pt-4">
+                    <label
+                      htmlFor="menuDesign"
+                      className="block text-sm font-medium text-slate-700"
+                    >
+                      Dizajn javnog menija
+                    </label>
+                    <select
+                      id="menuDesign"
+                      name="menuDesign"
+                      defaultValue={menuDesign ?? "classic"}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                    >
+                      <option value="classic">Classic (tamni)</option>
+                      <option value="editorial">Editorial (svijetli)</option>
+                    </select>
+                    <p className="text-xs text-slate-600">
+                      Odaberi izgled koji će gosti vidjeti na javnom meniju.
+                    </p>
+                  </div>
 
                   <label className="flex items-center gap-3">
                     <input

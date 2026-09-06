@@ -35,16 +35,20 @@ type SubTab = {
   count: number;
 };
 
+type MenuDesign = "classic" | "editorial";
+
 function PricePills({
   bam,
   eur,
   showPricesBam,
   showPricesEur,
+  design,
 }: {
   bam: number[];
   eur: number[];
   showPricesBam: boolean;
   showPricesEur: boolean;
+  design: MenuDesign;
 }) {
   if (!showPricesBam && !showPricesEur) {
     return null;
@@ -53,12 +57,24 @@ function PricePills({
   return (
     <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5 text-xs font-semibold md:gap-2 md:text-sm">
       {showPricesBam && (
-        <span className="rounded-full border border-amber-200/15 bg-amber-400/15 px-2.5 py-0.5 text-amber-100 md:px-3 md:py-1">
+        <span
+          className={`rounded-full border px-2.5 py-0.5 md:px-3 md:py-1 ${
+            design === "editorial"
+              ? "border-amber-300 bg-amber-50 text-amber-800"
+              : "border-amber-200/15 bg-amber-400/15 text-amber-100"
+          }`}
+        >
           {bam.map((v) => v.toFixed(2)).join(" / ")} KM
         </span>
       )}
       {showPricesEur && (
-        <span className="rounded-full border border-sky-200/15 bg-sky-400/15 px-2.5 py-0.5 text-sky-100 md:px-3 md:py-1">
+        <span
+          className={`rounded-full border px-2.5 py-0.5 md:px-3 md:py-1 ${
+            design === "editorial"
+              ? "border-sky-300 bg-sky-50 text-sky-800"
+              : "border-sky-200/15 bg-sky-400/15 text-sky-100"
+          }`}
+        >
           {eur.map((v) => v.toFixed(2)).join(" / ")} EUR
         </span>
       )}
@@ -68,12 +84,14 @@ function PricePills({
 
 function ItemCard({
   item,
+  design,
   exchangeRateEurToBam,
   showPricesBam,
   showPricesEur,
   onImageClick,
 }: {
   item: Item;
+  design: MenuDesign;
   exchangeRateEurToBam: number;
   showPricesBam: boolean;
   showPricesEur: boolean;
@@ -86,11 +104,16 @@ function ItemCard({
   ).map((v) => convertPrice(v.price, item.currency, exchangeRateEurToBam));
 
   const hasImageOrDesc = !!(item.imageUrl || item.description);
+  const isEditorial = design === "editorial";
 
   return (
     <li
       key={item._id}
-      className="rounded-2xl border border-amber-100/10 bg-[#151b1f]/75 px-4 py-3 backdrop-blur-sm"
+      className={`rounded-2xl border px-4 py-3 transition-shadow ${
+        isEditorial
+          ? "border-stone-200 bg-white shadow-[0_8px_24px_rgba(82,67,45,0.06)]"
+          : "border-amber-100/10 bg-[#151b1f]/75 backdrop-blur-sm"
+      }`}
     >
       <div className="flex items-start gap-3">
         {item.imageUrl && (
@@ -98,7 +121,7 @@ function ItemCard({
             type="button"
             onClick={() => onImageClick?.(item.imageUrl!, item.name)}
             aria-label={`Uvecaj sliku artikla ${item.name}`}
-            className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl ring-1 ring-amber-50/15 transition hover:opacity-90"
+            className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl ring-1 transition hover:opacity-90 ${isEditorial ? "ring-stone-200" : "ring-amber-50/15"}`}
           >
             <Image
               src={item.imageUrl}
@@ -111,7 +134,9 @@ function ItemCard({
         )}
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex items-start justify-between gap-4">
-            <h3 className="text-[15px] font-semibold leading-snug text-[#fff6e8] md:text-[15px]">
+            <h3
+              className={`text-[15px] font-semibold leading-snug md:text-[15px] ${isEditorial ? "text-stone-900" : "text-[#fff6e8]"}`}
+            >
               {item.name}
             </h3>
             {!hasImageOrDesc && (
@@ -120,11 +145,14 @@ function ItemCard({
                 eur={converted.map((c) => c.eur)}
                 showPricesBam={showPricesBam}
                 showPricesEur={showPricesEur}
+                design={design}
               />
             )}
           </div>
           {item.description && (
-            <p className="text-sm leading-relaxed text-amber-50/70">
+            <p
+              className={`text-sm leading-relaxed ${isEditorial ? "text-stone-600" : "text-amber-50/70"}`}
+            >
               {item.description}
             </p>
           )}
@@ -135,6 +163,7 @@ function ItemCard({
                 eur={converted.map((c) => c.eur)}
                 showPricesBam={showPricesBam}
                 showPricesEur={showPricesEur}
+                design={design}
               />
             </div>
           )}
@@ -147,6 +176,7 @@ function ItemCard({
 export function MenuTabs({
   categories,
   venueName,
+  menuDesign,
   hideDigitalMenuHeader,
   showPricesBam,
   showPricesEur,
@@ -159,6 +189,7 @@ export function MenuTabs({
 }: {
   categories: Category[];
   venueName: string;
+  menuDesign?: MenuDesign;
   hideDigitalMenuHeader?: boolean;
   showPricesBam: boolean;
   showPricesEur: boolean;
@@ -182,6 +213,8 @@ export function MenuTabs({
   supportedLocales: readonly string[];
   activeLanguages: string[];
 }) {
+  const design = menuDesign === "editorial" ? "editorial" : "classic";
+  const isEditorial = design === "editorial";
   const [activeId, setActiveId] = useState(categories[0]?._id ?? "");
   const [activeSubTab, setActiveSubTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -237,6 +270,33 @@ export function MenuTabs({
     filteredRootItems.length +
     visibleSubcategories.reduce((sum, sub) => sum + sub.items.length, 0);
 
+  const globalFilteredCategories = categories
+    .map((category) => ({
+      ...category,
+      items: category.items.filter(itemMatchesQuery),
+      subcategories: category.subcategories
+        .map((sub) => ({
+          ...sub,
+          items: sub.items.filter(itemMatchesQuery),
+        }))
+        .filter((sub) => sub.items.length > 0),
+    }))
+    .filter(
+      (category) =>
+        category.items.length > 0 || category.subcategories.length > 0,
+    );
+
+  const globalItemsCount = globalFilteredCategories.reduce(
+    (categoryTotal, category) =>
+      categoryTotal +
+      category.items.length +
+      category.subcategories.reduce(
+        (subTotal, sub) => subTotal + sub.items.length,
+        0,
+      ),
+    0,
+  );
+
   const subTabs: SubTab[] = [
     { key: "all", title: messages.all, count: allItemsCount },
     ...visibleSubcategories.map((sub) => ({
@@ -261,15 +321,21 @@ export function MenuTabs({
   };
 
   return (
-    <div className="space-y-3">
-      <div className="hidden items-center justify-between gap-6 rounded-[28px] border border-amber-100/10 bg-[#1b191a]/70 px-6 py-5 backdrop-blur-sm md:flex">
+    <div className={`space-y-3 ${isEditorial ? "font-sans" : ""}`}>
+      <div
+        className={`hidden items-center justify-between gap-6 rounded-[28px] border px-6 py-5 md:flex ${isEditorial ? "border-stone-200 bg-[#f8f5ef]" : "border-amber-100/10 bg-[#1b191a]/70 backdrop-blur-sm"}`}
+      >
         <div className="min-w-0">
           {!hideDigitalMenuHeader && (
-            <p className="text-[10px] uppercase tracking-[0.22em] text-amber-200/70">
+            <p
+              className={`text-[10px] uppercase tracking-[0.22em] ${isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
+            >
               {messages.digitalMenu}
             </p>
           )}
-          <p className="mt-1 text-lg font-semibold text-[#fff6e8]">
+          <p
+            className={`mt-1 text-lg font-semibold ${isEditorial ? "text-stone-900" : "text-[#fff6e8]"}`}
+          >
             {venueName}
           </p>
         </div>
@@ -324,15 +390,21 @@ export function MenuTabs({
       </div>
 
       <div className="sticky top-0 z-30 -mx-4 md:hidden sm:-mx-6">
-        <div className="bg-[#1b191a]/90 px-4 py-4 shadow-lg backdrop-blur-md sm:px-6">
+        <div
+          className={`px-4 py-4 shadow-lg backdrop-blur-md sm:px-6 ${isEditorial ? "bg-[#f8f5ef]/95" : "bg-[#1b191a]/90"}`}
+        >
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 pr-3">
               {!hideDigitalMenuHeader && (
-                <p className="text-[10px] uppercase tracking-[0.22em] text-amber-200/70">
+                <p
+                  className={`text-[10px] uppercase tracking-[0.22em] ${isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
+                >
                   {messages.digitalMenu}
                 </p>
               )}
-              <p className="truncate text-[18px] font-medium text-amber-100/70">
+              <p
+                className={`truncate text-[18px] font-medium ${isEditorial ? "text-stone-800" : "text-amber-100/70"}`}
+              >
                 {venueName}
               </p>
             </div>
@@ -389,8 +461,12 @@ export function MenuTabs({
                   onClick={() => selectCategory(cat._id)}
                   className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition ${
                     cat._id === activeId
-                      ? "border-amber-200/40 bg-amber-200/10 text-amber-100"
-                      : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70"
+                      ? isEditorial
+                        ? "border-stone-900 bg-stone-900 text-white"
+                        : "border-amber-200/40 bg-amber-200/10 text-amber-100"
+                      : isEditorial
+                        ? "border-stone-200 bg-white text-stone-500"
+                        : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70"
                   }`}
                 >
                   {cat.title}
@@ -406,8 +482,12 @@ export function MenuTabs({
                     onClick={() => selectSubTab(tab.key)}
                     className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                       tab.key === resolvedActiveSubTab
-                        ? "border-amber-300/50 bg-amber-300/15 text-amber-100"
-                        : "border-amber-100/15 bg-[#1a1f23] text-amber-50/65"
+                        ? isEditorial
+                          ? "border-stone-900 bg-stone-900 text-white"
+                          : "border-amber-300/50 bg-amber-300/15 text-amber-100"
+                        : isEditorial
+                          ? "border-stone-200 bg-white text-stone-500"
+                          : "border-amber-100/15 bg-[#1a1f23] text-amber-50/65"
                     }`}
                   >
                     {tab.title}
@@ -426,8 +506,12 @@ export function MenuTabs({
             onClick={() => selectCategory(cat._id)}
             className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition ${
               cat._id === activeId
-                ? "border-amber-200/40 bg-amber-200/10 text-amber-100"
-                : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70 hover:bg-[#20262b]"
+                ? isEditorial
+                  ? "border-stone-900 bg-stone-900 text-white"
+                  : "border-amber-200/40 bg-amber-200/10 text-amber-100"
+                : isEditorial
+                  ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-100"
+                  : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70 hover:bg-[#20262b]"
             }`}
           >
             {cat.title}
@@ -444,8 +528,12 @@ export function MenuTabs({
               onClick={() => selectSubTab(tab.key)}
               className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                 tab.key === resolvedActiveSubTab
-                  ? "border-amber-300/50 bg-amber-300/15 text-amber-100"
-                  : "border-amber-100/15 bg-[#1b2125] text-amber-50/65 hover:bg-[#20272d]"
+                  ? isEditorial
+                    ? "border-stone-900 bg-stone-900 text-white"
+                    : "border-amber-300/50 bg-amber-300/15 text-amber-100"
+                  : isEditorial
+                    ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-100"
+                    : "border-amber-100/15 bg-[#1b2125] text-amber-50/65 hover:bg-[#20272d]"
               }`}
             >
               {tab.title}
@@ -472,12 +560,64 @@ export function MenuTabs({
       )}
 
       <div className="space-y-3">
-        {resolvedActiveSubTab === "all" && filteredRootItems.length > 0 && (
+        {normalizedQuery ? (
+          globalFilteredCategories.map((category) => (
+            <div key={category._id}>
+              <h2
+                className={`mb-2 text-lg font-semibold ${isEditorial ? "text-stone-800" : "text-amber-100"}`}
+              >
+                {category.title}
+              </h2>
+              {category.items.length > 0 && (
+                <ul className="space-y-2">
+                  {category.items.map((item) => (
+                    <ItemCard
+                      key={item._id}
+                      item={item}
+                      design={design}
+                      exchangeRateEurToBam={exchangeRateEurToBam}
+                      showPricesBam={showPricesBam}
+                      showPricesEur={showPricesEur}
+                      onImageClick={(url, name) =>
+                        setSelectedImage({ url, name })
+                      }
+                    />
+                  ))}
+                </ul>
+              )}
+              {category.subcategories.map((sub) => (
+                <div key={sub._id} className="mt-3">
+                  <p
+                    className={`mb-2 text-[15px] font-semibold ${isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
+                  >
+                    {sub.title}
+                  </p>
+                  <ul className="space-y-2">
+                    {sub.items.map((item) => (
+                      <ItemCard
+                        key={item._id}
+                        item={item}
+                        design={design}
+                        exchangeRateEurToBam={exchangeRateEurToBam}
+                        showPricesBam={showPricesBam}
+                        showPricesEur={showPricesEur}
+                        onImageClick={(url, name) =>
+                          setSelectedImage({ url, name })
+                        }
+                      />
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          ))
+        ) : resolvedActiveSubTab === "all" && filteredRootItems.length > 0 ? (
           <ul className="space-y-2">
             {filteredRootItems.map((item) => (
               <ItemCard
                 key={item._id}
                 item={item}
+                design={design}
                 exchangeRateEurToBam={exchangeRateEurToBam}
                 showPricesBam={showPricesBam}
                 showPricesEur={showPricesEur}
@@ -485,38 +625,45 @@ export function MenuTabs({
               />
             ))}
           </ul>
+        ) : (
+          <>
+            {visibleSubcategories
+              .filter(
+                (sub) =>
+                  resolvedActiveSubTab === "all" ||
+                  resolvedActiveSubTab === `sub-${sub._id}`,
+              )
+              .map((sub) => (
+                <div key={sub._id}>
+                  <p
+                    className={`mb-2 text-[15px] font-semibold ${isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
+                  >
+                    {sub.title}
+                  </p>
+                  <ul className="space-y-2">
+                    {sub.items.map((item) => (
+                      <ItemCard
+                        key={item._id}
+                        item={item}
+                        design={design}
+                        exchangeRateEurToBam={exchangeRateEurToBam}
+                        showPricesBam={showPricesBam}
+                        showPricesEur={showPricesEur}
+                        onImageClick={(url, name) =>
+                          setSelectedImage({ url, name })
+                        }
+                      />
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </>
         )}
 
-        {visibleSubcategories
-          .filter(
-            (sub) =>
-              resolvedActiveSubTab === "all" ||
-              resolvedActiveSubTab === `sub-${sub._id}`,
-          )
-          .map((sub) => (
-            <div key={sub._id}>
-              <p className="mb-2 text-[15px] font-semibold text-amber-100/65">
-                {sub.title}
-              </p>
-              <ul className="space-y-2">
-                {sub.items.map((item) => (
-                  <ItemCard
-                    key={item._id}
-                    item={item}
-                    exchangeRateEurToBam={exchangeRateEurToBam}
-                    showPricesBam={showPricesBam}
-                    showPricesEur={showPricesEur}
-                    onImageClick={(url, name) =>
-                      setSelectedImage({ url, name })
-                    }
-                  />
-                ))}
-              </ul>
-            </div>
-          ))}
-
-        {allItemsCount === 0 && (
-          <p className="rounded-xl border border-amber-100/10 bg-[#17181b] px-3 py-3 text-sm text-amber-50/65">
+        {(normalizedQuery ? globalItemsCount : allItemsCount) === 0 && (
+          <p
+            className={`rounded-xl border px-3 py-3 text-sm ${isEditorial ? "border-stone-200 bg-white text-stone-500" : "border-amber-100/10 bg-[#17181b] text-amber-50/65"}`}
+          >
             {messages.noItemsInCategory}
           </p>
         )}

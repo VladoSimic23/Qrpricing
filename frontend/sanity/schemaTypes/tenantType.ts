@@ -49,6 +49,19 @@ export const tenantType = defineType({
         "Ako je uključeno, naslov 'Digitalni Meni' neće biti prikazan",
     }),
     defineField({
+      name: "menuDesign",
+      title: "Dizajn menija",
+      type: "string",
+      options: {
+        list: [
+          { title: "Classic (tamni)", value: "classic" },
+          { title: "Editorial (svijetli)", value: "editorial" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "classic",
+    }),
+    defineField({
       name: "showPricesBam",
       title: "Prikazi cijene u KM",
       type: "boolean",

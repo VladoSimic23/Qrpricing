@@ -14,6 +14,7 @@ export type TenantMembership = {
     exchangeRateEurToBam?: number;
     logo?: string;
     hideDigitalMenuHeader?: boolean;
+    menuDesign?: "classic" | "editorial";
     showPricesBam?: boolean;
     showPricesEur?: boolean;
     alcoholNotice?: string;
@@ -36,6 +37,7 @@ const membershipQuery = `*[_type == "tenantMember" && clerkUserId == $userId][0]
     exchangeRateEurToBam,
     "logo": logo.asset->url,
     hideDigitalMenuHeader,
+    menuDesign,
     showPricesBam,
     showPricesEur,
     alcoholNotice,

@@ -112,6 +112,7 @@ async function createTenantAction(formData: FormData) {
     isActive: true,
     showPricesBam: false,
     showPricesEur: true,
+    menuDesign: "classic",
   });
 
   await writeClient.create({
@@ -667,7 +668,7 @@ async function updateExchangeRateAction(formData: FormData) {
   revalidatePath(`/menu/${membership.tenant.slug}`);
 }
 
-async function updateTenantLogoAction(formData: FormData) {
+async function updateMenuSettingsAction(formData: FormData) {
   "use server";
 
   const membership = await getCurrentMembership();
@@ -675,10 +676,10 @@ async function updateTenantLogoAction(formData: FormData) {
     throw new Error("Nemas pristup tenantu.");
   }
 
-  const logoFile = formData.get("logo") as File | null;
   const hideDigitalMenuHeader = formData.get("hideDigitalMenuHeader") === "on";
   const showPricesBam = formData.get("showPricesBam") === "on";
   const showPricesEur = formData.get("showPricesEur") === "on";
+  const menuDesign = String(formData.get("menuDesign") || "classic");
   const alcoholNotice = String(formData.get("alcoholNotice") || "").trim();
   const activeLanguagesHr = formData.get("activeLanguagesHr") === "on";
   const activeLanguagesEn = formData.get("activeLanguagesEn") === "on";
@@ -691,33 +692,22 @@ async function updateTenantLogoAction(formData: FormData) {
     throw new Error("Uključi prikaz cijena u barem jednoj valuti.");
   }
 
-  const writeClient = getServerWriteClient();
-  let patchBuilder = writeClient.patch(membership.tenant._id);
-
-  if (logoFile && logoFile.size > 0) {
-    if (!logoFile.type.startsWith("image/")) {
-      throw new Error("Datoteka mora biti slika (JPEG, PNG, WebP...).");
-    }
-    if (logoFile.size > 5 * 1024 * 1024) {
-      throw new Error("Logo ne smije biti veci od 5MB.");
-    }
-    const asset = await writeClient.assets.upload("image", logoFile, {
-      filename: logoFile.name,
-    });
-    patchBuilder = patchBuilder.set({
-      logo: { _type: "image", asset: { _type: "reference", _ref: asset._id } },
-    });
+  if (menuDesign !== "classic" && menuDesign !== "editorial") {
+    throw new Error("Odabrani dizajn menija nije podržan.");
   }
 
-  patchBuilder = patchBuilder.set({
-    hideDigitalMenuHeader,
-    showPricesBam,
-    showPricesEur,
-    alcoholNotice,
-    activeLanguages,
-  });
-
-  await patchBuilder.commit();
+  const writeClient = getServerWriteClient();
+  await writeClient
+    .patch(membership.tenant._id)
+    .set({
+      hideDigitalMenuHeader,
+      showPricesBam,
+      showPricesEur,
+      menuDesign,
+      alcoholNotice,
+      activeLanguages,
+    })
+    .commit();
 
   revalidatePath("/dashboard");
 
@@ -933,8 +923,8 @@ export default async function DashboardPage() {
       <DashboardSectionsTabs
         tenantName={membership.tenant.name}
         tenantExchangeRate={membership.tenant.exchangeRateEurToBam || 0}
-        tenantLogo={membership.tenant.logo}
         hideDigitalMenuHeader={membership.tenant.hideDigitalMenuHeader}
+        menuDesign={membership.tenant.menuDesign}
         showPricesBam={membership.tenant.showPricesBam ?? false}
         showPricesEur={membership.tenant.showPricesEur ?? true}
         alcoholNotice={membership.tenant.alcoholNotice}
@@ -947,7 +937,7 @@ export default async function DashboardPage() {
         subcategories={subcategories}
         menuItems={menuItems}
         updateExchangeRateAction={updateExchangeRateAction}
-        updateTenantLogoAction={updateTenantLogoAction}
+        updateMenuSettingsAction={updateMenuSettingsAction}
         updateSocialLinksAction={updateSocialLinksAction}
         createCategoryAction={createCategoryAction}
         createMenuItemAction={createMenuItemAction}
