@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { InfoTooltip } from "./InfoTooltip";
 
 type SizeVariant = { label: string; price: number };
 
@@ -59,6 +60,11 @@ export function SizeVariantsEditor({
           className="h-4 w-4 rounded border-slate-300"
         />
         Artikl ima više veličina (npr. mala/velika)
+        <InfoTooltip
+          text={
+            "Uključi ovo samo kad isti artikl dolazi u više varijanti s različitim cijenama, npr.pizza normal i porodična. Za svaku veličinu upišeš naziv i njenu cijenu. Kad je isključeno, unosi se samo jedna cijena za artikl. Gostima se u meniju sve cijene tog artikla prikazuju zajedno pored naziva, razdvojene kosom crtom (npr. 5.00 / 7.00 KM), bez posebnih redova za svaku veličinu."
+          }
+        />
       </label>
 
       {!enabled ? (
