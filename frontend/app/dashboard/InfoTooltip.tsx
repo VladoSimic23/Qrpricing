@@ -37,7 +37,7 @@ export function InfoTooltip({ text }: Props) {
         <Info size={14} />
       </button>
       {isOpen && (
-        <span className="absolute left-1/2 top-full z-20 mt-2 w-64 -translate-x-1/2 rounded-lg border border-slate-200 bg-white p-3 text-xs font-normal leading-relaxed text-slate-600 shadow-lg">
+        <span className="absolute left-1/2 top-full z-20 mt-2 w-[min(16rem,calc(100vw-2rem))] -translate-x-1/2 rounded-lg border border-slate-200 bg-white p-3 text-xs font-normal leading-relaxed text-slate-600 shadow-lg">
           {text}
         </span>
       )}

@@ -34,6 +34,7 @@ import { DailyOfferPanel } from "./DailyOfferPanel";
 import { FormActionButton } from "./FormActionButton";
 import { ToastForm } from "./ToastForm";
 import { SizeVariantsEditor } from "./SizeVariantsEditor";
+import { InfoTooltip } from "./InfoTooltip";
 
 type Category = {
   _id: string;
@@ -532,8 +533,13 @@ export function DashboardSectionsTabs({
 
           {activeTab === "categories" && (
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <h2 className="text-xl font-semibold text-slate-900">
+              <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-900">
                 Kategorije
+                <InfoTooltip
+                  text={
+                    "Povuci kategoriju za znak ☰ i pomjeri je gore ili dolje da promijeniš redoslijed kojim se kategorije prikazuju gostima na meniju. Redoslijed odozgo prema dolje ovdje je isti kao redoslijed s lijeva na desno (ili gore-dolje) u meniju. Promjena pozicije se sprema automatski čim pustiš kategoriju - ne treba pritiskati Spremi."
+                  }
+                />
               </h2>
 
               <DndContext

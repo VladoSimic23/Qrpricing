@@ -1080,9 +1080,17 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
       <section className="rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 p-6 text-white shadow-lg sm:p-8">
-        <p className="text-sm uppercase tracking-[0.2em] text-emerald-300">
-          Dashboard
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <p className="text-sm uppercase tracking-[0.2em] text-emerald-300">
+            Dashboard
+          </p>
+          <Link
+            href="/dashboard/help"
+            className="whitespace-nowrap rounded-full border border-white/20 px-4 py-1.5 text-sm text-white transition hover:bg-white/10"
+          >
+            Pomoć
+          </Link>
+        </div>
         <h1 className="mt-3 text-3xl font-semibold">
           {membership.tenant.name}
         </h1>
