@@ -12,6 +12,7 @@ import {
   withLang,
 } from "@/lib/i18n";
 import { generateMetadata as generateSeoMetadata, siteConfig } from "@/lib/seo";
+import ContactSection from "@/app/components/ContactSection";
 
 export const metadata: Metadata = generateSeoMetadata({
   title: "Digitalni Meniji za Restorane - QR Cjenik",
@@ -547,6 +548,8 @@ export default async function Home({
         </div>
       </section>
 
+      <ContactSection />
+
       {/* 7. FOOTER */}
       <footer className="border-t border-slate-800 bg-slate-950 pt-16 pb-8">
         <div className="mx-auto max-w-6xl px-6">
@@ -632,8 +635,8 @@ export default async function Home({
         </div>
       </footer>
 
-      {/* Language Switcher Overlay */}
-      <div className="fixed bottom-4 right-4 z-50">
+      {/* Language Switcher Overlay - hidden on homepage for now */}
+      <div className="hidden fixed bottom-4 right-4 z-50">
         <div className="flex items-center gap-1 rounded-full border border-white/10 bg-slate-900/90 p-1.5 shadow-xl backdrop-blur-md">
           {supportedLocales.map((code) => (
             <Link
