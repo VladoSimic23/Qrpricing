@@ -588,7 +588,7 @@ export default async function Home({
                 +385 99 123 4567
               </a> */}
               <a
-                href="mailto:vladosimic525@gmail.com"
+                href="mailto:vladimir.simic@digitalcjenik.com"
                 className="group flex items-center text-lg text-slate-300 hover:text-emerald-400 transition-colors"
               >
                 <svg
@@ -604,7 +604,7 @@ export default async function Home({
                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                info@digitalcjenik.com
+                vladimir.simic@digitalcjenik.com
               </a>
             </div>
           </div>

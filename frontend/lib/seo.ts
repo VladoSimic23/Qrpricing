@@ -8,7 +8,7 @@ export const siteConfig = {
   url: "https://www.digitalcjenik.com",
   ogImage: "https://www.digitalcjenik.com/og-image.png",
   author: "QR Cjenik",
-  email: "info@digitalcjenik.com",
+  email: "vladimir.simic@digitalcjenik.com",
   keywords: [
     "digitalni meni",
     "QR kod meni",

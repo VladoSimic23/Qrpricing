@@ -154,10 +154,10 @@ export default function PrivacyPolicy() {
             <p className="text-slate-300">
               Zahtjev za brisanjem podataka šalje se na:{" "}
               <a
-                href="mailto:info@digitalcjenik.com"
+                href="mailto:vladimir.simic@digitalcjenik.com"
                 className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
               >
-                info@digitalcjenik.com
+                vladimir.simic@digitalcjenik.com
               </a>
             </p>
           </div>
