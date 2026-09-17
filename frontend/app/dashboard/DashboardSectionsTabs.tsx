@@ -74,7 +74,7 @@ type Props = {
   tenantName: string;
   tenantExchangeRate: number;
   hideDigitalMenuHeader?: boolean;
-  menuDesign?: "classic" | "editorial";
+  menuDesign?: "classic" | "editorial" | "bistro" | "burger-bar";
   showPricesBam: boolean;
   showPricesEur: boolean;
   alcoholNotice?: string;
@@ -714,11 +714,13 @@ export function DashboardSectionsTabs({
                     <select
                       id="menuDesign"
                       name="menuDesign"
-                      defaultValue={menuDesign ?? "classic"}
+                      defaultValue={menuDesign ?? "bistro"}
                       className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                     >
                       <option value="classic">Classic (tamni)</option>
                       <option value="editorial">Editorial (svijetli)</option>
+                      <option value="bistro">Bistro (topli)</option>
+                      <option value="burger-bar">Burger Bar (tamni)</option>
                     </select>
                     <p className="text-xs text-slate-600">
                       Odaberi izgled koji će gosti vidjeti na javnom meniju.

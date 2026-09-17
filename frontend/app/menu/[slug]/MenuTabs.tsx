@@ -36,7 +36,7 @@ type SubTab = {
   count: number;
 };
 
-type MenuDesign = "classic" | "editorial";
+type MenuDesign = "classic" | "editorial" | "bistro" | "burger-bar";
 
 function PricePills({
   bam,
@@ -44,25 +44,33 @@ function PricePills({
   showPricesBam,
   showPricesEur,
   design,
+  align = "end",
 }: {
   bam: number[];
   eur: number[];
   showPricesBam: boolean;
   showPricesEur: boolean;
   design: MenuDesign;
+  align?: "start" | "end";
 }) {
   if (!showPricesBam && !showPricesEur) {
     return null;
   }
 
   return (
-    <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5 text-xs font-semibold md:gap-2 md:text-sm">
+    <div
+      className={`flex shrink-0 items-center gap-1.5 text-xs font-semibold md:gap-2 md:text-sm ${align === "start" ? "justify-start" : "justify-end"} ${design === "burger-bar" ? "flex-nowrap" : "flex-wrap"}`}
+    >
       {showPricesBam && (
         <span
-          className={`rounded-full border px-2.5 py-0.5 md:px-3 md:py-1 ${
-            design === "editorial"
-              ? "border-amber-300 bg-amber-50 text-amber-800"
-              : "border-amber-200/15 bg-amber-400/15 text-amber-100"
+          className={`whitespace-nowrap rounded-full border px-2 py-0.5 md:px-3 md:py-1 ${
+            design === "burger-bar"
+              ? "border-[#f6bf3c] bg-[#f6bf3c] font-black text-[#17130d]"
+              : design === "bistro"
+                ? "border-[#dfb28f] bg-[#fff8ef] text-[#8f3d2e]"
+                : design === "editorial"
+                  ? "border-amber-300 bg-amber-50 text-amber-800"
+                  : "border-amber-200/15 bg-amber-400/15 text-amber-100"
           }`}
         >
           {bam.map((v) => v.toFixed(2)).join(" / ")} KM
@@ -70,10 +78,14 @@ function PricePills({
       )}
       {showPricesEur && (
         <span
-          className={`rounded-full border px-2.5 py-0.5 md:px-3 md:py-1 ${
-            design === "editorial"
-              ? "border-sky-300 bg-sky-50 text-sky-800"
-              : "border-sky-200/15 bg-sky-400/15 text-sky-100"
+          className={`whitespace-nowrap rounded-full border px-2 py-0.5 md:px-3 md:py-1 ${
+            design === "burger-bar"
+              ? "border-[#ff8b1f] bg-[#ff8b1f] font-black text-[#17130d]"
+              : design === "bistro"
+                ? "border-[#b9cfa9] bg-[#f3f8ed] text-[#48623b]"
+                : design === "editorial"
+                  ? "border-sky-300 bg-sky-50 text-sky-800"
+                  : "border-sky-200/15 bg-sky-400/15 text-sky-100"
           }`}
         >
           {eur.map((v) => v.toFixed(2)).join(" / ")} EUR
@@ -108,18 +120,167 @@ function ItemCard({
 
   const hasImageOrDesc = !!(item.imageUrl || item.description);
   const isEditorial = design === "editorial";
+  const isBistro = design === "bistro";
+  const isBurgerBar = design === "burger-bar";
+
+  if (isBurgerBar) {
+    if (!item.imageUrl) {
+      return (
+        <li
+          className={`border-l-4 bg-[#1e1a13] px-4 py-4 transition-transform hover:-translate-y-0.5 sm:px-5 ${
+            highlighted
+              ? "border-l-[#ff8b1f] ring-1 ring-[#ff8b1f]/40"
+              : "border-l-[#f6bf3c]"
+          }`}
+        >
+          <div className="flex flex-col items-start gap-2">
+            <h3 className="text-lg font-black uppercase leading-tight tracking-wide text-[#fff8e7]">
+              {item.name}
+            </h3>
+            {item.description && (
+              <p className="text-sm leading-relaxed text-[#d5c7aa]">
+                {item.description}
+              </p>
+            )}
+            <PricePills
+              bam={converted.map((c) => c.bam)}
+              eur={converted.map((c) => c.eur)}
+              showPricesBam={showPricesBam}
+              showPricesEur={showPricesEur}
+              design={design}
+              align="start"
+            />
+            {highlighted && (
+              <span className="bg-[#ff8b1f] px-2 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#17130d]">
+                {"Dnevna ponuda"}
+              </span>
+            )}
+          </div>
+        </li>
+      );
+    }
+
+    return (
+      <li
+        className={`relative mb-5 border-l-4 bg-[#1e1a13] transition-transform hover:-translate-y-0.5 ${
+          highlighted
+            ? "border-l-[#ff8b1f] ring-1 ring-[#ff8b1f]/40"
+            : "border-l-[#f6bf3c]"
+        }`}
+      >
+        <div className="flex min-h-28 items-stretch">
+          {item.imageUrl && (
+            <div className="relative w-34 shrink-0 overflow-hidden sm:w-44">
+              <button
+                type="button"
+                onClick={() => onImageClick?.(item.imageUrl!, item.name)}
+                aria-label={`Uvecaj sliku artikla ${item.name}`}
+                className="absolute inset-0 w-full"
+              >
+                <Image
+                  src={item.imageUrl}
+                  alt={item.name}
+                  fill
+                  sizes="176px"
+                  className="object-cover transition duration-300 hover:scale-105"
+                />
+              </button>
+            </div>
+          )}
+          <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 p-4 sm:p-5">
+            <div>
+              <h3 className="text-lg font-black uppercase leading-tight tracking-wide text-[#fff8e7]">
+                {item.name}
+              </h3>
+              {item.description && (
+                <p className="mt-2 text-sm leading-relaxed text-[#d5c7aa]">
+                  {item.description}
+                </p>
+              )}
+            </div>
+            {highlighted && (
+              <span className="w-fit bg-[#ff8b1f] px-2 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#17130d]">
+                {"Dnevna ponuda"}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="absolute bottom-0 right-4 z-10 translate-y-1/2 sm:right-5">
+          <PricePills
+            bam={converted.map((c) => c.bam)}
+            eur={converted.map((c) => c.eur)}
+            showPricesBam={showPricesBam}
+            showPricesEur={showPricesEur}
+            design={design}
+          />
+        </div>
+      </li>
+    );
+  }
+
+  if (isBistro) {
+    return (
+      <li
+        className={`overflow-hidden border bg-[#fffdf9] transition-shadow ${
+          highlighted
+            ? "border-[#bb4d36] shadow-[0_10px_28px_rgba(164,67,45,0.16)]"
+            : "border-[#ead4bf] shadow-[0_5px_18px_rgba(99,53,33,0.06)]"
+        }`}
+      >
+        {item.imageUrl && (
+          <button
+            type="button"
+            onClick={() => onImageClick?.(item.imageUrl!, item.name)}
+            aria-label={`Uvecaj sliku artikla ${item.name}`}
+            className="relative block h-36 w-full overflow-hidden transition hover:opacity-90 sm:h-44"
+          >
+            <Image
+              src={item.imageUrl}
+              alt={item.name}
+              fill
+              sizes="(max-width: 640px) 100vw, 640px"
+              className="object-cover"
+            />
+          </button>
+        )}
+        <div className="p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-4">
+            <h3 className="font-serif text-xl font-bold leading-snug text-[#4a281d]">
+              {item.name}
+            </h3>
+            <PricePills
+              bam={converted.map((c) => c.bam)}
+              eur={converted.map((c) => c.eur)}
+              showPricesBam={showPricesBam}
+              showPricesEur={showPricesEur}
+              design={design}
+            />
+          </div>
+          {item.description && (
+            <p className="mt-2 border-t border-[#ead4bf] pt-2 text-sm leading-relaxed text-[#875d4b]">
+              {item.description}
+            </p>
+          )}
+        </div>
+      </li>
+    );
+  }
 
   return (
     <li
       key={item._id}
       className={`rounded-2xl border px-4 py-3 transition-shadow ${
         highlighted
-          ? isEditorial
-            ? "border-emerald-300 bg-emerald-50 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
-            : "border-emerald-300/30 bg-emerald-950/30 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
-          : isEditorial
-            ? "border-stone-200 bg-white shadow-[0_8px_24px_rgba(82,67,45,0.06)]"
-            : "border-amber-100/10 bg-[#151b1f]/75 backdrop-blur-sm"
+          ? isBistro
+            ? "border-[#bb4d36] bg-[#fff0df] shadow-[0_8px_24px_rgba(164,67,45,0.12)]"
+            : isEditorial
+              ? "border-emerald-300 bg-emerald-50 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
+              : "border-emerald-300/30 bg-emerald-950/30 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
+          : isBistro
+            ? "border-[#ead4bf] bg-[#fffdf9] shadow-[0_5px_18px_rgba(99,53,33,0.06)]"
+            : isEditorial
+              ? "border-stone-200 bg-white shadow-[0_8px_24px_rgba(82,67,45,0.06)]"
+              : "border-amber-100/10 bg-[#151b1f]/75 backdrop-blur-sm"
       }`}
     >
       <div className="flex items-start gap-3">
@@ -128,7 +289,7 @@ function ItemCard({
             type="button"
             onClick={() => onImageClick?.(item.imageUrl!, item.name)}
             aria-label={`Uvecaj sliku artikla ${item.name}`}
-            className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl ring-1 transition hover:opacity-90 ${isEditorial ? "ring-stone-200" : "ring-amber-50/15"}`}
+            className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-full ring-2 transition hover:opacity-90 ${isBistro ? "ring-[#d9ae8b]" : isEditorial ? "ring-stone-200" : "ring-amber-50/15"}`}
           >
             <Image
               src={item.imageUrl}
@@ -142,7 +303,7 @@ function ItemCard({
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex items-start justify-between gap-4">
             <h3
-              className={`text-[15px] font-semibold leading-snug md:text-[15px] ${isEditorial ? "text-stone-900" : "text-[#fff6e8]"}`}
+              className={`text-[15px] font-semibold leading-snug md:text-[15px] ${isBistro ? "font-serif text-[#4a281d]" : isEditorial ? "text-stone-900" : "text-[#fff6e8]"}`}
             >
               {item.name}
             </h3>
@@ -158,7 +319,7 @@ function ItemCard({
           </div>
           {item.description && (
             <p
-              className={`text-sm leading-relaxed ${isEditorial ? "text-stone-600" : "text-amber-50/70"}`}
+              className={`text-sm leading-relaxed ${isBistro ? "text-[#875d4b]" : isEditorial ? "text-stone-600" : "text-amber-50/70"}`}
             >
               {item.description}
             </p>
@@ -220,8 +381,16 @@ export function MenuTabs({
   supportedLocales: readonly string[];
   activeLanguages: string[];
 }) {
-  const design = menuDesign === "editorial" ? "editorial" : "classic";
+  const design: MenuDesign =
+    menuDesign === "classic" ||
+    menuDesign === "editorial" ||
+    menuDesign === "bistro" ||
+    menuDesign === "burger-bar"
+      ? menuDesign
+      : "bistro";
   const isEditorial = design === "editorial";
+  const isBistro = design === "bistro";
+  const isBurgerBar = design === "burger-bar";
   const [activeId, setActiveId] = useState(
     categories.find((category) => !category.isDailyOffer)?._id ??
       categories[0]?._id ??
@@ -331,20 +500,22 @@ export function MenuTabs({
   };
 
   return (
-    <div className={`space-y-3 ${isEditorial ? "font-sans" : ""}`}>
+    <div
+      className={`space-y-4 ${isBurgerBar ? "font-sans" : isBistro ? "font-sans" : isEditorial ? "font-sans" : ""}`}
+    >
       <div
-        className={`hidden items-center justify-between gap-6 rounded-[28px] border px-6 py-5 md:flex ${isEditorial ? "border-stone-200 bg-[#f8f5ef]" : "border-amber-100/10 bg-[#1b191a]/70 backdrop-blur-sm"}`}
+        className={`hidden items-center justify-between gap-6 border px-6 py-5 md:flex ${isBurgerBar ? "border-[#f6bf3c]/55 bg-[#1e1a13] shadow-[0_14px_32px_rgba(0,0,0,0.28)]" : isBistro ? "border-[#e3c4aa] bg-[#fffdf8] shadow-[0_12px_30px_rgba(110,57,35,0.08)]" : isEditorial ? "rounded-[28px] border-stone-200 bg-[#f8f5ef]" : "rounded-[28px] border-amber-100/10 bg-[#1b191a]/70 backdrop-blur-sm"}`}
       >
         <div className="min-w-0">
           {!hideDigitalMenuHeader && (
             <p
-              className={`text-[10px] uppercase tracking-[0.22em] ${isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
+              className={`text-[10px] uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f6bf3c]" : isBistro ? "text-[#a66145]" : isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
             >
               {messages.digitalMenu}
             </p>
           )}
           <p
-            className={`mt-1 text-lg font-semibold ${isEditorial ? "text-stone-900" : "text-[#fff6e8]"}`}
+            className={`mt-1 text-2xl font-bold ${isBurgerBar ? "font-black uppercase tracking-wide text-[#fff8e7]" : isBistro ? "font-serif text-[#4a281d]" : isEditorial ? "text-lg font-semibold text-stone-900" : "text-lg font-semibold text-[#fff6e8]"}`}
           >
             {venueName}
           </p>
@@ -355,7 +526,7 @@ export function MenuTabs({
             type="button"
             onClick={() => setIsSearchOpen((prev) => !prev)}
             aria-label={isSearchOpen ? messages.close : searchPlaceholder}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-amber-100/15 bg-[#141213]/90 text-amber-100/80 transition hover:border-amber-100/30 hover:text-amber-100"
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-full border transition ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : "border-amber-100/15 bg-[#141213]/90 text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
           >
             <svg
               viewBox="0 0 24 24"
@@ -373,10 +544,14 @@ export function MenuTabs({
           </button>
           {activeLanguages.length > 1 && (
             <>
-              <span className="text-xs font-medium uppercase tracking-[0.22em] text-amber-100/55">
+              <span
+                className={`text-xs font-medium uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#98634c]" : "text-amber-100/55"}`}
+              >
                 {messages.languageLabel}
               </span>
-              <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
+              <div
+                className={`flex items-center gap-1 rounded-full border p-1 ${isBurgerBar ? "border-[#f6bf3c]/45 bg-[#12100d]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed]" : "border-amber-100/15 bg-[#141213]/90"}`}
+              >
                 {supportedLocales
                   .filter((code) => activeLanguages.includes(code))
                   .slice(0, 2)
@@ -386,8 +561,16 @@ export function MenuTabs({
                       href={`/menu/${slug}?lang=${code}`}
                       className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition ${
                         code === locale
-                          ? "bg-amber-300/20 text-amber-100"
-                          : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"
+                          ? isBurgerBar
+                            ? "bg-[#ff8b1f] text-[#17130d]"
+                            : isBistro
+                              ? "bg-[#b8422e] text-white"
+                              : "bg-amber-300/20 text-amber-100"
+                          : isBurgerBar
+                            ? "text-[#f8c85a] hover:bg-[#f6bf3c]/15"
+                            : isBistro
+                              ? "text-[#8a5a44] hover:bg-[#fde9d7]"
+                              : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"
                       }`}
                     >
                       {code}
@@ -401,19 +584,19 @@ export function MenuTabs({
 
       <div className="sticky top-0 z-30 -mx-4 md:hidden sm:-mx-6">
         <div
-          className={`px-4 py-4 shadow-lg backdrop-blur-md sm:px-6 ${isEditorial ? "bg-[#f8f5ef]/95" : "bg-[#1b191a]/90"}`}
+          className={`px-4 py-4 shadow-lg backdrop-blur-md sm:px-6 ${isBurgerBar ? "border-b border-[#f6bf3c]/45 bg-[#12100d]/95" : isBistro ? "border-b border-[#e3c4aa] bg-[#fffaf3]/95" : isEditorial ? "bg-[#f8f5ef]/95" : "bg-[#1b191a]/90"}`}
         >
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 pr-3">
               {!hideDigitalMenuHeader && (
                 <p
-                  className={`text-[10px] uppercase tracking-[0.22em] ${isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
+                  className={`text-[10px] uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f6bf3c]" : isBistro ? "text-[#a66145]" : isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
                 >
                   {messages.digitalMenu}
                 </p>
               )}
               <p
-                className={`truncate text-[18px] font-medium ${isEditorial ? "text-stone-800" : "text-amber-100/70"}`}
+                className={`truncate text-[18px] ${isBurgerBar ? "font-black uppercase tracking-wide text-[#fff8e7]" : isBistro ? "font-serif font-bold text-[#4a281d]" : isEditorial ? "font-medium text-stone-800" : "font-medium text-amber-100/70"}`}
               >
                 {venueName}
               </p>
@@ -423,7 +606,7 @@ export function MenuTabs({
                 type="button"
                 onClick={() => setIsSearchOpen((prev) => !prev)}
                 aria-label={isSearchOpen ? messages.close : searchPlaceholder}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-amber-100/15 bg-[#141213]/90 text-amber-100/80"
+                className={`inline-flex h-8 w-8 items-center justify-center rounded-full border ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f]" : "border-amber-100/15 bg-[#141213]/90 text-amber-100/80"}`}
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -440,7 +623,9 @@ export function MenuTabs({
                 </svg>
               </button>
               {activeLanguages.length > 1 && (
-                <div className="flex items-center gap-1 rounded-full border border-amber-100/15 bg-[#141213]/90 p-1">
+                <div
+                  className={`flex items-center gap-1 rounded-full border p-1 ${isBistro ? "border-[#dfb28f] bg-[#fff7ed]" : "border-amber-100/15 bg-[#141213]/90"}`}
+                >
                   {supportedLocales
                     .filter((code) => activeLanguages.includes(code))
                     .slice(0, 2)
@@ -450,8 +635,12 @@ export function MenuTabs({
                         href={`/menu/${slug}?lang=${code}`}
                         className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
                           code === locale
-                            ? "bg-amber-300/20 text-amber-100"
-                            : "text-amber-100/70"
+                            ? isBistro
+                              ? "bg-[#b8422e] text-white"
+                              : "bg-amber-300/20 text-amber-100"
+                            : isBistro
+                              ? "text-[#8a5a44]"
+                              : "text-amber-100/70"
                         }`}
                       >
                         {code}
@@ -462,7 +651,9 @@ export function MenuTabs({
             </div>
           </div>
 
-          <div className="mt-2 border-t border-amber-100/10 pt-2">
+          <div
+            className={`mt-2 border-t pt-2 ${isBurgerBar ? "border-[#f6bf3c]/30" : isBistro ? "border-[#ead4bf]" : "border-amber-100/10"}`}
+          >
             <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {categories.map((cat) => (
                 <button
@@ -471,12 +662,20 @@ export function MenuTabs({
                   onClick={() => selectCategory(cat._id)}
                   className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition ${
                     cat._id === activeId
-                      ? isEditorial
-                        ? "border-stone-900 bg-stone-900 text-white"
-                        : "border-amber-200/40 bg-amber-200/10 text-amber-100"
-                      : isEditorial
-                        ? "border-stone-200 bg-white text-stone-500"
-                        : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70"
+                      ? isBurgerBar
+                        ? "border-[#ff8b1f] bg-[#ff8b1f] text-[#17130d] shadow-[0_5px_0_#a94608]"
+                        : isBistro
+                          ? "border-[#b8422e] bg-[#b8422e] text-white"
+                          : isEditorial
+                            ? "border-stone-900 bg-stone-900 text-white"
+                            : "border-amber-200/40 bg-amber-200/10 text-amber-100"
+                      : isBurgerBar
+                        ? "border-[#f6bf3c]/40 bg-[#1e1a13] text-[#f8c85a]"
+                        : isBistro
+                          ? "border-[#e3c4aa] bg-[#fffdf9] text-[#80523e]"
+                          : isEditorial
+                            ? "border-stone-200 bg-white text-stone-500"
+                            : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70"
                   }`}
                 >
                   {cat.title}
@@ -492,12 +691,20 @@ export function MenuTabs({
                     onClick={() => selectSubTab(tab.key)}
                     className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                       tab.key === resolvedActiveSubTab
-                        ? isEditorial
-                          ? "border-stone-900 bg-stone-900 text-white"
-                          : "border-amber-300/50 bg-amber-300/15 text-amber-100"
-                        : isEditorial
-                          ? "border-stone-200 bg-white text-stone-500"
-                          : "border-amber-100/15 bg-[#1a1f23] text-amber-50/65"
+                        ? isBurgerBar
+                          ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d]"
+                          : isBistro
+                            ? "border-[#b8422e] bg-[#b8422e] text-white"
+                            : isEditorial
+                              ? "border-stone-900 bg-stone-900 text-white"
+                              : "border-amber-300/50 bg-amber-300/15 text-amber-100"
+                        : isBurgerBar
+                          ? "border-[#f6bf3c]/35 bg-[#191610] text-[#f8c85a]"
+                          : isBistro
+                            ? "border-[#e3c4aa] bg-[#fffdf9] text-[#80523e]"
+                            : isEditorial
+                              ? "border-stone-200 bg-white text-stone-500"
+                              : "border-amber-100/15 bg-[#1a1f23] text-amber-50/65"
                     }`}
                   >
                     {tab.title}
@@ -516,12 +723,20 @@ export function MenuTabs({
             onClick={() => selectCategory(cat._id)}
             className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition ${
               cat._id === activeId
-                ? isEditorial
-                  ? "border-stone-900 bg-stone-900 text-white"
-                  : "border-amber-200/40 bg-amber-200/10 text-amber-100"
-                : isEditorial
-                  ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-100"
-                  : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70 hover:bg-[#20262b]"
+                ? isBurgerBar
+                  ? "border-[#ff8b1f] bg-[#ff8b1f] text-[#17130d] shadow-[0_5px_0_#a94608]"
+                  : isBistro
+                    ? "border-[#b8422e] bg-[#b8422e] text-white"
+                    : isEditorial
+                      ? "border-stone-900 bg-stone-900 text-white"
+                      : "border-amber-200/40 bg-amber-200/10 text-amber-100"
+                : isBurgerBar
+                  ? "border-[#f6bf3c]/40 bg-[#1e1a13] text-[#f8c85a] hover:border-[#f6bf3c] hover:bg-[#292218]"
+                  : isBistro
+                    ? "border-[#e3c4aa] bg-[#fffdf9] text-[#80523e] hover:bg-[#fde9d7]"
+                    : isEditorial
+                      ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-100"
+                      : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70 hover:bg-[#20262b]"
             }`}
           >
             {cat.title}
@@ -538,17 +753,25 @@ export function MenuTabs({
               onClick={() => selectSubTab(tab.key)}
               className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                 tab.key === resolvedActiveSubTab
-                  ? isEditorial
-                    ? "border-stone-900 bg-stone-900 text-white"
-                    : "border-amber-300/50 bg-amber-300/15 text-amber-100"
-                  : isEditorial
-                    ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-100"
-                    : "border-amber-100/15 bg-[#1b2125] text-amber-50/65 hover:bg-[#20272d]"
+                  ? isBurgerBar
+                    ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d]"
+                    : isBistro
+                      ? "border-[#b8422e] bg-[#b8422e] text-white"
+                      : isEditorial
+                        ? "border-stone-900 bg-stone-900 text-white"
+                        : "border-amber-300/50 bg-amber-300/15 text-amber-100"
+                  : isBurgerBar
+                    ? "border-[#f6bf3c]/35 bg-[#191610] text-[#f8c85a] hover:border-[#f6bf3c]"
+                    : isBistro
+                      ? "border-[#e3c4aa] bg-[#fffdf9] text-[#80523e] hover:bg-[#fde9d7]"
+                      : isEditorial
+                        ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-100"
+                        : "border-amber-100/15 bg-[#1b2125] text-amber-50/65 hover:bg-[#20272d]"
               }`}
             >
               {tab.title}
               <span
-                className={`ml-1.5 text-[11px] ${tab.key === resolvedActiveSubTab ? "text-amber-200" : "text-amber-50/45"}`}
+                className={`ml-1.5 text-[11px] ${isBurgerBar ? (tab.key === resolvedActiveSubTab ? "text-[#17130d]/70" : "text-[#f6bf3c]/65") : isBistro ? (tab.key === resolvedActiveSubTab ? "text-white/75" : "text-[#af765c]") : tab.key === resolvedActiveSubTab ? "text-amber-200" : "text-amber-50/45"}`}
               >
                 {tab.count}
               </span>
@@ -558,28 +781,30 @@ export function MenuTabs({
       )}
 
       {isSearchOpen && (
-        <div className="rounded-2xl border border-amber-100/10 bg-[#171c20] px-3 py-2">
+        <div
+          className={`border px-3 py-2 ${isBurgerBar ? "border-[#f6bf3c]/45 bg-[#1e1a13]" : isBistro ? "rounded-2xl border-[#e3c4aa] bg-[#fffdf9]" : "rounded-2xl border-amber-100/10 bg-[#171c20]"}`}
+        >
           <input
             type="search"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full rounded-xl border border-amber-100/10 bg-[#11171a] px-4 py-2.5 text-sm text-amber-50 placeholder:text-amber-100/45 outline-none transition focus:border-amber-200/40"
+            className={`w-full border px-4 py-2.5 text-sm outline-none transition ${isBurgerBar ? "border-[#f6bf3c]/35 bg-[#12100d] text-[#fff8e7] placeholder:text-[#f8c85a]/60 focus:border-[#ff8b1f]" : isBistro ? "rounded-xl border-[#e3c4aa] bg-[#fff7ed] text-[#4a281d] placeholder:text-[#af765c] focus:border-[#b8422e]" : "rounded-xl border-amber-100/10 bg-[#11171a] text-amber-50 placeholder:text-amber-100/45 focus:border-amber-200/40"}`}
           />
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className={isBurgerBar ? "space-y-5" : "space-y-3"}>
         {normalizedQuery ? (
           globalFilteredCategories.map((category) => (
             <div key={category._id}>
               <h2
-                className={`mb-2 text-lg font-semibold ${isEditorial ? "text-stone-800" : "text-amber-100"}`}
+                className={`mb-3 text-lg font-semibold ${isBurgerBar ? "border-b-2 border-[#f6bf3c] px-5 py-4 text-2xl font-black uppercase tracking-wide text-[#fff8e7]" : isBistro ? "font-serif text-2xl text-[#4a281d]" : isEditorial ? "text-stone-800" : "text-amber-100"}`}
               >
                 {category.title}
               </h2>
               {category.items.length > 0 && (
-                <ul className="space-y-2">
+                <ul className={isBurgerBar ? "space-y-6" : "space-y-2"}>
                   {category.items.map((item) => (
                     <ItemCard
                       key={item._id}
@@ -597,13 +822,13 @@ export function MenuTabs({
                 </ul>
               )}
               {category.subcategories.map((sub) => (
-                <div key={sub._id} className="mt-3">
+                <div key={sub._id} className={isBurgerBar ? "mt-6" : "mt-3"}>
                   <p
-                    className={`mb-2 text-[15px] font-semibold ${isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
+                    className={`mb-3 text-[15px] font-semibold ${isBurgerBar ? "border-l-4 border-[#ff8b1f] px-4 py-3 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
                   >
                     {sub.title}
                   </p>
-                  <ul className="space-y-2">
+                  <ul className={isBurgerBar ? "space-y-6" : "space-y-2"}>
                     {sub.items.map((item) => (
                       <ItemCard
                         key={item._id}
@@ -624,7 +849,7 @@ export function MenuTabs({
             </div>
           ))
         ) : resolvedActiveSubTab === "all" && filteredRootItems.length > 0 ? (
-          <ul className="space-y-2">
+          <ul className={isBurgerBar ? "space-y-6" : "space-y-2"}>
             {filteredRootItems.map((item) => (
               <ItemCard
                 key={item._id}
@@ -649,11 +874,11 @@ export function MenuTabs({
               .map((sub) => (
                 <div key={sub._id}>
                   <p
-                    className={`mb-2 text-[15px] font-semibold ${isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
+                    className={`mb-3 font-semibold ${isBurgerBar ? "border-l-4 border-[#ff8b1f] px-4 py-3 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
                   >
                     {sub.title}
                   </p>
-                  <ul className="space-y-2">
+                  <ul className={isBurgerBar ? "space-y-6" : "space-y-2"}>
                     {sub.items.map((item) => (
                       <ItemCard
                         key={item._id}
@@ -676,7 +901,7 @@ export function MenuTabs({
 
         {(normalizedQuery ? globalItemsCount : allItemsCount) === 0 && (
           <p
-            className={`rounded-xl border px-3 py-3 text-sm ${isEditorial ? "border-stone-200 bg-white text-stone-500" : "border-amber-100/10 bg-[#17181b] text-amber-50/65"}`}
+            className={`border px-3 py-3 text-sm ${isBurgerBar ? "border-[#f6bf3c]/35 bg-[#1e1a13] text-[#f8c85a]" : isBistro ? "rounded-xl border-[#e3c4aa] bg-[#fffdf9] text-[#8a5a44]" : isEditorial ? "rounded-xl border-stone-200 bg-white text-stone-500" : "rounded-xl border-amber-100/10 bg-[#17181b] text-amber-50/65"}`}
           >
             {messages.noItemsInCategory}
           </p>

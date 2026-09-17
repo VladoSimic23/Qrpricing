@@ -56,10 +56,12 @@ export const tenantType = defineType({
         list: [
           { title: "Classic (tamni)", value: "classic" },
           { title: "Editorial (svijetli)", value: "editorial" },
+          { title: "Bistro (topli)", value: "bistro" },
+          { title: "Burger Bar (tamni)", value: "burger-bar" },
         ],
         layout: "radio",
       },
-      initialValue: "classic",
+      initialValue: "bistro",
     }),
     defineField({
       name: "showPricesBam",

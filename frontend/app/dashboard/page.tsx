@@ -113,7 +113,7 @@ async function createTenantAction(formData: FormData) {
     isActive: true,
     showPricesBam: false,
     showPricesEur: true,
-    menuDesign: "classic",
+    menuDesign: "bistro",
   });
 
   await writeClient.create({
@@ -857,7 +857,7 @@ async function updateMenuSettingsAction(formData: FormData) {
   const hideDigitalMenuHeader = formData.get("hideDigitalMenuHeader") === "on";
   const showPricesBam = formData.get("showPricesBam") === "on";
   const showPricesEur = formData.get("showPricesEur") === "on";
-  const menuDesign = String(formData.get("menuDesign") || "classic");
+  const menuDesign = String(formData.get("menuDesign") || "bistro");
   const alcoholNotice = String(formData.get("alcoholNotice") || "").trim();
   const activeLanguagesHr = formData.get("activeLanguagesHr") === "on";
   const activeLanguagesEn = formData.get("activeLanguagesEn") === "on";
@@ -870,7 +870,12 @@ async function updateMenuSettingsAction(formData: FormData) {
     throw new Error("Uključi prikaz cijena u barem jednoj valuti.");
   }
 
-  if (menuDesign !== "classic" && menuDesign !== "editorial") {
+  if (
+    menuDesign !== "classic" &&
+    menuDesign !== "editorial" &&
+    menuDesign !== "bistro" &&
+    menuDesign !== "burger-bar"
+  ) {
     throw new Error("Odabrani dizajn menija nije podržan.");
   }
 
