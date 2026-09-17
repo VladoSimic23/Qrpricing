@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { generateMetadata as generateSeoMetadata } from "@/lib/seo";
 
 import { ToastProvider } from "./Toast";
 
-export const metadata: Metadata = generateSeoMetadata({
+export const metadata: Metadata = {
   title: "Dashboard - QR Cjenik",
   description:
     "Upravljajte vašim digitalnim menijima, kategorijama, artiklima i postavkama u dashboard-u.",
@@ -11,7 +10,13 @@ export const metadata: Metadata = generateSeoMetadata({
     index: false,
     follow: false,
   },
-});
+  openGraph: {
+    images: [],
+  },
+  twitter: {
+    images: [],
+  },
+};
 
 export default function DashboardLayout({
   children,

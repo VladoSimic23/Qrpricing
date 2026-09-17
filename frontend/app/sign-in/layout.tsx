@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { generateMetadata as generateSeoMetadata, siteConfig } from "@/lib/seo";
 
-export const metadata: Metadata = generateSeoMetadata({
+export const metadata: Metadata = {
   title: "Prijava - QR Cjenik",
   description:
     "Prijavite se na vaš QR Cjenik račun i pristupite svojem dashboard-u za upravljanje menijima.",
@@ -9,7 +8,13 @@ export const metadata: Metadata = generateSeoMetadata({
     index: false,
     follow: true,
   },
-});
+  openGraph: {
+    images: [],
+  },
+  twitter: {
+    images: [],
+  },
+};
 
 export default function SignInLayout({
   children,
