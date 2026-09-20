@@ -370,6 +370,92 @@ export default async function Home({
         </div>
       </section>
 
+      {/* 4.5 TEME MENIJA */}
+      <section className="mx-auto max-w-6xl px-6 py-24">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400 mb-6">
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            Sve teme su besplatne — u svakom planu
+          </div>
+          <h2 className="text-3xl font-bold sm:text-4xl text-white">
+            Odaberite dizajn koji odgovara vašem lokalu
+          </h2>
+          <p className="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">
+            Svaka tema ima jedinstven karakter — od modernog i elegantnog do
+            urbanog i opuštenog. Mijenjajte ih kad god poželite, bez ikakve
+            doplate.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { src: "/slikeTema/tema1.png", name: "Classic" },
+            { src: "/slikeTema/tema2.png", name: "Editorial" },
+            { src: "/slikeTema/tema3.png", name: "Bistro" },
+            { src: "/slikeTema/tema4.png", name: "Burger Bar" },
+          ].map((theme) => (
+            <div
+              key={theme.src}
+              className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 shadow-lg hover:border-emerald-500/40 hover:shadow-emerald-500/10 transition-all"
+            >
+              <div className="relative aspect-[9/16] w-full overflow-hidden">
+                <Image
+                  src={theme.src}
+                  alt={`Tema digitalnog menija — ${theme.name}`}
+                  fill
+                  className="object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
+                />
+                <span className="absolute top-3 right-3 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-slate-950 shadow-lg">
+                  Besplatno
+                </span>
+              </div>
+              <div className="p-4 border-t border-slate-800">
+                <p className="font-semibold text-white">{theme.name}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 px-6 py-5 max-w-3xl mx-auto text-center sm:text-left">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
+            </svg>
+          </div>
+          <p className="text-sm sm:text-base text-slate-300">
+            Neprestano radimo na novim temama. Svaka buduća tema koju objavimo
+            automatski postaje dostupna{" "}
+            <strong className="text-emerald-400">
+              svim korisnicima digitalnog cjenika
+            </strong>{" "}
+            — potpuno besplatno, bez dodatne pretplate.
+          </p>
+        </div>
+      </section>
+
       {/* 5. LIVE DEMO */}
       <section
         id="demo"
@@ -445,7 +531,7 @@ export default async function Home({
                   Posebna ponuda za nove klijente
                 </div>
                 <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
-                  Prvi mjesec{" "}
+                  Tri mjeseca{" "}
                   <span className="text-emerald-400">potpuno besplatno</span>
                 </h2>
                 <p className="text-lg text-slate-300 leading-relaxed">

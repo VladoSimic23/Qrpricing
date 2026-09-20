@@ -134,7 +134,7 @@ function ItemCard({
           }`}
         >
           <div className="flex flex-col items-start gap-2">
-            <h3 className="text-lg font-black uppercase leading-tight tracking-wide text-[#fff8e7]">
+            <h3 className="text-base font-black uppercase leading-tight tracking-wide text-[#fff8e7]">
               {item.name}
             </h3>
             {item.description && (
@@ -162,10 +162,8 @@ function ItemCard({
 
     return (
       <li
-        className={`relative mb-5 border-l-4 bg-[#1e1a13] transition-transform hover:-translate-y-0.5 ${
-          highlighted
-            ? "border-l-[#ff8b1f] ring-1 ring-[#ff8b1f]/40"
-            : "border-l-[#f6bf3c]"
+        className={`relative mb-5 bg-[#1e1a13] transition-transform hover:-translate-y-0.5 ${
+          highlighted ? "ring-1 ring-[#ff8b1f]/40" : ""
         }`}
       >
         <div className="flex min-h-28 items-stretch">
@@ -189,7 +187,7 @@ function ItemCard({
           )}
           <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 p-4 sm:p-5">
             <div>
-              <h3 className="text-lg font-black uppercase leading-tight tracking-wide text-[#fff8e7]">
+              <h3 className="text-base font-black uppercase leading-tight tracking-wide text-[#fff8e7]">
                 {item.name}
               </h3>
               {item.description && (
@@ -245,7 +243,7 @@ function ItemCard({
         )}
         <div className="p-4 sm:p-5">
           <div className="flex items-start justify-between gap-4">
-            <h3 className="font-serif text-xl font-bold leading-snug text-[#4a281d]">
+            <h3 className="font-serif text-lg font-bold leading-snug text-[#4a281d]">
               {item.name}
             </h3>
             <PricePills
@@ -732,7 +730,7 @@ export function MenuTabs({
               {category.subcategories.map((sub) => (
                 <div key={sub._id} className={isBurgerBar ? "mt-6" : "mt-3"}>
                   <p
-                    className={`mb-3 text-[15px] font-semibold ${isBurgerBar ? "border-l-4 border-[#ff8b1f] px-4 py-3 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
+                    className={`mb-3 text-[15px] font-semibold ${isBurgerBar ? "inline-block border-b-4 border-[#ff8b1f] pb-1 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
                   >
                     {sub.title}
                   </p>
@@ -782,7 +780,7 @@ export function MenuTabs({
               .map((sub) => (
                 <div key={sub._id}>
                   <p
-                    className={`mb-3 font-semibold ${isBurgerBar ? "border-l-4 border-[#ff8b1f] px-4 py-3 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
+                    className={`mb-3 font-semibold ${isBurgerBar ? "inline-block border-b-4 border-[#ff8b1f] pb-1 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
                   >
                     {sub.title}
                   </p>
