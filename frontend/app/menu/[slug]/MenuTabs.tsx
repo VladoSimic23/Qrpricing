@@ -399,6 +399,7 @@ export function MenuTabs({
   const [activeSubTab, setActiveSubTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{
     url: string;
     name: string;
@@ -506,7 +507,7 @@ export function MenuTabs({
       <div
         className={`hidden items-center justify-between gap-6 border px-6 py-5 md:flex ${isBurgerBar ? "border-[#f6bf3c]/55 bg-[#1e1a13] shadow-[0_14px_32px_rgba(0,0,0,0.28)]" : isBistro ? "border-[#e3c4aa] bg-[#fffdf8] shadow-[0_12px_30px_rgba(110,57,35,0.08)]" : isEditorial ? "rounded-[28px] border-stone-200 bg-[#f8f5ef]" : "rounded-[28px] border-amber-100/10 bg-[#1b191a]/70 backdrop-blur-sm"}`}
       >
-        <div className="min-w-0">
+        <div className="min-w-0 w-full">
           {!hideDigitalMenuHeader && (
             <p
               className={`text-[10px] uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f6bf3c]" : isBistro ? "text-[#a66145]" : isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
@@ -520,135 +521,25 @@ export function MenuTabs({
             {venueName}
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setIsSearchOpen((prev) => !prev)}
-            aria-label={isSearchOpen ? messages.close : searchPlaceholder}
-            className={`inline-flex h-9 w-9 items-center justify-center rounded-full border transition ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : "border-amber-100/15 bg-[#141213]/90 text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="7" />
-              <path d="M20 20l-3.2-3.2" />
-            </svg>
-          </button>
-          {activeLanguages.length > 1 && (
-            <>
-              <span
-                className={`text-xs font-medium uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#98634c]" : "text-amber-100/55"}`}
-              >
-                {messages.languageLabel}
-              </span>
-              <div
-                className={`flex items-center gap-1 rounded-full border p-1 ${isBurgerBar ? "border-[#f6bf3c]/45 bg-[#12100d]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed]" : "border-amber-100/15 bg-[#141213]/90"}`}
-              >
-                {supportedLocales
-                  .filter((code) => activeLanguages.includes(code))
-                  .slice(0, 2)
-                  .map((code) => (
-                    <Link
-                      key={code}
-                      href={`/menu/${slug}?lang=${code}`}
-                      className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition ${
-                        code === locale
-                          ? isBurgerBar
-                            ? "bg-[#ff8b1f] text-[#17130d]"
-                            : isBistro
-                              ? "bg-[#b8422e] text-white"
-                              : "bg-amber-300/20 text-amber-100"
-                          : isBurgerBar
-                            ? "text-[#f8c85a] hover:bg-[#f6bf3c]/15"
-                            : isBistro
-                              ? "text-[#8a5a44] hover:bg-[#fde9d7]"
-                              : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"
-                      }`}
-                    >
-                      {code}
-                    </Link>
-                  ))}
-              </div>
-            </>
-          )}
-        </div>
       </div>
 
       <div className="sticky top-0 z-30 -mx-4 md:hidden sm:-mx-6">
         <div
           className={`px-4 py-4 shadow-lg backdrop-blur-md sm:px-6 ${isBurgerBar ? "border-b border-[#f6bf3c]/45 bg-[#12100d]/95" : isBistro ? "border-b border-[#e3c4aa] bg-[#fffaf3]/95" : isEditorial ? "bg-[#f8f5ef]/95" : "bg-[#1b191a]/90"}`}
         >
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0 pr-3">
-              {!hideDigitalMenuHeader && (
-                <p
-                  className={`text-[10px] uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f6bf3c]" : isBistro ? "text-[#a66145]" : isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
-                >
-                  {messages.digitalMenu}
-                </p>
-              )}
+          <div className="w-full min-w-0">
+            {!hideDigitalMenuHeader && (
               <p
-                className={`truncate text-[18px] ${isBurgerBar ? "font-black uppercase tracking-wide text-[#fff8e7]" : isBistro ? "font-serif font-bold text-[#4a281d]" : isEditorial ? "font-medium text-stone-800" : "font-medium text-amber-100/70"}`}
+                className={`text-[10px] uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f6bf3c]" : isBistro ? "text-[#a66145]" : isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
               >
-                {venueName}
+                {messages.digitalMenu}
               </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIsSearchOpen((prev) => !prev)}
-                aria-label={isSearchOpen ? messages.close : searchPlaceholder}
-                className={`inline-flex h-8 w-8 items-center justify-center rounded-full border ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f]" : "border-amber-100/15 bg-[#141213]/90 text-amber-100/80"}`}
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="11" cy="11" r="7" />
-                  <path d="M20 20l-3.2-3.2" />
-                </svg>
-              </button>
-              {activeLanguages.length > 1 && (
-                <div
-                  className={`flex items-center gap-1 rounded-full border p-1 ${isBistro ? "border-[#dfb28f] bg-[#fff7ed]" : "border-amber-100/15 bg-[#141213]/90"}`}
-                >
-                  {supportedLocales
-                    .filter((code) => activeLanguages.includes(code))
-                    .slice(0, 2)
-                    .map((code) => (
-                      <Link
-                        key={code}
-                        href={`/menu/${slug}?lang=${code}`}
-                        className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
-                          code === locale
-                            ? isBistro
-                              ? "bg-[#b8422e] text-white"
-                              : "bg-amber-300/20 text-amber-100"
-                            : isBistro
-                              ? "text-[#8a5a44]"
-                              : "text-amber-100/70"
-                        }`}
-                      >
-                        {code}
-                      </Link>
-                    ))}
-                </div>
-              )}
-            </div>
+            )}
+            <p
+              className={`truncate text-[18px] ${isBurgerBar ? "font-black uppercase tracking-wide text-[#fff8e7]" : isBistro ? "font-serif font-bold text-[#4a281d]" : isEditorial ? "font-medium text-stone-800" : "font-medium text-amber-100/70"}`}
+            >
+              {venueName}
+            </p>
           </div>
 
           <div
@@ -712,87 +603,104 @@ export function MenuTabs({
                 ))}
               </div>
             )}
+            {isSearchOpen && (
+              <div
+                className={`mt-2 border px-3 py-2 ${isBurgerBar ? "border-[#f6bf3c]/45 bg-[#1e1a13]" : isBistro ? "rounded-2xl border-[#e3c4aa] bg-[#fffdf9]" : "rounded-2xl border-amber-100/10 bg-[#171c20]"}`}
+              >
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder={searchPlaceholder}
+                  className={`w-full border px-4 py-2.5 text-sm outline-none transition ${isBurgerBar ? "border-[#f6bf3c]/35 bg-[#12100d] text-[#fff8e7] placeholder:text-[#f8c85a]/60 focus:border-[#ff8b1f]" : isBistro ? "rounded-xl border-[#e3c4aa] bg-[#fff7ed] text-[#4a281d] placeholder:text-[#af765c] focus:border-[#b8422e]" : "rounded-xl border-amber-100/10 bg-[#11171a] text-amber-50 placeholder:text-amber-100/45 focus:border-amber-200/40"}`}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="hidden gap-2 overflow-x-auto pb-1 md:flex">
-        {categories.map((cat) => (
-          <button
-            key={cat._id}
-            onClick={() => selectCategory(cat._id)}
-            className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition ${
-              cat._id === activeId
-                ? isBurgerBar
-                  ? "border-[#ff8b1f] bg-[#ff8b1f] text-[#17130d] shadow-[0_5px_0_#a94608]"
-                  : isBistro
-                    ? "border-[#b8422e] bg-[#b8422e] text-white"
-                    : isEditorial
-                      ? "border-stone-900 bg-stone-900 text-white"
-                      : "border-amber-200/40 bg-amber-200/10 text-amber-100"
-                : isBurgerBar
-                  ? "border-[#f6bf3c]/40 bg-[#1e1a13] text-[#f8c85a] hover:border-[#f6bf3c] hover:bg-[#292218]"
-                  : isBistro
-                    ? "border-[#e3c4aa] bg-[#fffdf9] text-[#80523e] hover:bg-[#fde9d7]"
-                    : isEditorial
-                      ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-100"
-                      : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70 hover:bg-[#20262b]"
-            }`}
-          >
-            {cat.title}
-          </button>
-        ))}
-      </div>
-
-      {subTabs.length > 1 && (
-        <div className="hidden gap-2 overflow-x-auto pb-1 md:flex">
-          {subTabs.map((tab) => (
+      <div
+        className={`sticky top-0 z-30 -mx-4 hidden px-4 pb-3 pt-3 backdrop-blur-md md:block sm:-mx-6 sm:px-6 ${isBurgerBar ? "border-b border-[#f6bf3c]/45 bg-[#12100d]/95" : isBistro ? "border-b border-[#e3c4aa] bg-[#fffaf3]/95" : isEditorial ? "bg-[#f8f5ef]/95" : "bg-[#141316]/90"}`}
+      >
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {categories.map((cat) => (
             <button
-              key={tab.key}
-              type="button"
-              onClick={() => selectSubTab(tab.key)}
-              className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                tab.key === resolvedActiveSubTab
+              key={cat._id}
+              onClick={() => selectCategory(cat._id)}
+              className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition ${
+                cat._id === activeId
                   ? isBurgerBar
-                    ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d]"
+                    ? "border-[#ff8b1f] bg-[#ff8b1f] text-[#17130d] shadow-[0_5px_0_#a94608]"
                     : isBistro
                       ? "border-[#b8422e] bg-[#b8422e] text-white"
                       : isEditorial
                         ? "border-stone-900 bg-stone-900 text-white"
-                        : "border-amber-300/50 bg-amber-300/15 text-amber-100"
+                        : "border-amber-200/40 bg-amber-200/10 text-amber-100"
                   : isBurgerBar
-                    ? "border-[#f6bf3c]/35 bg-[#191610] text-[#f8c85a] hover:border-[#f6bf3c]"
+                    ? "border-[#f6bf3c]/40 bg-[#1e1a13] text-[#f8c85a] hover:border-[#f6bf3c] hover:bg-[#292218]"
                     : isBistro
                       ? "border-[#e3c4aa] bg-[#fffdf9] text-[#80523e] hover:bg-[#fde9d7]"
                       : isEditorial
                         ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-100"
-                        : "border-amber-100/15 bg-[#1b2125] text-amber-50/65 hover:bg-[#20272d]"
+                        : "border-amber-100/15 bg-[#1a1f23] text-amber-50/70 hover:bg-[#20262b]"
               }`}
             >
-              {tab.title}
-              <span
-                className={`ml-1.5 text-[11px] ${isBurgerBar ? (tab.key === resolvedActiveSubTab ? "text-[#17130d]/70" : "text-[#f6bf3c]/65") : isBistro ? (tab.key === resolvedActiveSubTab ? "text-white/75" : "text-[#af765c]") : tab.key === resolvedActiveSubTab ? "text-amber-200" : "text-amber-50/45"}`}
-              >
-                {tab.count}
-              </span>
+              {cat.title}
             </button>
           ))}
         </div>
-      )}
 
-      {isSearchOpen && (
-        <div
-          className={`border px-3 py-2 ${isBurgerBar ? "border-[#f6bf3c]/45 bg-[#1e1a13]" : isBistro ? "rounded-2xl border-[#e3c4aa] bg-[#fffdf9]" : "rounded-2xl border-amber-100/10 bg-[#171c20]"}`}
-        >
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder={searchPlaceholder}
-            className={`w-full border px-4 py-2.5 text-sm outline-none transition ${isBurgerBar ? "border-[#f6bf3c]/35 bg-[#12100d] text-[#fff8e7] placeholder:text-[#f8c85a]/60 focus:border-[#ff8b1f]" : isBistro ? "rounded-xl border-[#e3c4aa] bg-[#fff7ed] text-[#4a281d] placeholder:text-[#af765c] focus:border-[#b8422e]" : "rounded-xl border-amber-100/10 bg-[#11171a] text-amber-50 placeholder:text-amber-100/45 focus:border-amber-200/40"}`}
-          />
-        </div>
-      )}
+        {subTabs.length > 1 && (
+          <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
+            {subTabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => selectSubTab(tab.key)}
+                className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                  tab.key === resolvedActiveSubTab
+                    ? isBurgerBar
+                      ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d]"
+                      : isBistro
+                        ? "border-[#b8422e] bg-[#b8422e] text-white"
+                        : isEditorial
+                          ? "border-stone-900 bg-stone-900 text-white"
+                          : "border-amber-300/50 bg-amber-300/15 text-amber-100"
+                    : isBurgerBar
+                      ? "border-[#f6bf3c]/35 bg-[#191610] text-[#f8c85a] hover:border-[#f6bf3c]"
+                      : isBistro
+                        ? "border-[#e3c4aa] bg-[#fffdf9] text-[#80523e] hover:bg-[#fde9d7]"
+                        : isEditorial
+                          ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-100"
+                          : "border-amber-100/15 bg-[#1b2125] text-amber-50/65 hover:bg-[#20272d]"
+                }`}
+              >
+                {tab.title}
+                <span
+                  className={`ml-1.5 text-[11px] ${isBurgerBar ? (tab.key === resolvedActiveSubTab ? "text-[#17130d]/70" : "text-[#f6bf3c]/65") : isBistro ? (tab.key === resolvedActiveSubTab ? "text-white/75" : "text-[#af765c]") : tab.key === resolvedActiveSubTab ? "text-amber-200" : "text-amber-50/45"}`}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {isSearchOpen && (
+          <div
+            className={`mt-2 border px-3 py-2 ${isBurgerBar ? "border-[#f6bf3c]/45 bg-[#1e1a13]" : isBistro ? "rounded-2xl border-[#e3c4aa] bg-[#fffdf9]" : "rounded-2xl border-amber-100/10 bg-[#171c20]"}`}
+          >
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder={searchPlaceholder}
+              className={`w-full border px-4 py-2.5 text-sm outline-none transition ${isBurgerBar ? "border-[#f6bf3c]/35 bg-[#12100d] text-[#fff8e7] placeholder:text-[#f8c85a]/60 focus:border-[#ff8b1f]" : isBistro ? "rounded-xl border-[#e3c4aa] bg-[#fff7ed] text-[#4a281d] placeholder:text-[#af765c] focus:border-[#b8422e]" : "rounded-xl border-amber-100/10 bg-[#11171a] text-amber-50 placeholder:text-amber-100/45 focus:border-amber-200/40"}`}
+            />
+          </div>
+        )}
+      </div>
 
       <div className={isBurgerBar ? "space-y-5" : "space-y-3"}>
         {normalizedQuery ? (
@@ -907,6 +815,74 @@ export function MenuTabs({
           </p>
         )}
       </div>
+
+      <button
+        type="button"
+        onClick={() => setIsSearchOpen((prev) => !prev)}
+        aria-label={isSearchOpen ? messages.close : searchPlaceholder}
+        className={`fixed bottom-0 left-4 z-40 inline-flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : isEditorial ? "border-stone-300 bg-white text-stone-700 hover:bg-stone-100" : "border-amber-100/15 bg-[#141213] text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-3.2-3.2" />
+        </svg>
+      </button>
+
+      {activeLanguages.length > 1 && (
+        <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+          {isLangOpen && (
+            <div
+              className={`flex flex-col gap-1 rounded-2xl border p-1 shadow-lg ${isBurgerBar ? "border-[#f6bf3c]/45 bg-[#12100d]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed]" : isEditorial ? "border-stone-200 bg-white" : "border-amber-100/15 bg-[#141213]"}`}
+            >
+              {supportedLocales
+                .filter((code) => activeLanguages.includes(code))
+                .map((code) => (
+                  <Link
+                    key={code}
+                    href={`/menu/${slug}?lang=${code}`}
+                    onClick={() => setIsLangOpen(false)}
+                    className={`rounded-xl px-3 py-1.5 text-center text-xs font-semibold uppercase tracking-wide transition ${
+                      code === locale
+                        ? isBurgerBar
+                          ? "bg-[#ff8b1f] text-[#17130d]"
+                          : isBistro
+                            ? "bg-[#b8422e] text-white"
+                            : isEditorial
+                              ? "bg-stone-900 text-white"
+                              : "bg-amber-300/20 text-amber-100"
+                        : isBurgerBar
+                          ? "text-[#f8c85a] hover:bg-[#f6bf3c]/15"
+                          : isBistro
+                            ? "text-[#8a5a44] hover:bg-[#fde9d7]"
+                            : isEditorial
+                              ? "text-stone-600 hover:bg-stone-100"
+                              : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"
+                    }`}
+                  >
+                    {code}
+                  </Link>
+                ))}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => setIsLangOpen((prev) => !prev)}
+            aria-label={messages.languageLabel}
+            className={`inline-flex h-10 w-10 items-center justify-center rounded-full border text-[11px] font-bold uppercase shadow-lg transition ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : isEditorial ? "border-stone-300 bg-white text-stone-700 hover:bg-stone-100" : "border-amber-100/15 bg-[#141213] text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
+          >
+            {locale}
+          </button>
+        </div>
+      )}
 
       {selectedImage && (
         <div
