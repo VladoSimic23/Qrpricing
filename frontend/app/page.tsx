@@ -3,6 +3,7 @@ import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { SignOutButton } from "@clerk/nextjs";
 import { headers } from "next/headers";
+import Script from "next/script";
 import type { Metadata } from "next";
 
 import {
@@ -11,7 +12,12 @@ import {
   supportedLocales,
   withLang,
 } from "@/lib/i18n";
-import { generateMetadata as generateSeoMetadata, siteConfig } from "@/lib/seo";
+import {
+  faqItems,
+  generateJsonLd,
+  generateMetadata as generateSeoMetadata,
+  siteConfig,
+} from "@/lib/seo";
 import ContactSection from "@/app/components/ContactSection";
 
 export const metadata: Metadata = generateSeoMetadata({
@@ -54,6 +60,7 @@ export default async function Home({
   const locale = resolveLocale(lang, requestHeaders.get("accept-language"));
   const t = messages[locale].home;
   const { userId } = await auth();
+  const faqSchema = generateJsonLd("faq");
 
   return (
     <main className="flex min-h-screen flex-col bg-slate-950 text-slate-50 selection:bg-emerald-500/30">
@@ -635,6 +642,40 @@ export default async function Home({
       </section>
 
       <ContactSection />
+
+      <section
+        id="faq"
+        className="border-t border-slate-800 bg-slate-900 py-24"
+      >
+        <div className="mx-auto max-w-4xl px-6">
+          <div className="mb-12 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-400">
+              Česta pitanja
+            </p>
+            <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">
+              Sve što trebate znati prije početka
+            </h2>
+          </div>
+          <div className="divide-y divide-slate-800 rounded-2xl border border-slate-800 bg-slate-950 px-6">
+            {faqItems.map(({ question, answer }) => (
+              <details key={question} className="group py-6">
+                <summary className="cursor-pointer list-none pr-8 text-lg font-semibold text-white marker:hidden">
+                  {question}
+                </summary>
+                <p className="mt-3 max-w-3xl leading-relaxed text-slate-400">
+                  {answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
 
       {/* 7. FOOTER */}
       <footer className="border-t border-slate-800 bg-slate-950 pt-16 pb-8">

@@ -21,13 +21,41 @@ export const siteConfig = {
     "QR cjenik",
     "restorani",
     "kafiće",
-    "donos hrane",
+    "dostava hrane",
     "meni softver",
     "upravljanje menijima",
     "elektronski meni",
   ],
   languages: ["hr", "en"] as const,
 };
+
+export const faqItems = [
+  {
+    question: "Što je QR Cjenik?",
+    answer:
+      "QR Cjenik je platforma za digitalne menije za restorane, kafiće i druge ugostiteljske objekte. Gost skenira QR kod i odmah otvara aktualnu ponudu na svom mobitelu.",
+  },
+  {
+    question: "Kako mogu promijeniti cijene i ponudu?",
+    answer:
+      "Cijene, artikle, kategorije i dnevnu ponudu uređujete iz dashboarda. Promjene se objavljuju na javnom meniju bez ponovnog tiskanja.",
+  },
+  {
+    question: "Trebaju li gosti instalirati aplikaciju?",
+    answer:
+      "Ne. Digitalni meni radi u web pregledniku na mobitelu, tabletu ili računalu, bez preuzimanja aplikacije.",
+  },
+  {
+    question: "Podržava li digitalni meni više jezika?",
+    answer:
+      "Da. Meni može imati hrvatsku i englesku verziju, pa ga mogu koristiti i domaći gosti i turisti.",
+  },
+  {
+    question: "Je li potrebna kreditna kartica za početak?",
+    answer:
+      "Ne. Možete zatražiti besplatni probni period bez unošenja podataka o plaćanju.",
+  },
+] as const;
 
 export function generateMetadata(overrides?: Partial<Metadata>): Metadata {
   return {
@@ -98,6 +126,7 @@ export function generateMetadata(overrides?: Partial<Metadata>): Metadata {
       languages: {
         "hr-HR": `${siteConfig.url}?lang=hr`,
         "en-US": `${siteConfig.url}?lang=en`,
+        "x-default": siteConfig.url,
       },
     },
     formatDetection: {
@@ -110,16 +139,12 @@ export function generateMetadata(overrides?: Partial<Metadata>): Metadata {
 }
 
 export function generateJsonLd(
-  pageType: "organization" | "website" | "faq" = "organization",
+  pageType:
+    | "organization"
+    | "website"
+    | "softwareApplication"
+    | "faq" = "organization",
 ) {
-  const baseStructure = {
-    "@context": "https://schema.org",
-    name: siteConfig.name,
-    url: siteConfig.url,
-    email: siteConfig.email,
-    description: siteConfig.description,
-  };
-
   const schemas: Record<string, unknown> = {
     organization: {
       "@context": "https://schema.org",
@@ -129,18 +154,10 @@ export function generateJsonLd(
       email: siteConfig.email,
       logo: `${siteConfig.url}/logoqr.png`,
       description: siteConfig.description,
-      sameAs: [
-        "https://www.facebook.com/digitalcjenik",
-        "https://www.instagram.com/digitalcjenik",
-        "https://twitter.com/digitalcjenik",
-        "https://www.linkedin.com/company/digitalcjenik",
-      ],
       contactPoint: {
         "@type": "ContactPoint",
-        telephone: "+387-xxx-xxx",
         contactType: "Customer Service",
         email: siteConfig.email,
-        areaServed: ["BA", "HR", "RS"],
         availableLanguage: ["hr", "en"],
       },
       founder: {
@@ -153,45 +170,31 @@ export function generateJsonLd(
       "@type": "WebSite",
       name: siteConfig.name,
       url: siteConfig.url,
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: `${siteConfig.url}/search?q={search_term_string}`,
-        },
-        query_input: "required name=search_term_string",
-      },
       inLanguage: ["hr", "en"],
+    },
+    softwareApplication: {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: siteConfig.name,
+      applicationCategory: "BusinessApplication",
+      applicationSubCategory: "Digital menu software",
+      operatingSystem: "Web",
+      url: siteConfig.url,
+      description: siteConfig.description,
+      inLanguage: ["hr", "en"],
+      audience: {
+        "@type": "BusinessAudience",
+        audienceType: "Restaurants, cafes and hospitality businesses",
+      },
     },
     faq: {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "Što je QR Cjenik?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "QR Cjenik je moderna platforma za digitalne menije koja omogućava brzo ažuriranje, upravljanje cijenama i interaktivne menije za restorane i kafiće.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Kako mogu početi?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Prijavite se na www.digitalcjenik.com, kreirajte svoj račun i počnite sa kreiranjem menija za vaš lokal.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Je li potrebna kreditna kartica?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Ne, možete početi sa besplatnom demo verzijom bez unošenja podataka o plaćanju.",
-          },
-        },
-      ],
+      mainEntity: faqItems.map(({ question, answer }) => ({
+        "@type": "Question",
+        name: question,
+        acceptedAnswer: { "@type": "Answer", text: answer },
+      })),
     },
   };
 

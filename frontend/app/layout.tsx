@@ -36,6 +36,7 @@ export default function RootLayout({
 }>) {
   const organizationSchema = generateJsonLd("organization");
   const websiteSchema = generateJsonLd("website");
+  const softwareApplicationSchema = generateJsonLd("softwareApplication");
 
   return (
     <ClerkProvider>
@@ -70,6 +71,14 @@ export default function RootLayout({
             id="website-schema"
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+          />
+
+          <Script
+            id="software-application-schema"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(softwareApplicationSchema),
+            }}
           />
 
           {/* Google Site Verification */}

@@ -149,7 +149,7 @@ export async function generateMetadata({
     }
 
     const title = `${menu.name} - Digitalni Meni | QR Cjenik`;
-    const description = `Interaktivni digitalni meni za ${menu.name}. Vidi cijene, dostupne artikle i narušite na QR kodu.`;
+    const description = `Interaktivni digitalni meni za ${menu.name}. Pogledajte cijene i dostupne artikle te naručite putem QR koda.`;
 
     return {
       title,

@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { client } from "@/sanity/lib/client";
 
 export const dynamic = "force-dynamic";
 
@@ -26,10 +27,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/dashboard`,
+      url: `${baseUrl}/privacy-policy`,
       lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.8,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/terms-of-service`,
+      lastModified: new Date(),
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
     },
   ];
 
@@ -43,5 +50,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  return multiLanguageRoutes;
+  try {
+    const tenants = await client.fetch<
+      { slug: { current: string }; _updatedAt: string }[]
+    >(
+      `*[_type == "tenant" && isActive != false && defined(slug.current)]{slug, _updatedAt}`,
+      {},
+      { cache: "no-store" },
+    );
+
+    const menuRoutes = tenants.flatMap((tenant) =>
+      languages.map((lang) => ({
+        url: `${baseUrl}/menu/${tenant.slug.current}?lang=${lang}`,
+        lastModified: new Date(tenant._updatedAt),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      })),
+    );
+
+    return [...multiLanguageRoutes, ...menuRoutes];
+  } catch {
+    return multiLanguageRoutes;
+  }
 }

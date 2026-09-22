@@ -2,9 +2,9 @@
 
 ## ✅ Šta je već implementirano
 
-### 1. **Dinamički Sitemap**
+### 1. **Dinamički Sitemap javnog sadržaja**
 
-- `app/sitemap.ts` - Automatski generiše sitemap.xml sa svim rutama
+- `app/sitemap.ts` - Automatski generiše sitemap.xml sa javnim stranicama i aktivnim javnim menijima iz Sanityja
 - Dostupan na: `https://www.digitalcjenik.com/sitemap.xml`
 
 ### 2. **Robots.txt**
@@ -28,7 +28,8 @@
 
 - Organization schema - Informacije o kompaniji
 - Website schema - Website metapodaci
-- FAQ schema - Česta pitanja
+- SoftwareApplication schema - Opis platforme za tražilice i AI sustave
+- FAQ schema - Česta pitanja koja su vidljiva i na početnoj stranici
 
 ### 5. **Open Graph & Twitter Cards**
 
@@ -104,14 +105,7 @@
 3. Lighthouse (Built-in u Chrome DevTools)
 ```
 
-### 7. **Sitemap za Menu stranice** (Napredni)
-
-```typescript
-// U app/menu/sitemap.ts dodaj sve javne menije
-// Trebat će query Sanity baze za sve aktivne tenants
-```
-
-### 8. **Pretraživanje na siteu** (Opciono)
+### 7. **Pretraživanje na siteu** (Opciono)
 
 ```
 Dodaj custom search handler u app/api/search/
