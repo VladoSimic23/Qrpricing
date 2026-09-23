@@ -420,7 +420,7 @@ export default async function PublicMenuPage({
                 href={menu.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#ff7ac8] ${isSidebarNeon ? "text-[#e9a7ff]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-[#c7a9db]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <InstagramIcon size={24} />
               </a>
@@ -430,7 +430,7 @@ export default async function PublicMenuPage({
                 href={menu.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#ff7ac8] ${isSidebarNeon ? "text-[#e9a7ff]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-[#c7a9db]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <FacebookIcon size={24} />
               </a>
@@ -440,7 +440,7 @@ export default async function PublicMenuPage({
                 href={menu.tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#ff7ac8] ${isSidebarNeon ? "text-[#e9a7ff]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-[#c7a9db]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <Music2 size={24} />
               </a>
@@ -450,7 +450,7 @@ export default async function PublicMenuPage({
                 href={menu.websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#ff7ac8] ${isSidebarNeon ? "text-[#e9a7ff]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-[#c7a9db]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <Globe size={24} />
               </a>
@@ -466,7 +466,7 @@ export default async function PublicMenuPage({
               href="https://digitalcjenik.com"
               target="_blank"
               rel="noopener noreferrer"
-              className={`transition-colors underline underline-offset-2 ${isSidebarNeon ? "hover:text-[#e3a0b9]" : isBurgerBar ? "hover:text-[#ff8b1f]" : isBistro ? "hover:text-[#b8422e]" : "hover:text-emerald-400"}`}
+              className={`transition-colors underline underline-offset-2 ${isSidebarNeon ? "hover:text-[#d6a07f]" : isBurgerBar ? "hover:text-[#ff8b1f]" : isBistro ? "hover:text-[#b8422e]" : "hover:text-emerald-400"}`}
             >
               digitalcjenik.com
             </a>

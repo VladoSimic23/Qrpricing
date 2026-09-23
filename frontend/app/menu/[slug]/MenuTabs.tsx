@@ -71,7 +71,7 @@ function PricePills({
         <span
           className={`whitespace-nowrap rounded-full border px-2 py-0.5 md:px-3 md:py-1 ${
             design === "sidebar-neon"
-              ? "border-[#d98aa8] bg-[#d98aa8] font-black text-[#241326]"
+              ? "border-[#c58b68] bg-[#c58b68] font-black text-[#241326]"
               : design === "burger-bar"
                 ? "border-[#f6bf3c] bg-[#f6bf3c] font-black text-[#17130d]"
                 : design === "bistro"
@@ -137,7 +137,7 @@ function ItemCard({
   if (isSidebarNeon) {
     return (
       <li
-        className={`overflow-hidden rounded-2xl border bg-[#1d1628] shadow-[0_12px_30px_rgba(0,0,0,0.22)] transition-transform hover:-translate-y-0.5 ${highlighted ? "border-[#d98aa8] ring-1 ring-[#d98aa8]/40" : "border-[#765b96]/45"}`}
+        className={`overflow-hidden rounded-2xl border bg-[#1d1628] shadow-[0_12px_30px_rgba(0,0,0,0.22)] transition-transform hover:-translate-y-0.5 ${highlighted ? "border-[#c58b68] ring-1 ring-[#c58b68]/40" : "border-[#765b96]/45"}`}
       >
         {item.imageUrl && (
           <button
@@ -174,7 +174,7 @@ function ItemCard({
             </p>
           )}
           {highlighted && (
-            <span className="mt-3 inline-block rounded-full bg-[#d98aa8] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#241326]">
+            <span className="mt-3 inline-block rounded-full bg-[#c58b68] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#241326]">
               Dnevna ponuda
             </span>
           )}
@@ -583,12 +583,12 @@ export function MenuTabs({
                 type="button"
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label={messages.openCategories}
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#d98aa8]/70 bg-[#d98aa8] text-[#241326] shadow-[0_6px_18px_rgba(217,138,168,0.2)] transition hover:bg-[#e3a0b9]"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#c58b68]/70 bg-[#c58b68] text-[#241326] shadow-[0_6px_18px_rgba(197,139,104,0.2)] transition hover:bg-[#d6a07f]"
               >
                 <Menu size={22} aria-hidden="true" />
               </button>
             </div>
-            <label className="mt-4 flex items-center gap-3 rounded-xl border border-[#765b96]/55 bg-[#1d1628] px-3 py-2.5 focus-within:border-[#d98aa8]">
+            <label className="mt-4 flex items-center gap-3 rounded-xl border border-[#765b96]/55 bg-[#1d1628] px-3 py-2.5 focus-within:border-[#c58b68]">
               <Search
                 size={18}
                 className="shrink-0 text-[#c7a9db]"
@@ -629,7 +629,7 @@ export function MenuTabs({
                     type="button"
                     onClick={() => setIsSidebarOpen(false)}
                     aria-label={messages.closeMobileMenu}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#765b96]/55 text-[#c7a9db] transition hover:border-[#d98aa8] hover:text-[#e3a0b9]"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#765b96]/55 text-[#c7a9db] transition hover:border-[#c58b68] hover:text-[#d6a07f]"
                   >
                     <X size={20} aria-hidden="true" />
                   </button>
@@ -643,7 +643,7 @@ export function MenuTabs({
                           selectCategory(category._id);
                           setIsSidebarOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${category._id === activeId ? "bg-[#d98aa8] text-[#241326]" : "text-[#f5edf8] hover:bg-[#765b96]/25"}`}
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${category._id === activeId ? "bg-[#c58b68] text-[#241326]" : "text-[#f5edf8] hover:bg-[#765b96]/25"}`}
                       >
                         <span>{category.title}</span>
                         <span className="text-xs opacity-70">
@@ -665,7 +665,7 @@ export function MenuTabs({
                                 selectSubTab(`sub-${subcategory._id}`);
                                 setIsSidebarOpen(false);
                               }}
-                              className="block w-full px-3 py-2 text-left text-sm text-[#cbbbd5] transition hover:text-[#e3a0b9]"
+                              className="block w-full px-3 py-2 text-left text-sm text-[#cbbbd5] transition hover:text-[#d6a07f]"
                             >
                               {subcategory.title}
                             </button>
@@ -884,7 +884,11 @@ export function MenuTabs({
         )}
       </div>
 
-      <div className={isSidebarNeon ? "space-y-5" : isBurgerBar ? "space-y-5" : "space-y-3"}>
+      <div
+        className={
+          isSidebarNeon ? "space-y-5" : isBurgerBar ? "space-y-5" : "space-y-3"
+        }
+      >
         {!normalizedQuery && active && (
           <div className="border-b border-[#765b96]/45 pb-3 pt-2">
             <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[#c7a9db]">
@@ -922,9 +926,14 @@ export function MenuTabs({
                 </ul>
               )}
               {category.subcategories.map((sub) => (
-                <div key={sub._id} className={isSidebarNeon ? "mt-7" : isBurgerBar ? "mt-6" : "mt-3"}>
+                <div
+                  key={sub._id}
+                  className={
+                    isSidebarNeon ? "mt-7" : isBurgerBar ? "mt-6" : "mt-3"
+                  }
+                >
                   <p
-                    className={`mb-3 text-[15px] font-semibold ${isSidebarNeon ? "inline-block border-b-2 border-[#d98aa8] pb-1 text-lg tracking-wide text-[#e3c4d9]" : isBurgerBar ? "inline-block border-b-4 border-[#ff8b1f] pb-1 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
+                    className={`mb-3 text-[15px] font-semibold ${isSidebarNeon ? "inline-block border-b-2 border-[#c58b68] pb-1 text-lg tracking-wide text-[#d9c5b8]" : isBurgerBar ? "inline-block border-b-4 border-[#ff8b1f] pb-1 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
                   >
                     {sub.title}
                   </p>
@@ -974,7 +983,7 @@ export function MenuTabs({
               .map((sub) => (
                 <div key={sub._id}>
                   <p
-                    className={`mb-3 font-semibold ${isSidebarNeon ? "inline-block border-b-2 border-[#d98aa8] pb-1 text-lg tracking-wide text-[#e3c4d9]" : isBurgerBar ? "inline-block border-b-4 border-[#ff8b1f] pb-1 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
+                    className={`mb-3 font-semibold ${isSidebarNeon ? "inline-block border-b-2 border-[#c58b68] pb-1 text-lg tracking-wide text-[#d9c5b8]" : isBurgerBar ? "inline-block border-b-4 border-[#ff8b1f] pb-1 text-xl font-black uppercase tracking-wide text-[#f6bf3c]" : isBistro ? "font-serif text-2xl text-[#8a5a44]" : isEditorial ? "text-stone-700" : "text-amber-100/65"}`}
                   >
                     {sub.title}
                   </p>
@@ -1046,7 +1055,7 @@ export function MenuTabs({
                       code === locale
                         ? isBurgerBar
                           ? isSidebarNeon
-                            ? "bg-[#d98aa8] text-[#241326]"
+                            ? "bg-[#c58b68] text-[#241326]"
                             : "bg-[#ff8b1f] text-[#17130d]"
                           : isBistro
                             ? "bg-[#b8422e] text-white"
@@ -1056,12 +1065,12 @@ export function MenuTabs({
                         : isSidebarNeon
                           ? "text-[#cbbbd5] hover:bg-[#765b96]/20 hover:text-[#f5edf8]"
                           : isBurgerBar
-                          ? "text-[#f8c85a] hover:bg-[#f6bf3c]/15"
-                          : isBistro
-                            ? "text-[#8a5a44] hover:bg-[#fde9d7]"
-                            : isEditorial
-                              ? "text-stone-600 hover:bg-stone-100"
-                              : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"
+                            ? "text-[#f8c85a] hover:bg-[#f6bf3c]/15"
+                            : isBistro
+                              ? "text-[#8a5a44] hover:bg-[#fde9d7]"
+                              : isEditorial
+                                ? "text-stone-600 hover:bg-stone-100"
+                                : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"
                     }`}
                   >
                     {code}
@@ -1073,7 +1082,7 @@ export function MenuTabs({
             type="button"
             onClick={() => setIsLangOpen((prev) => !prev)}
             aria-label={messages.languageLabel}
-            className={`inline-flex h-10 w-10 items-center justify-center rounded-full border text-[11px] font-bold uppercase shadow-lg transition ${isSidebarNeon ? "border-[#d98aa8] bg-[#d98aa8] text-[#241326] hover:bg-[#e3a0b9]" : isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : isEditorial ? "border-stone-300 bg-white text-stone-700 hover:bg-stone-100" : "border-amber-100/15 bg-[#141213] text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
+            className={`inline-flex h-10 w-10 items-center justify-center rounded-full border text-[11px] font-bold uppercase shadow-lg transition ${isSidebarNeon ? "border-[#c58b68] bg-[#c58b68] text-[#241326] hover:bg-[#d6a07f]" : isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : isEditorial ? "border-stone-300 bg-white text-stone-700 hover:bg-stone-100" : "border-amber-100/15 bg-[#141213] text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
           >
             {locale}
           </button>
@@ -1113,7 +1122,9 @@ export function MenuTabs({
               </svg>
             </button>
 
-            <div className={`relative h-[75vh] w-full overflow-hidden rounded-2xl border ${isSidebarNeon ? "border-[#765b96]/45 bg-[#130e1b]" : "border-amber-100/20 bg-[#0f1113]"}`}>
+            <div
+              className={`relative h-[75vh] w-full overflow-hidden rounded-2xl border ${isSidebarNeon ? "border-[#765b96]/45 bg-[#130e1b]" : "border-amber-100/20 bg-[#0f1113]"}`}
+            >
               <Image
                 src={selectedImage.url}
                 alt={selectedImage.name}
