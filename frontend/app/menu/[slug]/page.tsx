@@ -397,7 +397,7 @@ export default async function PublicMenuPage({
           <p
             className={`max-w-xl rounded-lg px-4 py-3 text-center text-sm leading-relaxed ${
               isSidebarNeon
-                ? "border-[#b64dff]/35 bg-[#21102f] text-[#f3d8ff]"
+                ? "border border-[#765b96]/45 bg-[#1d1628] text-[#cbbbd5]"
                 : isBurgerBar
                   ? "border border-[#f6bf3c]/35 bg-[#1e1a13] text-[#ffe19a]"
                   : isBistro
@@ -458,7 +458,7 @@ export default async function PublicMenuPage({
           </div>
         )}
         <div
-          className={`text-center text-xs ${isBurgerBar ? "text-[#c79b42]" : isBistro ? "text-[#98634c]" : "text-[#f7efe4]/40"}`}
+          className={`text-center text-xs ${isSidebarNeon ? "text-[#9f8bab]" : isBurgerBar ? "text-[#c79b42]" : isBistro ? "text-[#98634c]" : "text-[#f7efe4]/40"}`}
         >
           <p>
             Kreirano pomoću{" "}
@@ -466,7 +466,7 @@ export default async function PublicMenuPage({
               href="https://digitalcjenik.com"
               target="_blank"
               rel="noopener noreferrer"
-              className={`transition-colors underline underline-offset-2 ${isBurgerBar ? "hover:text-[#ff8b1f]" : isBistro ? "hover:text-[#b8422e]" : "hover:text-emerald-400"}`}
+              className={`transition-colors underline underline-offset-2 ${isSidebarNeon ? "hover:text-[#e3a0b9]" : isBurgerBar ? "hover:text-[#ff8b1f]" : isBistro ? "hover:text-[#b8422e]" : "hover:text-emerald-400"}`}
             >
               digitalcjenik.com
             </a>
