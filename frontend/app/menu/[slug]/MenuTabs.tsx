@@ -889,7 +889,7 @@ export function MenuTabs({
           isSidebarNeon ? "space-y-5" : isBurgerBar ? "space-y-5" : "space-y-3"
         }
       >
-        {!normalizedQuery && active && (
+        {isSidebarNeon && !normalizedQuery && active && (
           <div className="border-b border-[#765b96]/45 pb-3 pt-2">
             <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[#c7a9db]">
               {messages.categories}
