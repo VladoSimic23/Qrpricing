@@ -130,7 +130,7 @@ export default async function Home({
                 }
                 className="flex items-center justify-center rounded-full bg-emerald-500 px-8 py-4 text-bases font-bold text-slate-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 hover:scale-[1.02] transition-all"
               >
-                Zatražite besplatnu demo verziju
+                Iskoristite besplatna 3 mjeseca bez ikakvog plaćanja
               </Link>
               <Link
                 href="#demo"
@@ -544,7 +544,9 @@ export default async function Home({
                 <p className="text-lg text-slate-300 leading-relaxed">
                   Isprobajte platformu bez ikakvog rizika. Jedini trošak koji
                   snosite je nabava naljepnica s QR kodom za stolove — sve
-                  ostalo je na nama.
+                  ostalo je na nama. Niste obavezni ništa platiti tijekom
+                  probnog razdoblja nakon kojega možete odlučiti želite li
+                  nastaviti koristiti platformu uz plaćenu pretplatu.
                 </p>
               </div>
 
@@ -569,7 +571,7 @@ export default async function Home({
                   <div>
                     <p className="font-semibold text-white">Platforma — 0 €</p>
                     <p className="text-sm text-slate-400 mt-0.5">
-                      30 dana bez pretplate, bez kartica, bez obaveza.
+                      3 mjeseca bez pretplate, bez kartica, bez obaveza.
                     </p>
                   </div>
                 </div>
@@ -633,7 +635,7 @@ export default async function Home({
                   href={withLang("/sign-up", locale)}
                   className="mt-2 flex w-full items-center justify-center rounded-full bg-emerald-500 px-8 py-4 text-base font-bold text-slate-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 hover:scale-[1.02] transition-all"
                 >
-                  Zatražite besplatni probni period
+                  Isprobajte besplatna 3 mjeseca bez ikakvog plaćanja
                 </Link>
               </div>
             </div>

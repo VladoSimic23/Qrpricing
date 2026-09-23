@@ -31,7 +31,7 @@ export const siteConfig = {
 
 export const faqItems = [
   {
-    question: "Što je QR Cjenik?",
+    question: "Što je QR Cjenik ili digitalni meni?",
     answer:
       "QR Cjenik je platforma za digitalne menije za restorane, kafiće i druge ugostiteljske objekte. Gost skenira QR kod i odmah otvara aktualnu ponudu na svom mobitelu.",
   },
@@ -54,6 +54,11 @@ export const faqItems = [
     question: "Je li potrebna kreditna kartica za početak?",
     answer:
       "Ne. Možete zatražiti besplatni probni period bez unošenja podataka o plaćanju.",
+  },
+  {
+    question: "Nudi li se probni rok za digitalni cjenik?",
+    answer:
+      "Da. Digitalni cjenik nudi besplatni probni rok od 3 mjeseca, tako da možete isprobati sve funkcionalnosti prije nego što se odlučite za plaćenu verziju ukoliko vam odgovara.",
   },
 ] as const;
 

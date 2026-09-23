@@ -74,7 +74,12 @@ type Props = {
   tenantName: string;
   tenantExchangeRate: number;
   hideDigitalMenuHeader?: boolean;
-  menuDesign?: "classic" | "editorial" | "bistro" | "burger-bar";
+  menuDesign?:
+    | "classic"
+    | "editorial"
+    | "bistro"
+    | "burger-bar"
+    | "sidebar-neon";
   showPricesBam: boolean;
   showPricesEur: boolean;
   alcoholNotice?: string;
@@ -721,6 +726,9 @@ export function DashboardSectionsTabs({
                       <option value="editorial">Editorial (svijetli)</option>
                       <option value="bistro">Bistro (topli)</option>
                       <option value="burger-bar">Burger Bar (tamni)</option>
+                      <option value="sidebar-neon">
+                        Sidebar Neon (ljubičasti)
+                      </option>
                     </select>
                     <p className="text-xs text-slate-600">
                       Odaberi izgled koji će gosti vidjeti na javnom meniju.

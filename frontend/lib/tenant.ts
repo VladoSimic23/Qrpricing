@@ -14,7 +14,12 @@ export type TenantMembership = {
     exchangeRateEurToBam?: number;
     logo?: string;
     hideDigitalMenuHeader?: boolean;
-    menuDesign?: "classic" | "editorial" | "bistro" | "burger-bar";
+    menuDesign?:
+      | "classic"
+      | "editorial"
+      | "bistro"
+      | "burger-bar"
+      | "sidebar-neon";
     showPricesBam?: boolean;
     showPricesEur?: boolean;
     alcoholNotice?: string;

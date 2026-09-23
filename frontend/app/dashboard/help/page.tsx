@@ -5,7 +5,8 @@ import { generateMetadata as generateSeoMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = generateSeoMetadata({
   title: "Pomoć - Dashboard | QR Cjenik",
-  description: "Vodič za korištenje dashboarda za upravljanje digitalnim menijem.",
+  description:
+    "Vodič za korištenje dashboarda za upravljanje digitalnim menijem.",
   robots: {
     index: false,
     follow: false,
@@ -34,9 +35,8 @@ const sections: Section[] = [
         u gornjem desnom kutu kliknite &quot;Prijava&quot;. U prozoru koji se
         otvori kliknite &quot;Continue with Google&quot; (prijava e-mailom
         trenutno nije dostupna). Provjerite da ste već prijavljeni u Google
-        račun koji koristite za cjenik — ako je to jedini aktivni Google račun
-        u vašem pregledniku, prijava će vas automatski odvesti na
-        dashboard.
+        račun koji koristite za cjenik — ako je to jedini aktivni Google račun u
+        vašem pregledniku, prijava će vas automatski odvesti na dashboard.
       </p>
     ),
   },
@@ -44,8 +44,8 @@ const sections: Section[] = [
     title: "2. Upravljačka ploča (Dashboard)",
     body: (
       <p>
-        Ovdje upravljate cijelim sadržajem cjenika: dodajete artikle,
-        kategorije i dnevnu ponudu, i mijenjate postavke prikaza.
+        Ovdje upravljate cijelim sadržajem cjenika: dodajete artikle, kategorije
+        i dnevnu ponudu, i mijenjate postavke prikaza.
       </p>
     ),
   },
@@ -55,11 +55,11 @@ const sections: Section[] = [
       <p>
         Prazan cjenik prvo treba barem jednu kategoriju jer svaki artikl mora
         pripadati kategoriji. U izborniku odaberite &quot;Dodaj
-        kategoriju&quot;, upišite naziv na hrvatskom i/ili engleskom i
-        kliknite &quot;Spremi kategoriju&quot;. U tabu &quot;Kategorije&quot;
-        možete uređivati naziv, brisati kategoriju, ili je premjestiti
-        povlačenjem znaka ☰ (na mobitelu pritisnite i držite pa povucite) —
-        redoslijed se sprema automatski, čim je pustite.
+        kategoriju&quot;, upišite naziv na hrvatskom i/ili engleskom i kliknite
+        &quot;Spremi kategoriju&quot;. U tabu &quot;Kategorije&quot; možete
+        uređivati naziv, brisati kategoriju, ili je premjestiti povlačenjem
+        znaka ☰ (na mobitelu pritisnite i držite pa povucite) — redoslijed se
+        sprema automatski, čim je pustite.
       </p>
     ),
   },
@@ -67,19 +67,18 @@ const sections: Section[] = [
     title: "4. Dodaj artikl i podkategorije",
     body: (
       <p>
-        Unesite naziv (hrvatski i/ili engleski) i opis (npr. sastojke za
-        jelo). Ako artikl dolazi u više veličina s različitim cijenama (npr.
-        pivo 0.3l/0.5l), označite kvadratić &quot;Artikl ima više
-        veličina&quot; — otvorit će se polja za svaku veličinu i cijenu.
-        Gostima će se cijene prikazati zajedno pored naziva, razdvojene kosom
-        crtom (npr. 10 € / 20 €). Ako artikl ima samo jednu cijenu, kvadratić
-        ostaje neoznačen. Nakon cijene odaberite kategoriju kojoj artikl
-        pripada. Podkategorije (npr. &quot;Roštilj&quot; unutar
-        &quot;Jela&quot;) dodajete u tabu &quot;Artikli po kategorijama&quot;,
-        a zatim kliknete &quot;Prikaži detalje&quot; na artiklu i odaberete
-        podkategoriju — tu isto možete uređivati cijeli artikl. Slika je
-        opcionalna — kliknite &quot;Choose file&quot; i odaberite sliku s
-        uređaja.
+        Unesite naziv (hrvatski i/ili engleski) i opis (npr. sastojke za jelo).
+        Ako artikl dolazi u više veličina s različitim cijenama (npr. pivo
+        0.3l/0.5l), označite kvadratić &quot;Artikl ima više veličina&quot; —
+        otvorit će se polja za svaku veličinu i cijenu. Gostima će se cijene
+        prikazati zajedno pored naziva, razdvojene kosom crtom (npr. 10 € / 20
+        €). Ako artikl ima samo jednu cijenu, kvadratić ostaje neoznačen. Nakon
+        cijene odaberite kategoriju kojoj artikl pripada. Podkategorije (npr.
+        &quot;Roštilj&quot; unutar &quot;Jela&quot;) dodajete u tabu
+        &quot;Artikli po kategorijama&quot;, a zatim kliknete &quot;Prikaži
+        detalje&quot; na artiklu i odaberete podkategoriju — tu isto možete
+        uređivati cijeli artikl. Slika je opcionalna — kliknite &quot;Choose
+        file&quot; i odaberite sliku s uređaja.
       </p>
     ),
   },
@@ -102,8 +101,8 @@ const sections: Section[] = [
     body: (
       <ul className="list-disc space-y-2 pl-5">
         <li>
-          <strong>Tečaj EUR → KM</strong> — unosite samo ako prikazujete
-          cijene u obje valute.
+          <strong>Tečaj EUR → KM</strong> — unosite samo ako prikazujete cijene
+          u obje valute.
         </li>
         <li>
           <strong>Naziv restorana</strong> — mijenja ime prikazano na javnoj
@@ -114,13 +113,13 @@ const sections: Section[] = [
           mali naslov iznad naziva restorana.
         </li>
         <li>
-          <strong>Dizajn javnog menija</strong> — birate između
-          &quot;Classic&quot; (tamna tema) i &quot;Editorial&quot; (svijetla
-          tema).
+          <strong>Dizajn javnog menija</strong> — birate između više tema,
+          uključujući &quot;Sidebar Neon&quot; sa bočnim menijem kategorija i
+          stalnom pretragom.
         </li>
         <li>
-          <strong>Prikazuj cijene u KM / EUR</strong> — dva odvojena
-          kvadratića; barem jedan mora ostati uključen.
+          <strong>Prikazuj cijene u KM / EUR</strong> — dva odvojena kvadratića;
+          barem jedan mora ostati uključen.
         </li>
         <li>
           <strong>Poruka o zabrani točenja alkohola</strong> — prikazuje se u

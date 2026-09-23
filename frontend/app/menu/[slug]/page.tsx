@@ -48,7 +48,12 @@ type MenuPayload = {
   exchangeRateEurToBam?: number;
   logo?: string;
   hideDigitalMenuHeader?: boolean;
-  menuDesign?: "classic" | "editorial" | "bistro" | "burger-bar";
+  menuDesign?:
+    | "classic"
+    | "editorial"
+    | "bistro"
+    | "burger-bar"
+    | "sidebar-neon";
   showPricesBam?: boolean;
   showPricesEur?: boolean;
   alcoholNotice?: string;
@@ -330,22 +335,24 @@ export default async function PublicMenuPage({
           ...nonEmptyCategories,
         ]
       : nonEmptyCategories;
-  const activeMenuDesign =
-    process.env.NODE_ENV === "development" ? "burger-bar" : menu.menuDesign;
+  const activeMenuDesign = menu.menuDesign;
   const isEditorial = activeMenuDesign === "editorial";
   const isBistro = activeMenuDesign === "bistro" || !activeMenuDesign;
   const isBurgerBar = activeMenuDesign === "burger-bar";
+  const isSidebarNeon = activeMenuDesign === "sidebar-neon";
 
   return (
     <main
       className={`min-h-screen ${
-        isBurgerBar
-          ? "bg-[#12100d] bg-[radial-gradient(circle_at_top,#3b220d_0%,#12100d_42rem)] text-[#fff8e7]"
-          : isBistro
-            ? "bg-[#fff7ed] text-[#34221a]"
-            : isEditorial
-              ? "bg-[#f3efe7] text-stone-900"
-              : "bg-gradient-to-b from-[#0b1418] via-[#101a1f] to-[#131114] text-[#f7efe4]"
+        isSidebarNeon
+          ? "bg-[#120b1d] bg-[radial-gradient(circle_at_top,#3b165d_0%,#120b1d_38rem)] text-[#fff4ff]"
+          : isBurgerBar
+            ? "bg-[#12100d] bg-[radial-gradient(circle_at_top,#3b220d_0%,#12100d_42rem)] text-[#fff8e7]"
+            : isBistro
+              ? "bg-[#fff7ed] text-[#34221a]"
+              : isEditorial
+                ? "bg-[#f3efe7] text-stone-900"
+                : "bg-gradient-to-b from-[#0b1418] via-[#101a1f] to-[#131114] text-[#f7efe4]"
       }`}
     >
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 pb-10 sm:px-6 lg:px-8">
@@ -375,25 +382,29 @@ export default async function PublicMenuPage({
 
       <footer
         className={`mt-8 flex flex-col items-center justify-center gap-6 pb-12 px-4 ${
-          isBurgerBar
-            ? "text-[#f8c85a]"
-            : isBistro
-              ? "text-[#8a5a44]"
-              : isEditorial
-                ? "text-stone-600"
-                : ""
+          isSidebarNeon
+            ? "text-[#e9a7ff]"
+            : isBurgerBar
+              ? "text-[#f8c85a]"
+              : isBistro
+                ? "text-[#8a5a44]"
+                : isEditorial
+                  ? "text-stone-600"
+                  : ""
         }`}
       >
         {menu.alcoholNotice && (
           <p
             className={`max-w-xl rounded-lg px-4 py-3 text-center text-sm leading-relaxed ${
-              isBurgerBar
-                ? "border border-[#f6bf3c]/35 bg-[#1e1a13] text-[#ffe19a]"
-                : isBistro
-                  ? "border border-[#e7c5ae] bg-[#fffdf9] text-[#7a4b38]"
-                  : isEditorial
-                    ? "border border-stone-200 bg-white text-stone-600"
-                    : "border border-amber-100/15 bg-[#151b1f]/70 text-amber-50/75"
+              isSidebarNeon
+                ? "border-[#b64dff]/35 bg-[#21102f] text-[#f3d8ff]"
+                : isBurgerBar
+                  ? "border border-[#f6bf3c]/35 bg-[#1e1a13] text-[#ffe19a]"
+                  : isBistro
+                    ? "border border-[#e7c5ae] bg-[#fffdf9] text-[#7a4b38]"
+                    : isEditorial
+                      ? "border border-stone-200 bg-white text-stone-600"
+                      : "border border-amber-100/15 bg-[#151b1f]/70 text-amber-50/75"
             }`}
           >
             {menu.alcoholNotice}
@@ -409,7 +420,7 @@ export default async function PublicMenuPage({
                 href={menu.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#ff8b1f] ${isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#ff7ac8] ${isSidebarNeon ? "text-[#e9a7ff]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <InstagramIcon size={24} />
               </a>
@@ -419,7 +430,7 @@ export default async function PublicMenuPage({
                 href={menu.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#ff8b1f] ${isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#ff7ac8] ${isSidebarNeon ? "text-[#e9a7ff]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <FacebookIcon size={24} />
               </a>
@@ -429,7 +440,7 @@ export default async function PublicMenuPage({
                 href={menu.tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#ff8b1f] ${isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#ff7ac8] ${isSidebarNeon ? "text-[#e9a7ff]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <Music2 size={24} />
               </a>
@@ -439,7 +450,7 @@ export default async function PublicMenuPage({
                 href={menu.websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#ff8b1f] ${isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#ff7ac8] ${isSidebarNeon ? "text-[#e9a7ff]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <Globe size={24} />
               </a>

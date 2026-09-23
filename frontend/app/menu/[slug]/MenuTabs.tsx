@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Menu, Search, X } from "lucide-react";
 import { convertPrice } from "@/lib/pricing";
 
 type Item = {
@@ -36,7 +37,12 @@ type SubTab = {
   count: number;
 };
 
-type MenuDesign = "classic" | "editorial" | "bistro" | "burger-bar";
+type MenuDesign =
+  | "classic"
+  | "editorial"
+  | "bistro"
+  | "burger-bar"
+  | "sidebar-neon";
 
 function PricePills({
   bam,
@@ -64,13 +70,15 @@ function PricePills({
       {showPricesBam && (
         <span
           className={`whitespace-nowrap rounded-full border px-2 py-0.5 md:px-3 md:py-1 ${
-            design === "burger-bar"
-              ? "border-[#f6bf3c] bg-[#f6bf3c] font-black text-[#17130d]"
-              : design === "bistro"
-                ? "border-[#dfb28f] bg-[#fff8ef] text-[#8f3d2e]"
-                : design === "editorial"
-                  ? "border-amber-300 bg-amber-50 text-amber-800"
-                  : "border-amber-200/15 bg-amber-400/15 text-amber-100"
+            design === "sidebar-neon"
+              ? "border-[#ff5ca8] bg-[#ff5ca8] font-black text-[#210c2f]"
+              : design === "burger-bar"
+                ? "border-[#f6bf3c] bg-[#f6bf3c] font-black text-[#17130d]"
+                : design === "bistro"
+                  ? "border-[#dfb28f] bg-[#fff8ef] text-[#8f3d2e]"
+                  : design === "editorial"
+                    ? "border-amber-300 bg-amber-50 text-amber-800"
+                    : "border-amber-200/15 bg-amber-400/15 text-amber-100"
           }`}
         >
           {bam.map((v) => v.toFixed(2)).join(" / ")} KM
@@ -79,13 +87,15 @@ function PricePills({
       {showPricesEur && (
         <span
           className={`whitespace-nowrap rounded-full border px-2 py-0.5 md:px-3 md:py-1 ${
-            design === "burger-bar"
-              ? "border-[#ff8b1f] bg-[#ff8b1f] font-black text-[#17130d]"
-              : design === "bistro"
-                ? "border-[#b9cfa9] bg-[#f3f8ed] text-[#48623b]"
-                : design === "editorial"
-                  ? "border-sky-300 bg-sky-50 text-sky-800"
-                  : "border-sky-200/15 bg-sky-400/15 text-sky-100"
+            design === "sidebar-neon"
+              ? "border-[#a855f7] bg-[#a855f7] font-black text-[#210c2f]"
+              : design === "burger-bar"
+                ? "border-[#ff8b1f] bg-[#ff8b1f] font-black text-[#17130d]"
+                : design === "bistro"
+                  ? "border-[#b9cfa9] bg-[#f3f8ed] text-[#48623b]"
+                  : design === "editorial"
+                    ? "border-sky-300 bg-sky-50 text-sky-800"
+                    : "border-sky-200/15 bg-sky-400/15 text-sky-100"
           }`}
         >
           {eur.map((v) => v.toFixed(2)).join(" / ")} EUR
@@ -122,6 +132,56 @@ function ItemCard({
   const isEditorial = design === "editorial";
   const isBistro = design === "bistro";
   const isBurgerBar = design === "burger-bar";
+  const isSidebarNeon = design === "sidebar-neon";
+
+  if (isSidebarNeon) {
+    return (
+      <li
+        className={`overflow-hidden rounded-2xl border bg-[#21102f] shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-transform hover:-translate-y-0.5 ${highlighted ? "border-[#ff5ca8] ring-1 ring-[#ff5ca8]/40" : "border-[#8d4dcc]/45"}`}
+      >
+        {item.imageUrl && (
+          <button
+            type="button"
+            onClick={() => onImageClick?.(item.imageUrl!, item.name)}
+            aria-label={`Uvecaj sliku artikla ${item.name}`}
+            className="relative block h-40 w-full overflow-hidden sm:h-48"
+          >
+            <Image
+              src={item.imageUrl}
+              alt={item.name}
+              fill
+              sizes="(max-width: 640px) 100vw, 640px"
+              className="object-cover transition duration-300 hover:scale-105"
+            />
+          </button>
+        )}
+        <div className="p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-4">
+            <h3 className="text-lg font-bold leading-snug text-[#fff4ff]">
+              {item.name}
+            </h3>
+            <PricePills
+              bam={converted.map((c) => c.bam)}
+              eur={converted.map((c) => c.eur)}
+              showPricesBam={showPricesBam}
+              showPricesEur={showPricesEur}
+              design={design}
+            />
+          </div>
+          {item.description && (
+            <p className="mt-2 border-t border-[#8d4dcc]/35 pt-2 text-sm leading-relaxed text-[#d8b9e9]">
+              {item.description}
+            </p>
+          )}
+          {highlighted && (
+            <span className="mt-3 inline-block rounded-full bg-[#ff5ca8] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#210c2f]">
+              Dnevna ponuda
+            </span>
+          )}
+        </div>
+      </li>
+    );
+  }
 
   if (isBurgerBar) {
     if (!item.imageUrl) {
@@ -383,12 +443,14 @@ export function MenuTabs({
     menuDesign === "classic" ||
     menuDesign === "editorial" ||
     menuDesign === "bistro" ||
-    menuDesign === "burger-bar"
+    menuDesign === "burger-bar" ||
+    menuDesign === "sidebar-neon"
       ? menuDesign
       : "bistro";
   const isEditorial = design === "editorial";
   const isBistro = design === "bistro";
   const isBurgerBar = design === "burger-bar";
+  const isSidebarNeon = design === "sidebar-neon";
   const [activeId, setActiveId] = useState(
     categories.find((category) => !category.isDailyOffer)?._id ??
       categories[0]?._id ??
@@ -397,6 +459,7 @@ export function MenuTabs({
   const [activeSubTab, setActiveSubTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{
     url: string;
@@ -502,8 +565,123 @@ export function MenuTabs({
     <div
       className={`space-y-4 ${isBurgerBar ? "font-sans" : isBistro ? "font-sans" : isEditorial ? "font-sans" : ""}`}
     >
+      {isSidebarNeon && (
+        <>
+          <header className="sticky top-0 z-30 -mx-4 border-b border-[#8d4dcc]/45 bg-[#160b22]/95 px-4 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.25)] backdrop-blur-md sm:-mx-6 sm:px-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                {!hideDigitalMenuHeader && (
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-[#e9a7ff]">
+                    {messages.digitalMenu}
+                  </p>
+                )}
+                <p className="truncate text-xl font-bold tracking-tight text-[#fff4ff]">
+                  {venueName}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSidebarOpen(true)}
+                aria-label={messages.openCategories}
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#ff5ca8]/70 bg-[#ff5ca8] text-[#210c2f] shadow-[0_6px_18px_rgba(255,92,168,0.25)] transition hover:bg-[#ff7ac8]"
+              >
+                <Menu size={22} aria-hidden="true" />
+              </button>
+            </div>
+            <label className="mt-4 flex items-center gap-3 rounded-xl border border-[#8d4dcc]/55 bg-[#21102f] px-3 py-2.5 focus-within:border-[#ff5ca8]">
+              <Search
+                size={18}
+                className="shrink-0 text-[#e9a7ff]"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder={searchPlaceholder}
+                aria-label={searchPlaceholder}
+                className="w-full bg-transparent text-sm text-[#fff4ff] outline-none placeholder:text-[#d8b9e9]/65"
+              />
+            </label>
+          </header>
+
+          {isSidebarOpen && (
+            <div
+              className="fixed inset-0 z-50 bg-[#08040d]/70 backdrop-blur-sm"
+              onClick={() => setIsSidebarOpen(false)}
+              role="presentation"
+            >
+              <aside
+                className="ml-auto flex h-full w-[min(88vw,22rem)] flex-col border-l border-[#8d4dcc]/55 bg-[#160b22] p-5 shadow-2xl shadow-black/50"
+                onClick={(event) => event.stopPropagation()}
+                aria-label={messages.categories}
+              >
+                <div className="flex items-center justify-between border-b border-[#8d4dcc]/35 pb-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#e9a7ff]">
+                      {messages.categories}
+                    </p>
+                    <p className="mt-1 text-lg font-bold text-[#fff4ff]">
+                      {venueName}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsSidebarOpen(false)}
+                    aria-label={messages.closeMobileMenu}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#8d4dcc]/55 text-[#e9a7ff] transition hover:border-[#ff5ca8] hover:text-[#ff7ac8]"
+                  >
+                    <X size={20} aria-hidden="true" />
+                  </button>
+                </div>
+                <nav className="mt-5 flex-1 space-y-2 overflow-y-auto pr-1">
+                  {categories.map((category) => (
+                    <div key={category._id}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          selectCategory(category._id);
+                          setIsSidebarOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${category._id === activeId ? "bg-[#ff5ca8] text-[#210c2f]" : "text-[#fff4ff] hover:bg-[#8d4dcc]/25"}`}
+                      >
+                        <span>{category.title}</span>
+                        <span className="text-xs opacity-70">
+                          {category.items.length +
+                            category.subcategories.reduce(
+                              (sum, sub) => sum + sub.items.length,
+                              0,
+                            )}
+                        </span>
+                      </button>
+                      {category.subcategories.length > 0 && (
+                        <div className="ml-4 border-l border-[#8d4dcc]/45 pl-3">
+                          {category.subcategories.map((subcategory) => (
+                            <button
+                              key={subcategory._id}
+                              type="button"
+                              onClick={() => {
+                                selectCategory(category._id);
+                                selectSubTab(`sub-${subcategory._id}`);
+                                setIsSidebarOpen(false);
+                              }}
+                              className="block w-full px-3 py-2 text-left text-sm text-[#d8b9e9] transition hover:text-[#ff7ac8]"
+                            >
+                              {subcategory.title}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </nav>
+              </aside>
+            </div>
+          )}
+        </>
+      )}
       <div
-        className={`hidden items-center justify-between gap-6 border px-6 py-5 md:flex ${isBurgerBar ? "border-[#f6bf3c]/55 bg-[#1e1a13] shadow-[0_14px_32px_rgba(0,0,0,0.28)]" : isBistro ? "border-[#e3c4aa] bg-[#fffdf8] shadow-[0_12px_30px_rgba(110,57,35,0.08)]" : isEditorial ? "rounded-[28px] border-stone-200 bg-[#f8f5ef]" : "rounded-[28px] border-amber-100/10 bg-[#1b191a]/70 backdrop-blur-sm"}`}
+        className={`${isSidebarNeon ? "hidden" : "hidden md:flex"} items-center justify-between gap-6 border px-6 py-5 ${isBurgerBar ? "border-[#f6bf3c]/55 bg-[#1e1a13] shadow-[0_14px_32px_rgba(0,0,0,0.28)]" : isBistro ? "border-[#e3c4aa] bg-[#fffdf8] shadow-[0_12px_30px_rgba(110,57,35,0.08)]" : isEditorial ? "rounded-[28px] border-stone-200 bg-[#f8f5ef]" : "rounded-[28px] border-amber-100/10 bg-[#1b191a]/70 backdrop-blur-sm"}`}
       >
         <div className="min-w-0 w-full">
           {!hideDigitalMenuHeader && (
@@ -521,7 +699,13 @@ export function MenuTabs({
         </div>
       </div>
 
-      <div className="sticky top-0 z-30 -mx-4 md:hidden sm:-mx-6">
+      <div
+        className={
+          isSidebarNeon
+            ? "hidden"
+            : "sticky top-0 z-30 -mx-4 md:hidden sm:-mx-6"
+        }
+      >
         <div
           className={`px-4 py-4 shadow-lg backdrop-blur-md sm:px-6 ${isBurgerBar ? "border-b border-[#f6bf3c]/45 bg-[#12100d]/95" : isBistro ? "border-b border-[#e3c4aa] bg-[#fffaf3]/95" : isEditorial ? "bg-[#f8f5ef]/95" : "bg-[#1b191a]/90"}`}
         >
@@ -619,7 +803,7 @@ export function MenuTabs({
       </div>
 
       <div
-        className={`sticky top-0 z-30 -mx-4 hidden px-4 pb-3 pt-3 backdrop-blur-md md:block sm:-mx-6 sm:px-6 ${isBurgerBar ? "border-b border-[#f6bf3c]/45 bg-[#12100d]/95" : isBistro ? "border-b border-[#e3c4aa] bg-[#fffaf3]/95" : isEditorial ? "bg-[#f8f5ef]/95" : "bg-[#141316]/90"}`}
+        className={`${isSidebarNeon ? "hidden" : "sticky top-0 z-30 -mx-4 hidden px-4 pb-3 pt-3 backdrop-blur-md md:block sm:-mx-6 sm:px-6"} ${isBurgerBar ? "border-b border-[#f6bf3c]/45 bg-[#12100d]/95" : isBistro ? "border-b border-[#e3c4aa] bg-[#fffaf3]/95" : isEditorial ? "bg-[#f8f5ef]/95" : "bg-[#141316]/90"}`}
       >
         <div className="flex gap-2 overflow-x-auto pb-1">
           {categories.map((cat) => (
@@ -818,7 +1002,7 @@ export function MenuTabs({
         type="button"
         onClick={() => setIsSearchOpen((prev) => !prev)}
         aria-label={isSearchOpen ? messages.close : searchPlaceholder}
-        className={`fixed bottom-0 left-4 z-40 inline-flex h-10 w-10 items-center justify-center rounded-full border shadow-lg transition ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : isEditorial ? "border-stone-300 bg-white text-stone-700 hover:bg-stone-100" : "border-amber-100/15 bg-[#141213] text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
+        className={`${isSidebarNeon ? "hidden" : "fixed bottom-0 left-4 z-40 inline-flex"} h-10 w-10 items-center justify-center rounded-full border shadow-lg transition ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : isEditorial ? "border-stone-300 bg-white text-stone-700 hover:bg-stone-100" : "border-amber-100/15 bg-[#141213] text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
       >
         <svg
           viewBox="0 0 24 24"
