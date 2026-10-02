@@ -67,7 +67,7 @@ function PricePills({
 
   return (
     <div
-      className={`flex shrink-0 items-center gap-1.5 text-xs font-semibold md:gap-2 md:text-sm ${align === "start" ? "justify-start" : "justify-end"} ${design === "burger-bar" ? "flex-nowrap" : "flex-wrap"}`}
+      className={`flex shrink-0 items-center gap-1.5 text-xs font-semibold md:gap-2 md:text-sm ${design.startsWith("sidebar-") ? "text-sm md:text-base" : ""} ${align === "start" ? "justify-start" : "justify-end"} ${design === "burger-bar" ? "flex-nowrap" : "flex-wrap"}`}
     >
       {showPricesBam && (
         <span
@@ -178,7 +178,7 @@ function ItemCard({
             />
           </div>
           {item.description && (
-            <p className="mt-2 border-t border-sn-edge/35 pt-2 text-sm leading-relaxed text-sn-soft">
+            <p className="mt-2 border-t border-sn-edge/35 pt-2 text-base leading-relaxed text-sn-soft">
               {item.description}
             </p>
           )}
@@ -711,7 +711,7 @@ export function MenuTabs({
                           selectCategory(category._id);
                           setIsSidebarOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${category._id === activeId ? "bg-sn-accent text-sn-on" : "text-sn-text hover:bg-sn-edge/25"}`}
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-base font-semibold transition ${category._id === activeId ? "bg-sn-accent text-sn-on" : "text-sn-text hover:bg-sn-edge/25"}`}
                       >
                         <span>{category.title}</span>
                         <span className="text-xs opacity-70">
@@ -733,7 +733,7 @@ export function MenuTabs({
                                 selectSubTab(`sub-${subcategory._id}`);
                                 setIsSidebarOpen(false);
                               }}
-                              className="block w-full px-3 py-2 text-left text-sm text-sn-soft transition hover:text-sn-accent-hi"
+                              className="block w-full px-3 py-2 text-left text-[15px] text-sn-soft transition hover:text-sn-accent-hi"
                             >
                               {subcategory.title}
                             </button>
