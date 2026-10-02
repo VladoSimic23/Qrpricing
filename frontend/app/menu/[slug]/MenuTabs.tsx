@@ -327,9 +327,9 @@ function ItemCard({
   if (design === "classic" && hasImageOrDesc) {
     return (
       <li
-        className={`overflow-hidden rounded-2xl border bg-[#151b1f]/75 backdrop-blur-sm transition-shadow ${
+        className={`group mb-4 overflow-hidden rounded-2xl border bg-gradient-to-b from-[#1a2227]/90 to-[#12171a]/90 shadow-[0_10px_28px_rgba(0,0,0,0.28)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-amber-200/30 hover:shadow-[0_16px_36px_rgba(0,0,0,0.38)] ${
           highlighted
-            ? "border-emerald-300/30 bg-emerald-950/30 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
+            ? "border-emerald-300/30 ring-1 ring-emerald-300/20"
             : "border-amber-100/10"
         }`}
       >
@@ -338,15 +338,16 @@ function ItemCard({
             type="button"
             onClick={() => onImageClick?.(item.imageUrl!, item.name)}
             aria-label={`Uvecaj sliku artikla ${item.name}`}
-            className="relative block h-36 w-full overflow-hidden transition hover:opacity-90 sm:h-44"
+            className="relative block h-48 w-full overflow-hidden sm:h-60"
           >
             <Image
               src={item.imageUrl}
               alt={item.name}
               fill
               sizes="(max-width: 640px) 100vw, 640px"
-              className="object-cover"
+              className="object-cover transition duration-500 group-hover:scale-105"
             />
+            <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#12171a]/80 to-transparent" />
           </button>
         )}
         <div className="p-4 sm:p-5">
