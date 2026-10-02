@@ -710,6 +710,7 @@ export function MenuTabs({
                         onClick={() => {
                           selectCategory(category._id);
                           setIsSidebarOpen(false);
+                          window.scrollTo({ top: 0 });
                         }}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-base font-semibold transition ${category._id === activeId ? "bg-sn-accent text-sn-on" : "text-sn-text hover:bg-sn-edge/25"}`}
                       >
@@ -732,6 +733,7 @@ export function MenuTabs({
                                 selectCategory(category._id);
                                 selectSubTab(`sub-${subcategory._id}`);
                                 setIsSidebarOpen(false);
+                                window.scrollTo({ top: 0 });
                               }}
                               className="block w-full px-3 py-2 text-left text-[15px] text-sn-soft transition hover:text-sn-accent-hi"
                             >
