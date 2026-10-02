@@ -146,7 +146,7 @@ function ItemCard({
   if (isSidebarNeon) {
     return (
       <li
-        className={`overflow-hidden rounded-2xl border bg-sn-field shadow-[0_12px_30px_rgba(0,0,0,0.22)] transition-transform hover:-translate-y-0.5 ${highlighted ? "border-sn-accent ring-1 ring-sn-accent/40" : "border-sn-edge/45"}`}
+        className={`overflow-hidden rounded-2xl border bg-sn-field shadow-[0_12px_30px_rgba(0,0,0,0.22)] transition-transform hover:-translate-y-0.5 ${design === "sidebar-royal" ? "border-transparent" : highlighted ? "border-sn-accent ring-1 ring-sn-accent/40" : "border-sn-edge/45"}`}
       >
         {item.imageUrl && (
           <button
