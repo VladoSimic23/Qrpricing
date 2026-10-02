@@ -13,6 +13,45 @@
   --font-mono: var(--font-mono);
 }
 
+/* Paleta Sidebar teme (neon po defaultu, autumn kroz override ispod) */
+@theme {
+  --color-sn-base: #120b1d;
+  --color-sn-glow: #3b165d;
+  --color-sn-page: #fff4ff;
+  --color-sn-deep: #130e1b;
+  --color-sn-veil: #08060b;
+  --color-sn-edge: #765b96;
+  --color-sn-field: #1d1628;
+  --color-sn-text: #f5edf8;
+  --color-sn-soft: #cbbbd5;
+  --color-sn-muted: #c7a9db;
+  --color-sn-dim: #9f8bab;
+  --color-sn-sub: #d9c5b8;
+  --color-sn-accent: #c58b68;
+  --color-sn-accent-hi: #d6a07f;
+  --color-sn-on: #241326;
+  --color-sn-alt: #9b7bc6;
+}
+
+.theme-sidebar-autumn {
+  --color-sn-base: #1f1712;
+  --color-sn-glow: #4a3322;
+  --color-sn-page: #fbf1e4;
+  --color-sn-deep: #261c15;
+  --color-sn-veil: #0f0a07;
+  --color-sn-edge: #8c6b50;
+  --color-sn-field: #31241b;
+  --color-sn-text: #f8ede0;
+  --color-sn-soft: #dcc8b3;
+  --color-sn-muted: #d2b594;
+  --color-sn-dim: #b39a82;
+  --color-sn-sub: #e6cfae;
+  --color-sn-accent: #d9a068;
+  --color-sn-accent-hi: #e6b685;
+  --color-sn-on: #2a1a0e;
+  --color-sn-alt: #a9b27c;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

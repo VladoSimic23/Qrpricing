@@ -19,7 +19,8 @@ export type TenantMembership = {
       | "editorial"
       | "bistro"
       | "burger-bar"
-      | "sidebar-neon";
+      | "sidebar-neon"
+      | "sidebar-autumn";
     showPricesBam?: boolean;
     showPricesEur?: boolean;
     alcoholNotice?: string;

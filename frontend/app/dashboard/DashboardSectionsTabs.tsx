@@ -79,7 +79,8 @@ type Props = {
     | "editorial"
     | "bistro"
     | "burger-bar"
-    | "sidebar-neon";
+    | "sidebar-neon"
+    | "sidebar-autumn";
   showPricesBam: boolean;
   showPricesEur: boolean;
   alcoholNotice?: string;
@@ -728,6 +729,9 @@ export function DashboardSectionsTabs({
                       <option value="burger-bar">Burger Bar (tamni)</option>
                       <option value="sidebar-neon">
                         Sidebar Neon (ljubičasti)
+                      </option>
+                      <option value="sidebar-autumn">
+                        Sidebar Jesen (topli, nježni)
                       </option>
                     </select>
                     <p className="text-xs text-slate-600">

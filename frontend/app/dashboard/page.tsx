@@ -875,7 +875,8 @@ async function updateMenuSettingsAction(formData: FormData) {
     menuDesign !== "editorial" &&
     menuDesign !== "bistro" &&
     menuDesign !== "burger-bar" &&
-    menuDesign !== "sidebar-neon"
+    menuDesign !== "sidebar-neon" &&
+    menuDesign !== "sidebar-autumn"
   ) {
     throw new Error("Odabrani dizajn menija nije podržan.");
   }

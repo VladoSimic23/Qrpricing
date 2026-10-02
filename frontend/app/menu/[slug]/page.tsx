@@ -53,7 +53,8 @@ type MenuPayload = {
     | "editorial"
     | "bistro"
     | "burger-bar"
-    | "sidebar-neon";
+    | "sidebar-neon"
+    | "sidebar-autumn";
   showPricesBam?: boolean;
   showPricesEur?: boolean;
   alcoholNotice?: string;
@@ -339,13 +340,17 @@ export default async function PublicMenuPage({
   const isEditorial = activeMenuDesign === "editorial";
   const isBistro = activeMenuDesign === "bistro" || !activeMenuDesign;
   const isBurgerBar = activeMenuDesign === "burger-bar";
-  const isSidebarNeon = activeMenuDesign === "sidebar-neon";
+  const isSidebarNeon =
+    activeMenuDesign === "sidebar-neon" ||
+    activeMenuDesign === "sidebar-autumn";
 
   return (
     <main
       className={`min-h-screen ${
+        activeMenuDesign === "sidebar-autumn" ? "theme-sidebar-autumn " : ""
+      }${
         isSidebarNeon
-          ? "bg-[#120b1d] bg-[radial-gradient(circle_at_top,#3b165d_0%,#120b1d_38rem)] text-[#fff4ff]"
+          ? "bg-sn-base bg-[radial-gradient(circle_at_top,var(--color-sn-glow)_0%,var(--color-sn-base)_38rem)] text-sn-page"
           : isBurgerBar
             ? "bg-[#12100d] bg-[radial-gradient(circle_at_top,#3b220d_0%,#12100d_42rem)] text-[#fff8e7]"
             : isBistro
@@ -397,7 +402,7 @@ export default async function PublicMenuPage({
           <p
             className={`max-w-xl rounded-lg px-4 py-3 text-center text-sm leading-relaxed ${
               isSidebarNeon
-                ? "border border-[#765b96]/45 bg-[#1d1628] text-[#cbbbd5]"
+                ? "border border-sn-edge/45 bg-sn-field text-sn-soft"
                 : isBurgerBar
                   ? "border border-[#f6bf3c]/35 bg-[#1e1a13] text-[#ffe19a]"
                   : isBistro
@@ -420,7 +425,7 @@ export default async function PublicMenuPage({
                 href={menu.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-[#c7a9db]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-sn-muted" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <InstagramIcon size={24} />
               </a>
@@ -430,7 +435,7 @@ export default async function PublicMenuPage({
                 href={menu.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-[#c7a9db]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-sn-muted" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <FacebookIcon size={24} />
               </a>
@@ -440,7 +445,7 @@ export default async function PublicMenuPage({
                 href={menu.tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-[#c7a9db]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-sn-muted" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <Music2 size={24} />
               </a>
@@ -450,7 +455,7 @@ export default async function PublicMenuPage({
                 href={menu.websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-[#c7a9db]" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
+                className={`transition-colors hover:text-[#d6a07f] ${isSidebarNeon ? "text-sn-muted" : isBurgerBar ? "text-[#f8c85a]" : isBistro ? "text-[#a66c52]" : isEditorial ? "text-stone-400" : "text-[#f7efe4]/60"}`}
               >
                 <Globe size={24} />
               </a>
@@ -458,7 +463,7 @@ export default async function PublicMenuPage({
           </div>
         )}
         <div
-          className={`text-center text-xs ${isSidebarNeon ? "text-[#9f8bab]" : isBurgerBar ? "text-[#c79b42]" : isBistro ? "text-[#98634c]" : "text-[#f7efe4]/40"}`}
+          className={`text-center text-xs ${isSidebarNeon ? "text-sn-dim" : isBurgerBar ? "text-[#c79b42]" : isBistro ? "text-[#98634c]" : "text-[#f7efe4]/40"}`}
         >
           <p>
             Kreirano pomoću{" "}
