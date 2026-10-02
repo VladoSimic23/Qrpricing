@@ -60,6 +60,7 @@ export const tenantType = defineType({
           { title: "Burger Bar (tamni)", value: "burger-bar" },
           { title: "Sidebar Neon (ljubičasti)", value: "sidebar-neon" },
           { title: "Sidebar Jesen (topli, nježni)", value: "sidebar-autumn" },
+          { title: "Sidebar Royal (tamni, zlatni)", value: "sidebar-royal" },
         ],
         layout: "radio",
       },

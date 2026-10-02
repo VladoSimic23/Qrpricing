@@ -43,7 +43,8 @@ type MenuDesign =
   | "bistro"
   | "burger-bar"
   | "sidebar-neon"
-  | "sidebar-autumn";
+  | "sidebar-autumn"
+  | "sidebar-royal";
 
 function PricePills({
   bam,
@@ -71,7 +72,9 @@ function PricePills({
       {showPricesBam && (
         <span
           className={`whitespace-nowrap rounded-full border px-2 py-0.5 md:px-3 md:py-1 ${
-            design === "sidebar-neon" || design === "sidebar-autumn"
+            design === "sidebar-neon" ||
+            design === "sidebar-autumn" ||
+            design === "sidebar-royal"
               ? "border-sn-accent bg-sn-accent font-black text-sn-on"
               : design === "burger-bar"
                 ? "border-[#f6bf3c] bg-[#f6bf3c] font-black text-[#17130d]"
@@ -88,7 +91,9 @@ function PricePills({
       {showPricesEur && (
         <span
           className={`whitespace-nowrap rounded-full border px-2 py-0.5 md:px-3 md:py-1 ${
-            design === "sidebar-neon" || design === "sidebar-autumn"
+            design === "sidebar-neon" ||
+            design === "sidebar-autumn" ||
+            design === "sidebar-royal"
               ? "border-sn-alt bg-sn-alt font-black text-sn-on"
               : design === "burger-bar"
                 ? "border-[#ff8b1f] bg-[#ff8b1f] font-black text-[#17130d]"
@@ -134,7 +139,9 @@ function ItemCard({
   const isBistro = design === "bistro";
   const isBurgerBar = design === "burger-bar";
   const isSidebarNeon =
-    design === "sidebar-neon" || design === "sidebar-autumn";
+    design === "sidebar-neon" ||
+    design === "sidebar-autumn" ||
+    design === "sidebar-royal";
 
   if (isSidebarNeon) {
     return (
@@ -496,14 +503,22 @@ export function MenuTabs({
     menuDesign === "bistro" ||
     menuDesign === "burger-bar" ||
     menuDesign === "sidebar-neon" ||
-    menuDesign === "sidebar-autumn"
+    menuDesign === "sidebar-autumn" ||
+    menuDesign === "sidebar-royal"
       ? menuDesign
       : "bistro";
   const isEditorial = design === "editorial";
   const isBistro = design === "bistro";
   const isBurgerBar = design === "burger-bar";
   const isSidebarNeon =
-    design === "sidebar-neon" || design === "sidebar-autumn";
+    design === "sidebar-neon" ||
+    design === "sidebar-autumn" ||
+    design === "sidebar-royal";
+  const listSpacing = isBurgerBar
+    ? "space-y-6"
+    : isSidebarNeon
+      ? "space-y-4"
+      : "space-y-2";
   const [activeId, setActiveId] = useState(
     categories.find((category) => !category.isDailyOffer)?._id ??
       categories[0]?._id ??
@@ -961,7 +976,7 @@ export function MenuTabs({
                 {category.title}
               </h2>
               {category.items.length > 0 && (
-                <ul className={isBurgerBar ? "space-y-6" : "space-y-2"}>
+                <ul className={listSpacing}>
                   {category.items.map((item) => (
                     <ItemCard
                       key={item._id}
@@ -990,7 +1005,7 @@ export function MenuTabs({
                   >
                     {sub.title}
                   </p>
-                  <ul className={isBurgerBar ? "space-y-6" : "space-y-2"}>
+                  <ul className={listSpacing}>
                     {sub.items.map((item) => (
                       <ItemCard
                         key={item._id}
@@ -1011,7 +1026,7 @@ export function MenuTabs({
             </div>
           ))
         ) : resolvedActiveSubTab === "all" && filteredRootItems.length > 0 ? (
-          <ul className={isBurgerBar ? "space-y-6" : "space-y-2"}>
+          <ul className={listSpacing}>
             {filteredRootItems.map((item) => (
               <ItemCard
                 key={item._id}
@@ -1040,7 +1055,7 @@ export function MenuTabs({
                   >
                     {sub.title}
                   </p>
-                  <ul className={isBurgerBar ? "space-y-6" : "space-y-2"}>
+                  <ul className={listSpacing}>
                     {sub.items.map((item) => (
                       <ItemCard
                         key={item._id}

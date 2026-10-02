@@ -54,7 +54,8 @@ type MenuPayload = {
     | "bistro"
     | "burger-bar"
     | "sidebar-neon"
-    | "sidebar-autumn";
+    | "sidebar-autumn"
+    | "sidebar-royal";
   showPricesBam?: boolean;
   showPricesEur?: boolean;
   alcoholNotice?: string;
@@ -342,13 +343,14 @@ export default async function PublicMenuPage({
   const isBurgerBar = activeMenuDesign === "burger-bar";
   const isSidebarNeon =
     activeMenuDesign === "sidebar-neon" ||
-    activeMenuDesign === "sidebar-autumn";
+    activeMenuDesign === "sidebar-autumn" ||
+    activeMenuDesign === "sidebar-royal";
 
   return (
     <main
       className={`min-h-screen ${
         activeMenuDesign === "sidebar-autumn" ? "theme-sidebar-autumn " : ""
-      }${
+      }${activeMenuDesign === "sidebar-royal" ? "theme-sidebar-royal " : ""}${
         isSidebarNeon
           ? "bg-sn-base bg-[radial-gradient(circle_at_top,var(--color-sn-glow)_0%,var(--color-sn-base)_38rem)] text-sn-page"
           : isBurgerBar

@@ -52,6 +52,25 @@
   --color-sn-alt: #a9b27c;
 }
 
+.theme-sidebar-royal {
+  --color-sn-base: #0a0a0e;
+  --color-sn-glow: #3b0f1c;
+  --color-sn-page: #fff7ea;
+  --color-sn-deep: #0e0e13;
+  --color-sn-veil: #000000;
+  --color-sn-edge: #7a6232;
+  --color-sn-field: #17171d;
+  --color-sn-text: #f7f0e1;
+  --color-sn-soft: #d0c7b4;
+  --color-sn-muted: #d8b86e;
+  --color-sn-dim: #988e7a;
+  --color-sn-sub: #ecd495;
+  --color-sn-accent: #d4a63a;
+  --color-sn-accent-hi: #e9bf55;
+  --color-sn-on: #17110a;
+  --color-sn-alt: #c0394f;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
