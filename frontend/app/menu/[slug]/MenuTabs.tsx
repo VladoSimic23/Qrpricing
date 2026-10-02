@@ -324,6 +324,54 @@ function ItemCard({
     );
   }
 
+  if (design === "classic" && hasImageOrDesc) {
+    return (
+      <li
+        className={`overflow-hidden rounded-2xl border bg-[#151b1f]/75 backdrop-blur-sm transition-shadow ${
+          highlighted
+            ? "border-emerald-300/30 bg-emerald-950/30 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
+            : "border-amber-100/10"
+        }`}
+      >
+        {item.imageUrl && (
+          <button
+            type="button"
+            onClick={() => onImageClick?.(item.imageUrl!, item.name)}
+            aria-label={`Uvecaj sliku artikla ${item.name}`}
+            className="relative block h-36 w-full overflow-hidden transition hover:opacity-90 sm:h-44"
+          >
+            <Image
+              src={item.imageUrl}
+              alt={item.name}
+              fill
+              sizes="(max-width: 640px) 100vw, 640px"
+              className="object-cover"
+            />
+          </button>
+        )}
+        <div className="p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-4">
+            <h3 className="text-lg font-semibold leading-snug text-[#fff6e8]">
+              {item.name}
+            </h3>
+            <PricePills
+              bam={converted.map((c) => c.bam)}
+              eur={converted.map((c) => c.eur)}
+              showPricesBam={showPricesBam}
+              showPricesEur={showPricesEur}
+              design={design}
+            />
+          </div>
+          {item.description && (
+            <p className="mt-2 border-t border-amber-100/10 pt-2 text-sm leading-relaxed text-amber-50/70">
+              {item.description}
+            </p>
+          )}
+        </div>
+      </li>
+    );
+  }
+
   return (
     <li
       key={item._id}
