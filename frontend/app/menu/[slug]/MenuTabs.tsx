@@ -78,7 +78,7 @@ function PricePills({
                   ? "border-[#dfb28f] bg-[#fff8ef] text-[#8f3d2e]"
                   : design === "editorial"
                     ? "border-amber-300 bg-amber-50 text-amber-800"
-                    : "border-amber-200/15 bg-amber-400/15 text-amber-100"
+                    : "border-sky-200/15 bg-sky-400/15 text-sky-100"
           }`}
         >
           {bam.map((v) => v.toFixed(2)).join(" / ")} KM
@@ -95,7 +95,7 @@ function PricePills({
                   ? "border-[#b9cfa9] bg-[#f3f8ed] text-[#48623b]"
                   : design === "editorial"
                     ? "border-sky-300 bg-sky-50 text-sky-800"
-                    : "border-sky-200/15 bg-sky-400/15 text-sky-100"
+                    : "border-amber-200/15 bg-amber-400/15 text-amber-100"
           }`}
         >
           {eur.map((v) => v.toFixed(2)).join(" / ")} EUR
