@@ -510,6 +510,7 @@ export function MenuTabs({
   const isEditorial = design === "editorial";
   const isBistro = design === "bistro";
   const isBurgerBar = design === "burger-bar";
+  const isClassic = design === "classic";
   const isSidebarNeon =
     design === "sidebar-neon" ||
     design === "sidebar-autumn" ||
@@ -753,7 +754,7 @@ export function MenuTabs({
       <div
         className={`${isSidebarNeon ? "hidden" : "hidden md:flex"} items-center justify-between gap-6 border px-6 py-5 ${isBurgerBar ? "border-[#f6bf3c]/55 bg-[#1e1a13] shadow-[0_14px_32px_rgba(0,0,0,0.28)]" : isBistro ? "border-[#e3c4aa] bg-[#fffdf8] shadow-[0_12px_30px_rgba(110,57,35,0.08)]" : isEditorial ? "rounded-[28px] border-stone-200 bg-[#f8f5ef]" : "rounded-[28px] border-amber-100/10 bg-[#1b191a]/70 backdrop-blur-sm"}`}
       >
-        <div className="min-w-0 w-full">
+        <div className="min-w-0 flex-1">
           {!hideDigitalMenuHeader && (
             <p
               className={`text-[10px] uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f6bf3c]" : isBistro ? "text-[#a66145]" : isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
@@ -767,6 +768,46 @@ export function MenuTabs({
             {venueName}
           </p>
         </div>
+        {isClassic && (
+          <div className="relative flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsSearchOpen((open) => !open)}
+              aria-label={isSearchOpen ? messages.close : searchPlaceholder}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-amber-100/15 bg-[#141316] text-amber-100/80 transition hover:border-amber-200/30 hover:text-amber-100"
+            >
+              <Search size={18} aria-hidden="true" />
+            </button>
+            {activeLanguages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setIsLangOpen((open) => !open)}
+                  aria-label={messages.languageLabel}
+                  className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-amber-100/15 bg-[#141316] px-2 text-xs font-bold uppercase text-amber-100/80 transition hover:border-amber-200/30 hover:text-amber-100"
+                >
+                  {locale}
+                </button>
+                {isLangOpen && (
+                  <div className="absolute right-0 top-full z-40 mt-2 flex flex-col gap-1 rounded-xl border border-amber-100/15 bg-[#141316] p-1 shadow-xl">
+                    {supportedLocales
+                      .filter((code) => activeLanguages.includes(code))
+                      .map((code) => (
+                        <Link
+                          key={code}
+                          href={`/menu/${slug}?lang=${code}`}
+                          onClick={() => setIsLangOpen(false)}
+                          className={`rounded-lg px-3 py-2 text-center text-xs font-semibold uppercase transition ${code === locale ? "bg-amber-300/20 text-amber-100" : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"}`}
+                        >
+                          {code}
+                        </Link>
+                      ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       <div
@@ -779,19 +820,61 @@ export function MenuTabs({
         <div
           className={`px-4 py-4 shadow-lg backdrop-blur-md sm:px-6 ${isBurgerBar ? "border-b border-[#f6bf3c]/45 bg-[#12100d]/95" : isBistro ? "border-b border-[#e3c4aa] bg-[#fffaf3]/95" : isEditorial ? "bg-[#f8f5ef]/95" : "bg-[#1b191a]/90"}`}
         >
-          <div className="w-full min-w-0">
-            {!hideDigitalMenuHeader && (
+          <div className="flex w-full min-w-0 items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              {!hideDigitalMenuHeader && (
+                <p
+                  className={`text-[10px] uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f6bf3c]" : isBistro ? "text-[#a66145]" : isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
+                >
+                  {messages.digitalMenu}
+                </p>
+              )}
               <p
-                className={`text-[10px] uppercase tracking-[0.22em] ${isBurgerBar ? "text-[#f6bf3c]" : isBistro ? "text-[#a66145]" : isEditorial ? "text-stone-500" : "text-amber-200/70"}`}
+                className={`truncate text-[18px] ${isBurgerBar ? "font-black uppercase tracking-wide text-[#fff8e7]" : isBistro ? "font-serif font-bold text-[#4a281d]" : isEditorial ? "font-medium text-stone-800" : "font-medium text-amber-100/70"}`}
               >
-                {messages.digitalMenu}
+                {venueName}
               </p>
+            </div>
+            {isClassic && (
+              <div className="relative flex shrink-0 items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen((open) => !open)}
+                  aria-label={isSearchOpen ? messages.close : searchPlaceholder}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-amber-100/15 bg-[#141316] text-amber-100/80 transition hover:border-amber-200/30 hover:text-amber-100"
+                >
+                  <Search size={17} aria-hidden="true" />
+                </button>
+                {activeLanguages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setIsLangOpen((open) => !open)}
+                      aria-label={messages.languageLabel}
+                      className="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-amber-100/15 bg-[#141316] px-2 text-xs font-bold uppercase text-amber-100/80 transition hover:border-amber-200/30 hover:text-amber-100"
+                    >
+                      {locale}
+                    </button>
+                    {isLangOpen && (
+                      <div className="absolute right-0 top-full z-40 mt-2 flex flex-col gap-1 rounded-xl border border-amber-100/15 bg-[#141316] p-1 shadow-xl">
+                        {supportedLocales
+                          .filter((code) => activeLanguages.includes(code))
+                          .map((code) => (
+                            <Link
+                              key={code}
+                              href={`/menu/${slug}?lang=${code}`}
+                              onClick={() => setIsLangOpen(false)}
+                              className={`rounded-lg px-3 py-2 text-center text-xs font-semibold uppercase transition ${code === locale ? "bg-amber-300/20 text-amber-100" : "text-amber-100/70 hover:bg-amber-50/5 hover:text-amber-100"}`}
+                            >
+                              {code}
+                            </Link>
+                          ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             )}
-            <p
-              className={`truncate text-[18px] ${isBurgerBar ? "font-black uppercase tracking-wide text-[#fff8e7]" : isBistro ? "font-serif font-bold text-[#4a281d]" : isEditorial ? "font-medium text-stone-800" : "font-medium text-amber-100/70"}`}
-            >
-              {venueName}
-            </p>
           </div>
 
           <div
@@ -1091,7 +1174,7 @@ export function MenuTabs({
         type="button"
         onClick={() => setIsSearchOpen((prev) => !prev)}
         aria-label={isSearchOpen ? messages.close : searchPlaceholder}
-        className={`${isSidebarNeon ? "hidden" : "fixed bottom-0 left-4 z-40 inline-flex"} h-10 w-10 items-center justify-center rounded-full border shadow-lg transition ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : isEditorial ? "border-stone-300 bg-white text-stone-700 hover:bg-stone-100" : "border-amber-100/15 bg-[#141213] text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
+        className={`${isSidebarNeon || isClassic ? "hidden" : "fixed bottom-0 left-4 z-40 inline-flex"} h-10 w-10 items-center justify-center rounded-full border shadow-lg transition ${isBurgerBar ? "border-[#f6bf3c] bg-[#f6bf3c] text-[#17130d] hover:bg-[#ff8b1f]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed] text-[#98412f] hover:bg-[#fde9d7]" : isEditorial ? "border-stone-300 bg-white text-stone-700 hover:bg-stone-100" : "border-amber-100/15 bg-[#141213] text-amber-100/80 hover:border-amber-100/30 hover:text-amber-100"}`}
       >
         <svg
           viewBox="0 0 24 24"
@@ -1109,7 +1192,9 @@ export function MenuTabs({
       </button>
 
       {activeLanguages.length > 1 && (
-        <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+        <div
+          className={`${isClassic ? "hidden" : "fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2"}`}
+        >
           {isLangOpen && (
             <div
               className={`flex flex-col gap-1 rounded-2xl border p-1 shadow-lg ${isSidebarNeon ? "border-sn-edge/55 bg-sn-deep" : isBurgerBar ? "border-[#f6bf3c]/45 bg-[#12100d]" : isBistro ? "border-[#dfb28f] bg-[#fff7ed]" : isEditorial ? "border-stone-200 bg-white" : "border-amber-100/15 bg-[#141213]"}`}

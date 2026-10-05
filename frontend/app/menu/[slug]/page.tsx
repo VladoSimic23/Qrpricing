@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { headers } from "next/headers";
 import type { Metadata, Viewport } from "next";
 import { Music2, Globe } from "lucide-react";
 
@@ -60,6 +59,7 @@ type MenuPayload = {
   showPricesEur?: boolean;
   alcoholNotice?: string;
   activeLanguages?: string[];
+  defaultLanguage?: string;
   facebookUrl?: string;
   instagramUrl?: string;
   tiktokUrl?: string;
@@ -122,17 +122,20 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const { lang } = await searchParams;
-  const requestHeaders = await headers();
 
   try {
     const tempMenu = await serverReadClient.fetch<{
       activeLanguages?: string[];
+      defaultLanguage?: string;
     } | null>(
-      `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{ activeLanguages }`,
+      `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{ activeLanguages, defaultLanguage }`,
       { slug },
     );
     const activeLanguages = tempMenu?.activeLanguages || ["hr", "en"];
-    let locale = resolveLocale(lang, requestHeaders.get("accept-language"));
+    let locale = resolveLocale(
+      lang,
+      tempMenu?.defaultLanguage ?? activeLanguages[0] ?? "hr",
+    );
     if (!activeLanguages.includes(locale) && activeLanguages.length > 0) {
       locale = activeLanguages[0] as typeof locale;
     }
@@ -211,18 +214,21 @@ export default async function PublicMenuPage({
 }) {
   const { slug } = await params;
   const { lang } = await searchParams;
-  const requestHeaders = await headers();
 
   // Prvo dohvacamo tenanta kako bismo znali aktivne jezike
   const tempMenu = await serverReadClient.fetch<{
     activeLanguages?: string[];
+    defaultLanguage?: string;
   } | null>(
-    `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{ activeLanguages }`,
+    `*[_type == "tenant" && slug.current == $slug && isActive != false][0]{ activeLanguages, defaultLanguage }`,
     { slug },
   );
 
   const activeLanguages = tempMenu?.activeLanguages || ["hr", "en"];
-  let locale = resolveLocale(lang, requestHeaders.get("accept-language"));
+  let locale = resolveLocale(
+    lang,
+    tempMenu?.defaultLanguage ?? activeLanguages[0] ?? "hr",
+  );
 
   if (!activeLanguages.includes(locale) && activeLanguages.length > 0) {
     locale = activeLanguages[0] as typeof locale;

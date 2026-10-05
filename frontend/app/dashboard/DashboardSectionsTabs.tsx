@@ -86,6 +86,7 @@ type Props = {
   showPricesEur: boolean;
   alcoholNotice?: string;
   activeLanguages: string[];
+  defaultLanguage: string;
   facebookUrl?: string;
   instagramUrl?: string;
   tiktokUrl?: string;
@@ -262,6 +263,7 @@ export function DashboardSectionsTabs({
   deleteSubcategoryAction,
   reorderAction,
   activeLanguages,
+  defaultLanguage,
 }: Props) {
   const [activeTab, setActiveTab] = useState<DashboardTab>("add-item");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -818,6 +820,36 @@ export function DashboardSectionsTabs({
                   </label>
                   <p className="text-xs text-slate-600">
                     Neaktivni jezici će biti izbačeni sa cjenika.
+                  </p>
+                  <label
+                    htmlFor="defaultLanguage"
+                    className="block pt-2 text-sm font-medium text-slate-700"
+                  >
+                    Zadani jezik menija
+                  </label>
+                  <select
+                    id="defaultLanguage"
+                    name="defaultLanguage"
+                    defaultValue={
+                      activeLanguages.includes(defaultLanguage)
+                        ? defaultLanguage
+                        : (activeLanguages[0] ?? "hr")
+                    }
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                  >
+                    {activeLanguages.includes("hr") && (
+                      <option value="hr">Hrvatski</option>
+                    )}
+                    {activeLanguages.includes("en") && (
+                      <option value="en">Engleski</option>
+                    )}
+                    {activeLanguages.length === 0 && (
+                      <option value="hr">Hrvatski</option>
+                    )}
+                  </select>
+                  <p className="text-xs text-slate-600">
+                    Koristi se pri prvom otvaranju menija; posjetitelj i dalje
+                    može promijeniti jezik.
                   </p>
                 </div>
 

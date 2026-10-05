@@ -113,6 +113,21 @@ export const tenantType = defineType({
         "Odaberite koji će jezici biti prikazani. Neaktivni jezici bit će skriveni, ali uneseni podaci ostaju sačuvani.",
     }),
     defineField({
+      name: "defaultLanguage",
+      title: "Zadani jezik menija",
+      type: "string",
+      options: {
+        list: [
+          { title: "Hrvatski", value: "hr" },
+          { title: "Engleski", value: "en" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "hr",
+      description:
+        "Jezik koji se koristi kada posjetitelj prvi put otvori meni bez odabranog jezika.",
+    }),
+    defineField({
       name: "facebookUrl",
       title: "Facebook (URL)",
       type: "url",

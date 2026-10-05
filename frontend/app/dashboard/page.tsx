@@ -861,10 +861,16 @@ async function updateMenuSettingsAction(formData: FormData) {
   const alcoholNotice = String(formData.get("alcoholNotice") || "").trim();
   const activeLanguagesHr = formData.get("activeLanguagesHr") === "on";
   const activeLanguagesEn = formData.get("activeLanguagesEn") === "on";
+  const selectedDefaultLanguage = String(
+    formData.get("defaultLanguage") || "hr",
+  );
 
   const activeLanguages = [];
   if (activeLanguagesHr) activeLanguages.push("hr");
   if (activeLanguagesEn) activeLanguages.push("en");
+  const defaultLanguage = activeLanguages.includes(selectedDefaultLanguage)
+    ? selectedDefaultLanguage
+    : (activeLanguages[0] ?? "hr");
 
   if (!showPricesBam && !showPricesEur) {
     throw new Error("Uključi prikaz cijena u barem jednoj valuti.");
@@ -892,6 +898,7 @@ async function updateMenuSettingsAction(formData: FormData) {
       menuDesign,
       alcoholNotice,
       activeLanguages,
+      defaultLanguage,
     })
     .commit();
 
@@ -1124,6 +1131,7 @@ export default async function DashboardPage() {
         showPricesEur={membership.tenant.showPricesEur ?? true}
         alcoholNotice={membership.tenant.alcoholNotice}
         activeLanguages={membership.tenant.activeLanguages || ["hr", "en"]}
+        defaultLanguage={membership.tenant.defaultLanguage || "hr"}
         facebookUrl={membership.tenant.facebookUrl}
         instagramUrl={membership.tenant.instagramUrl}
         tiktokUrl={membership.tenant.tiktokUrl}
